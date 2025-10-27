@@ -3,4 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="halo_green_dark">#ff669900</color>
+    <color name="background_color">#EAF6FF</color>
+    <color name="toolbar_color">#AAC4D7</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="floating_button_bg">#2F80ED</color>
+    <color name="primary_text_color">#FFFFFF</color>
 </resources>

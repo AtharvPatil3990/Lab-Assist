@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:id="@+id/tvIssueTitle"
-                android:text="PC not turning on"
+                android:text="PC not Starting"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="@android:color/black" />
