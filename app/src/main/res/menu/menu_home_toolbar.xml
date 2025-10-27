@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+        <!-- Bell Icon -->
+        <item
+            android:id="@+id/action_notifications"
+            android:icon="@drawable/notifications_icon"
+            android:title="Notifications"
+            app:showAsAction="always"/>
+
+        <!-- 3 Dots (Overflow menu) -->
+        <item
+            android:id="@+id/action_settings"
+            android:title="Settings" />
+
+        <item
+            android:id="@+id/action_help"
+            android:title="Help" />
+
+        <item
+            android:id="@+id/action_logout"
+            android:title="Logout" />
+
+</menu>

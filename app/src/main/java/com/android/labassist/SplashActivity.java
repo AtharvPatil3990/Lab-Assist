@@ -30,6 +30,6 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(new Intent(this, LoginActivity.class));
             }
             finish();
-        }, 1500); // 1.5 second delay
+        }, 1000); // 1 second delay
     }
 }

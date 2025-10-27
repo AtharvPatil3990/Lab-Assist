@@ -4,4 +4,5 @@
     <string name="home">Home</string>
     <string name="profile">Profile</string>
     <string name="dashboard">Dashboard</string>
+    <string name="report_a_new_issue">Report a new issue</string>
 </resources>
