@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_view_notes_of_complaint"
+        android:icon="@drawable/notes_icon"
+        android:title="View Notes"
+        android:iconTint="@color/icon"
+        />
+
+    <item
+        android:id="@+id/menu_view_device_complaint_history"
+        android:icon="@drawable/history_icon"
+        android:title="Device Complaint History"
+        android:iconTint="@color/icon"
+        />
+
+    <item
+        android:id="@+id/menu_resign_complaint"
+        android:title="Resign Complaint"
+        android:icon="@drawable/resign_complaint_icon"
+        android:iconTint="@color/icon"
+        />
+    <item
+        android:id="@+id/menu_on_hold"
+        android:title="Put On Hold"
+        android:icon="@drawable/hold_icon"
+        android:iconTint="@color/icon"
+        />
+    <item
+        android:id="@+id/menu_flag_duplicate"
+        android:title="Flag as Duplicate"
+        android:icon="@drawable/duplicate_icon"
+        android:iconTint="@color/icon"
+        />
+</menu>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/toolbar_bg"
+    android:paddingHorizontal="12dp">
+
+    <!-- App Logo -->
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/lab_assist_round_logo"
+        android:contentDescription="App Logo"
+        />
+
+    <!-- App Title -->
+    <TextView
+        android:id="@+id/tvToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lab-Assist"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/heading_text"
+        android:layout_marginStart="8dp"
+        android:layout_gravity="center"
+        />
+
+</LinearLayout>

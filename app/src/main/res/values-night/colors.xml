@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="secondary_bg">#0E141A</color>
+    <color name="background_color">#15202B</color>
+
+    <!--    Text Color      -->
+    <color name="primary_text">#FFFFFF</color>
+    <color name="icon">#FFFFFF</color>
+
+    <color name="divider">#2C3A45</color>
+
+    <!--    Material Card   -->
+    <color name="card">#1C2A36</color>
+    <color name="card_stroke">#324755</color>
+
+    <!--    Toolbar     -->
+    <color name="toolbar_text">#EAF5FF</color>
+    <color name="toolbar_bg">#0A1F2C</color>
+    <color name="toolbar_icon">#FFFFFF</color>
+
+    <!--    Bottom Navigation   -->
+    <color name="bottom_nav_bg">#0E141A</color>
+    <color name="bottom_nav_active_icon">#4DA6E4</color>
+    <color name="bottom_nav_inactive_icon">#7C8B99</color>
+    <color name="bottom_nav_ripple">#1B3551</color>
+    <color name="bottom_nav_item_bg">#757575</color>
+
+    <!--    FAB     -->
+    <color name="fab_bg">#0D83C2</color>
+    <color name="fab_icon">#FFFFFF</color>
+    <color name="fab_tooltip_text">#FFFFFF</color>
+
+    <!--    Material Button       -->
+    <color name="primary_btn_bg">#0A6CA8</color>
+    <color name="primary_btn_pressed">#095985</color>
+    <color name="primary_btn_text">#FFFFFF</color>
+
+    <!--    Settings Button     -->
+    <color name="settings_button_bg">#1F2A33</color>
+    <color name="settings_button_border">#2C3A45</color>  <!-- Muted dark grey-blue -->
+
+    <!--    Text Colors-->
+    <color name="heading_text">#E5F4FD</color>
+    <color name="body_text">#D8E2EA</color>
+    <color name="subtext">#9AA8B5</color>
+    <color name="label">#0A6CA8</color>
+    <color name="hint">#9AA8B5</color>
+    <color name="text_secondary_dark">#B0B0B0</color>
+
+    <!--    Status Colors-->
+    <color name="pending_status">#FFC470</color>
+    <color name="in_progress_status">#60A5FA</color>
+    <color name="cancelled_status">#EF9A9A</color>
+    <color name="completed_status">#81C784</color>
+
+    <color name="profile_header_bg">#1E293B</color>
+
+</resources>

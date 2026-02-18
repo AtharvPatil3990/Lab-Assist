@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Lab Assist</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home">Home</string>
+    <string name="my_complaints">My Complaints</string>
+    <string name="profile">Profile</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="reports">Reports</string>
+    <string name="history">History</string>
+    <string name="tasks">Tasks</string>
+    <string name="report_a_new_issue">Report a new issue</string>
+    <string name="report_email">nextgendevelopers99@gmail.com</string>
+</resources>

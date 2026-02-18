@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="General" >
+        <ListPreference
+            android:title="App Theme"
+            android:key="app_theme"
+            android:defaultValue="system"
+            android:entries="@array/theme_names"
+            android:entryValues="@array/theme_values"
+            app:useSimpleSummaryProvider="true"
+
+            />
+
+        <SwitchPreferenceCompat
+            android:title="Notification"
+            android:key="notification"
+            android:icon="@drawable/notifications_active_icon"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Profile">
+        <Preference
+            android:title="Edit Profile"
+            android:key="edit_profile"
+            android:icon="@drawable/edit_icon"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="About">
+        <Preference
+            android:title="Version"
+            android:key="app_version"
+            android:icon="@drawable/info_icon"
+            />
+
+        <Preference android:title="Report a Problem"
+            android:key="report_problem"
+            android:icon="@drawable/report_icon"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Account">
+        <Preference
+            android:title="Change Password"
+            android:key="account_change_pass"
+            android:icon="@drawable/change_pass_icon"
+            />
+
+        <Preference
+            android:title="Logout"
+            android:key="account_logout"
+            android:icon="@drawable/logout_icon"
+            />
+
+        <Preference
+            android:title="Delete Account"
+            android:key="account_delete"
+            app:summary="Once deleted account cannot be restored"
+            android:icon="@drawable/delete_forever_icon"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>

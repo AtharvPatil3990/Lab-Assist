@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/MainConstLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="12dp"
+    android:paddingBottom="12dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="2dp"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- TechComplaint Title -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Network Issue"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/body_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- Status Chip -->
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipStatus"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Completed"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:clickable="false"
+        android:focusable="false"
+        android:elevation="2dp"
+        app:chipBackgroundColor="@color/chip_completed_status_bg"
+        android:textColor="@color/completed_status"
+        app:chipStrokeColor="@color/chip_completed_status_stroke_color"
+        app:chipStrokeWidth="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- Location -->
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Lab 203 • Computer Lab"
+        android:textSize="14sp"
+        android:textColor="@color/subtext"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvDepartmentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Department: Computer"
+        android:textColor="@color/subtext"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/tvLocation"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <!-- TechComplaint ID -->
+    <TextView
+        android:id="@+id/tvComplaintId"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="ID: #CMP1023"
+        android:textSize="12sp"
+        android:textColor="@color/subtext"
+        app:layout_constraintTop_toBottomOf="@id/tvDepartmentName"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- Time -->
+    <TextView
+        android:id="@+id/tvAllocatedTime"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Assigned: Today, 10:30 AM"
+        android:textSize="12sp"
+        android:textColor="@color/subtext"
+        app:layout_constraintTop_toBottomOf="@id/tvComplaintId"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

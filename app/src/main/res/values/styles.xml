@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ProfileHeaderContainer">
+        <item name="android:background">@color/profile_header_bg</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+</resources>

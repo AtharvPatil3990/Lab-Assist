@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="secondary_bg">#FFFFFF</color>
+    <color name="background_color">#F5FAFD</color>
+
+    <color name="splash_background">#F5FAFD</color>
+
+    <!--    Text Color      -->
+    <color name="primary_text">#FFFFFF</color>
+    <color name="icon">#333333</color>
+
+    <!--    Material Card   -->
+    <color name="card">#F2F7FA</color>
+    <color name="card_stroke">#D9E5ED</color>
+
+    <!--    Toolbar     -->
+    <color name="toolbar_bg">#80FFFFFF</color>
+    <color name="toolbar_icon">#FFFFFF</color>
+    <color name="toolbar_text">#084A7A</color>
+
+    <!--    Bottom Navigation   -->
+    <color name="bottom_nav_bg">#FFFFFF</color>
+    <color name="bottom_nav_active_icon">#084A7A</color>
+    <color name="bottom_nav_inactive_icon">#9099A6</color>
+    <color name="bottom_nav_ripple">#D8E7F2</color>
+    <color name="bottom_nav_item_bg">#757575</color>
+
+    <!--    FAB     -->
+    <color name="fab_bg">#DC0A6CA8</color>
+    <color name="fab_icon">#FFFFFF</color>
+    <color name="fab_tooltip_text">#FFFFFF</color>
+
+    <!--    Material Button       -->
+    <color name="primary_btn_bg">#0A6CA8</color>
+    <color name="primary_btn_pressed">#021D33</color>
+    <color name="primary_btn_text">#FFFFFF</color>
+
+    <!--    Settings Button     -->
+    <color name="settings_button_bg">#F2F4F7</color>
+    <color name="settings_button_border">#D0D7DE</color>  <!-- Soft grey -->
+
+    <color name="profile_header_bg">#E8F0FE</color>
+
+    <!--    Text Colors-->
+    <color name="heading_text">#084A7A</color>
+    <color name="body_text">#333333</color>
+    <color name="subtext">#6D7A84</color>
+    <color name="label">#0A6CA8</color>
+    <color name="hint">#6D7A84</color>
+    <color name="text_secondary_dark">#757575</color>
+
+    <color name="welcome_card_bg">#DC0A6CA8</color>
+    <color name="welcome_card_text">#FFFFFF</color>
+
+    <color name="divider">#D6DCE1</color>
+
+    <!--    Status Colors-->
+    <color name="pending_status">#eb8c00</color>
+    <color name="ongoing_status">#2563EB</color>
+    <color name="cancelled_status">#F44336</color>
+    <color name="completed_status">#4CAF50</color>
+
+    <color name="chip_pending_status_bg">#26EB8C00</color>
+    <color name="chip_pending_status_stroke_color">#66EB8C00</color>
+
+    <color name="chip_ongoing_status_bg">#332563EB</color>
+    <color name="chip_ongoing_status_stroke_color">#662563EB</color>
+
+    <color name="chip_cancelled_status_bg">#26F44336</color>
+    <color name="chip_cancelled_status_stroke_color">#66F44336</color>
+
+    <color name="chip_completed_status_bg">#4060DC65</color>
+    <color name="chip_completed_status_stroke_color">#664CAF50</color>
+
+<!--    Item Divider    -->
+<!--    <color name="item_divider_color">#E0E0E0</color>-->
+
+    <!--    Selected status color   -->
+
+    <!-- Selected Pending -->
+    <color name="pending_status_selected_bg">#EB8C00</color>   <!-- solid -->
+    <color name="pending_status_selected_text">#FFFFFF</color>
+    <color name="pending_status_selected_stroke">#C76F00</color>
+
+    <!-- Selected Ongoing -->
+    <color name="ongoing_status_selected_bg">#3A72ED</color>
+    <color name="ongoing_status_selected_text">#FFFFFF</color>
+    <color name="ongoing_status_selected_stroke">#1E4ED8</color>
+
+    <!-- Selected Cancelled -->
+    <color name="cancelled_status_selected_bg">#F44336</color>
+    <color name="cancelled_status_selected_text">#FFFFFF</color>
+    <color name="cancelled_status_selected_stroke">#D32F2F</color>
+
+    <!-- Selected Completed -->
+    <color name="completed_status_selected_bg">#4CAF50</color>
+    <color name="completed_status_selected_text">#FFFFFF</color>
+    <color name="completed_status_selected_stroke">#388E3C</color>
+
+</resources>
