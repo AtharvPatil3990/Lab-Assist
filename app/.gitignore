@@ -226,4 +226,5 @@ crashlytics-build.properties
 fabric.properties
 
 google-services.json
+*.properties
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Android,AndroidStudio
