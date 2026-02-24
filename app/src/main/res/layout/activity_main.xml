@@ -21,6 +21,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+
+        android:alpha="@integer/google_play_services_version"
+        app:layout_constraintBottom_toBottomOf="@+id/nav_host_fragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -28,7 +40,7 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false"
         app:labelVisibilityMode="labeled"
-
+        android:visibility="invisible"
         app:itemRippleColor="@color/bottom_nav_ripple"
         app:itemTextColor="@color/body_text"
         app:horizontalItemTextAppearanceActive="@color/bottom_nav_active_icon"

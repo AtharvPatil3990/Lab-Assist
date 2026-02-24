@@ -11,6 +11,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.labassist.auth.AuthEventBus;
+import com.android.labassist.auth.SessionManager;
+import com.android.labassist.auth.TokenManager;
+
 public class SplashActivity extends AppCompatActivity {
 
     @Override
@@ -23,8 +27,11 @@ public class SplashActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        AuthEventBus.getInstance();
+
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (SessionManager.isLoggedIn(this)) {
+            if (new TokenManager(getApplicationContext()).getRefreshToken() != null) {
                 startActivity(new Intent(this, MainActivity.class));
             } else {
                 startActivity(new Intent(this, LoginActivity.class));

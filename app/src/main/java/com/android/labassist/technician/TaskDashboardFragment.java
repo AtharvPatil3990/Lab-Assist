@@ -2,9 +2,7 @@ package com.android.labassist.technician;
 
 import android.os.Bundle;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
@@ -13,14 +11,12 @@ import android.view.ViewGroup;
 
 import com.android.labassist.ComplaintStatus;
 import com.android.labassist.R;
-import com.android.labassist.SessionManager;
+import com.android.labassist.auth.SessionManager;
 import com.android.labassist.databinding.FragmentTechnicianDashboardBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
-import java.util.Objects;
 
 public class TaskDashboardFragment extends Fragment {
 
@@ -56,7 +52,7 @@ public class TaskDashboardFragment extends Fragment {
     }
 
     private void setUsernameAndDate(){
-        String username = "Logged in as, " + SessionManager.getUsername(requireContext());
+        String username = "Logged in as, " + SessionManager.getInstance(requireContext()).getUsername();
         SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM", Locale.getDefault());
 
         binding.tvTecUsername.setText(username);

@@ -34,9 +34,9 @@ public class ViewNotesTechFragment extends Fragment {
 
         binding = FragmentViewNotesTechBinding.bind(view);
 
-        binding.toolbarViewNotes.setNavigationOnClickListener(v -> {
-            NavHostFragment.findNavController(ViewNotesTechFragment.this).navigateUp();
-        });
+//        binding.toolbarViewNotes.setNavigationOnClickListener(v -> {
+//            NavHostFragment.findNavController(ViewNotesTechFragment.this).navigateUp();
+//        });
 
 
         return view;

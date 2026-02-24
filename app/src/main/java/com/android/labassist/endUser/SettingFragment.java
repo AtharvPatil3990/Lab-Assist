@@ -23,7 +23,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.labassist.R;
-import com.android.labassist.SessionManager;
+import com.android.labassist.auth.SessionManager;
 
 public class SettingFragment extends PreferenceFragmentCompat {
 //  TODO: Edit profile function
@@ -79,7 +79,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
         if(logoutPref != null) {
             logoutPref.setOnPreferenceClickListener(preference -> {
 //                Todo: Write extra logic for logout here
-                SessionManager.logout(requireContext());
+                SessionManager.getInstance(requireContext()).logout();
                 return true;
             });
         }

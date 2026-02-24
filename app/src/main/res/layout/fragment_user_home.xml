@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:text="Welcome"
-                android:textSize="23dp"
+                android:textSize="20sp"
                 android:textColor="@color/welcome_card_text"
                 android:layout_marginTop="10dp"
                 android:textStyle="bold"
@@ -130,7 +130,7 @@
 
             <!-- Total Count -->
             <TextView
-                android:id="@+id/tvTotalComplaints"
+                android:id="@+id/tvTotalCompCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="3"
@@ -169,7 +169,7 @@
 
             <!-- Pending Count -->
             <TextView
-                android:id="@+id/tvPendingComplaints"
+                android:id="@+id/tvPendingCompCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1"
@@ -207,7 +207,7 @@
 
             <!-- Resolved Count -->
             <TextView
-                android:id="@+id/tvResolvedComplaints"
+                android:id="@+id/tvResolvedCompCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2"

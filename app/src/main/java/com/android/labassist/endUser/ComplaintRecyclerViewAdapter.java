@@ -49,6 +49,13 @@ public class ComplaintRecyclerViewAdapter extends RecyclerView.Adapter<Complaint
         holder.tvStatus.setText(complaint.getStatus().toString());
     }
 
+    public void updateList(ArrayList<UserComplaint> filteredList) {
+        // 1. Replace the old list with the newly filtered search results
+        this.complaintsArrList = filteredList;
+        // 2. Tell the RecyclerView to wipe the screen and redraw itself with the new data
+        notifyDataSetChanged();
+    }
+
     private String setDate(long dateInMills){
         String date;
         LocalDateTime noteDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateInMills), ZoneId.systemDefault());

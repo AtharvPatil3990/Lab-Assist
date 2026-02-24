@@ -3,6 +3,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
+
 }
 
 val localProperties = Properties()
@@ -30,10 +31,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildFeatures{
-            buildConfig = true
-        }
 
         buildConfigField(
             "String",
@@ -63,6 +60,7 @@ android {
     }
     buildFeatures{
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -82,10 +80,21 @@ dependencies {
 
     implementation(libs.preference)
 
-
 //    Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.messaging)
+
+//    Retrofit and GSON converter
+    implementation(libs.retrofit)
+// Gson converter (for JSON parsing)
+    implementation(libs.converter.gson)
+
+    implementation(libs.security.crypto)
+
+//  Room Database
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
+
 }

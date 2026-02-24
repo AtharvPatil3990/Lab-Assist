@@ -7,26 +7,36 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.widget.RadioGroup;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.button.MaterialButton;
+import com.android.labassist.auth.AuthEventBus;
+import com.android.labassist.auth.SessionManager;
+import com.android.labassist.auth.TokenManager;
+import com.android.labassist.databinding.ActivityLoginBinding;
+import com.android.labassist.network.ApiController;
+import com.android.labassist.network.models.LoginRequest;
+import com.android.labassist.network.models.LoginResponse;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputEditText;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    TextInputEditText etUsername, etPassword, etOrgCode;
-    MaterialButton btnLogin, btnForgotPassword, btnRegisterUser;
-    RadioGroup rgUserRole;
+    ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,53 +48,27 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        binding = ActivityLoginBinding.bind(findViewById(R.id.login_activity));
+        setContentView(binding.getRoot());
 
         askNotificationPermission();
 
-        etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
-        etOrgCode = findViewById(R.id.etOrgCode);
-        btnForgotPassword = findViewById(R.id.btnForgotPassword);
-        btnRegisterUser = findViewById(R.id.btnRegisterUser);
-        rgUserRole = findViewById(R.id.rgUserRole);
+        binding.btnLogin.setOnClickListener(view -> {
+            String email = binding.etEmail.getText().toString().trim();
+            String password = binding.etPassword.getText().toString().trim();
 
-        btnLogin.setOnClickListener(view -> {
-            String username = etUsername.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
-            String orgCode =  etOrgCode.getText().toString().trim();
-            int id = rgUserRole.getCheckedRadioButtonId();
-            String role = "";
-
-            if(username.isEmpty()){
-                etUsername.setError("Email address cannot be empty");
-                etUsername.requestFocus();
+            if(email.isEmpty()){
+                binding.etEmail.setError("Email address cannot be empty");
+                binding.etEmail.requestFocus();
                 return;
             }
             else if(password.isEmpty()){
-                etPassword.setError("Please enter password");
-                etPassword.requestFocus();
+                binding.etPassword.setError("Please enter password");
+                binding.etPassword.requestFocus();
                 return;
             }
-            else if(orgCode.isEmpty()){
-                etOrgCode.setError("Please enter organisation code");
-                etOrgCode.requestFocus();
-                return;
-            }
-            if(id != -1) {
-                if (id == R.id.rbEndUser)
-                    role = "end_user";
-                else if (id == R.id.rbAdmin)
-                    role = "admin";
-                else
-                    role = "technician";
-            }
-            SessionManager.saveLogin(LoginActivity.this, username, role, orgCode);
 
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-
-            // Todo: check user validity using firebase auth and store user data in UserInfo
+            loginUser(new LoginRequest(email, password));
         });
 
     }
@@ -111,5 +95,54 @@ public class LoginActivity extends AppCompatActivity {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
         }
+    }
+
+    private void loginUser(LoginRequest request){
+        binding.loginProgressBar.setVisibility(View.VISIBLE);
+
+        Call<LoginResponse> call =
+                ApiController.getInstance(LoginActivity.this)
+                .getPublicApi()
+                .getLogin(request);
+
+        AuthEventBus.getInstance().resetLogoutSignal();
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+                if(response.isSuccessful() && response.body()!=null) {
+                    LoginResponse body = response.body();
+                    new TokenManager(LoginActivity.this).saveTokens(body.getAccessToken(), body.getRefreshToken());
+                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+                    binding.loginProgressBar.setVisibility(View.GONE);
+
+                    finish();
+                }
+                else{
+                    Snackbar.make(binding.getRoot(), "Login not successful", Snackbar.LENGTH_SHORT).show();
+                    Log.d("LogErr", call.toString());
+                    Log.d("LogErr", response.toString());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+                Snackbar.make(binding.getRoot(), "Unexpected error occurred", Snackbar.LENGTH_SHORT).show();
+
+                Log.d("LogErr", call.toString());
+                Log.d("LogErr", t.getMessage());
+                Log.d("LogErr", t.toString());
+                binding.loginProgressBar.setVisibility(View.GONE);
+                Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 }

@@ -1,0 +1,44 @@
+package com.android.labassist.network;
+
+import com.android.labassist.network.models.ComplaintsResponse;
+import com.android.labassist.network.models.LoginRequest;
+import com.android.labassist.network.models.LoginResponse;
+import com.android.labassist.network.models.RefreshSessionRequest;
+import com.android.labassist.network.models.UserProfileResponse;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+
+public interface APICalls {
+    @POST("auth/v1/token?grant_type=password")
+    Call<LoginResponse> getLogin(@Body LoginRequest request);
+
+    @POST("auth/v1/token?grant_type=refresh_token")
+    Call<LoginResponse> getAccessToken(@Body RefreshSessionRequest request);
+
+    @GET("functions/v1/get-user-profile")
+    Call<UserProfileResponse> getUserProfile();
+
+    // 🎓 STUDENT CALL (Hardcoded select)
+    @GET("rest/v1/complaints?select=*,labs(lab_name,lab_code),devices(device_name),technicians(name)")
+    Call<List<ComplaintsResponse>> getStudentComplaints(
+            @Query("student_id") String studentIdEq
+    );
+
+    // 🔧 TECHNICIAN CALL (Hardcoded select)
+    @GET("rest/v1/complaints?select=*,labs(lab_name,lab_code),devices(device_name),students(name)")
+    Call<List<ComplaintsResponse>> getTechnicianComplaints(
+            @Query("assigned_technician_id") String techIdEq
+    );
+
+    // 🏢 ADMIN CALL (Hardcoded select)
+    @GET("rest/v1/complaints?select=*,labs(lab_name,lab_code),devices(device_name),students(name),technicians(name)")
+    Call<List<ComplaintsResponse>> getDepartmentComplaints(
+            @Query("labs.department_id") String deptIdEq // e.g., "eq.uuid-here"
+    );
+}
