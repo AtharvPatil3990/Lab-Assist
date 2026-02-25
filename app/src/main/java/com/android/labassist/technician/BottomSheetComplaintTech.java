@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.android.labassist.ComplaintStatus;
 import com.android.labassist.R;
+import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.databinding.BottomSheetComplaintTechBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -39,10 +40,10 @@ import java.util.Objects;
 
 public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
     private BottomSheetComplaintTechBinding binding;
-    private final TechComplaint techComplaint;
+    private final ComplaintEntity techComplaint;
     private boolean isNotesOpen;
 
-    public  BottomSheetComplaintTech(TechComplaint techComplaint){
+    public  BottomSheetComplaintTech(ComplaintEntity techComplaint){
         this.techComplaint = techComplaint;
     }
 
@@ -53,8 +54,8 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         // Inflate the layout for this fragment
         binding = BottomSheetComplaintTechBinding.bind(inflater.inflate(R.layout.bottom_sheet_complaint_tech, container, false));
         binding.tvComplaintTitle.setText(techComplaint.getTitle());
-        binding.tvLabLocation.setText(techComplaint.getLab());
-        binding.tvAppointedDate.setText(setDate(techComplaint.getAssignedDate()));
+        binding.tvLabLocation.setText(techComplaint.getLabName());
+        binding.tvAppointedDate.setText(setDate(techComplaint.getCreatedAt()));
         String description = techComplaint.getDescription();
         if(description == null || description.isBlank()) {
             binding.tvProblemDescription.setText("No description set");
@@ -67,38 +68,26 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
         binding.layoutButtonPendingState.setOnClickListener(v->{
             setBottomButtonStatePending();
-            techComplaint.setStatus(ComplaintStatus.Pending);
+            techComplaint.setStatus("Pending");
         });
 
         binding.layoutButtonOngoingState.setOnClickListener(v->{
             setBottomButtonStateOngoing();
-            techComplaint.setStatus(ComplaintStatus.Ongoing);
+            techComplaint.setStatus("Ongoing");
         });
 
         binding.layoutButtonCompletedState.setOnClickListener(v->{
             setBottomButtonStateComplete();
-            techComplaint.setStatus(ComplaintStatus.Resolved);
+            techComplaint.setStatus("Resolved");
         });
 
         binding.layoutButtonCancelState.setOnClickListener(v->{
             setBottomButtonStateCancel();
-            techComplaint.setStatus(ComplaintStatus.Cancelled);
+            techComplaint.setStatus("Cancelled");
         });
 
 //        TODO: Load notes with real data
 //        setting notes recycler view adapter
-        List<TechNotes>  arrNotes = new ArrayList<>(3);
-        arrNotes.add(techComplaint.getLatestNote());
-
-        techComplaint.setLatestNote(new TechNotes("#PC115", "#PC115N", "JSPCO128", "Ganesh Satpute", "CPU corrupted created new CPU for it", System.currentTimeMillis() - 50000));
-        arrNotes.add(new TechNotes("#PC115", "#PC115N", "JSPCO128", "Ganesh Satpute", "CPU corrupted created new CPU for it", System.currentTimeMillis() - 50000));
-        arrNotes.add(new TechNotes("#PC103", "#PC03N", "JSPCO848", "Vishal Munde", "OS had problem created and installed new myself", System.currentTimeMillis() - 30));
-        binding.rvTechNotes.setLayoutManager(new LinearLayoutManager(requireContext()));
-        techComplaint.setNotesCount(3);
-        binding.rvTechNotes.setAdapter(new NotesRVAdapter(requireContext(), arrNotes));
-
-//        Setting Item decoration for Notes RecyclerView
-        binding.rvTechNotes.addItemDecoration(new RVItemDivider(requireContext()));
 
         binding.ivOverflowMenu.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(requireContext(), v);
@@ -124,11 +113,11 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 //        Assigning Last updated date / completed date
         String lastUpdateDateLabel;
         switch (techComplaint.getStatus()){
-            case Resolved:
+            case "Resolved":
                     lastUpdateDateLabel = "Resolved on";
                     binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.completed_date_icon);
                     break;
-            case Cancelled:
+            case "Cancelled":
                     lastUpdateDateLabel = "Rejected on";
                     binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.reject_icon);
                     break;
@@ -138,78 +127,27 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         }
         binding.tvLastUpdatedDateLabel.setText(lastUpdateDateLabel);
 
-        binding.tvLastUpdatedDate.setText(setDate(techComplaint.getLastUpdatedDate()));
-
-        isNotesOpen = false;
-        binding.cardTechNotes.setOnClickListener(v -> {
-            if(isNotesOpen){
-                collapseNotes();
-                isNotesOpen = false;
-            }
-            else {
-                expandNotes();
-                isNotesOpen = true;
-            }
-        });
-
         return binding.getRoot();
     }
 
-    private void expandNotes() {
-        if (techComplaint.getNotesCount() <= 0) {
-            binding.tvNoTechNotesLabel.setVisibility(View.VISIBLE);
-            binding.rvTechNotes.setVisibility(View.GONE);
-        }
-        else {
-            binding.rvTechNotes.setVisibility(View.VISIBLE);
-            binding.tvNoTechNotesLabel.setVisibility(View.GONE);
-        }
-
-        binding.notesContainer.setAlpha(0f);
-        binding.notesContainer.setVisibility(View.VISIBLE);
-        binding.notesContainer.animate()
-                .alpha(1f)
-                .setDuration(200)
-                .start();
-
-        binding.ivDownArrow.animate().rotation(180f).setDuration(200).start();
-    }
-
-    private void collapseNotes() {
-        binding.notesContainer.animate()
-                .alpha(0f)
-                .setDuration(150)
-                .withEndAction(() ->
-                        binding.notesContainer.setVisibility(View.GONE))
-                .start();
-
-        binding.ivDownArrow.animate().rotation(0f).setDuration(200).start();
-    }
-
-
-    private void setBottomButtonSelectedStatus(ComplaintStatus status){
+    private void setBottomButtonSelectedStatus(String status){
         switch(status){
-            case Pending:
+            case "Pending":
                     setBottomButtonStatePending();
                     break;
-            case Ongoing:
+            case "Ongoing":
                     setBottomButtonStateOngoing();
                     break;
-            case Resolved:
+            case "Resolved":
                     setBottomButtonStateComplete();
                     break;
-            case Cancelled:
+            case "Cancelled":
                     setBottomButtonStateCancel();
                     break;
         }
     }
 
     private void setBottomButtonStatePending(){
-//        setting color of pending layout button
-//        binding.layoutButtonPendingState.setBackgroundResource(R.drawable.button_bg_status_pending_selected);
-//        binding.ivBottomPendingStatusIcon.setImageTintList(ColorStateList.valueOf(R.color.pending_status_selected_text));
-//        binding.tvBottomPendingStatusText.setBackgroundTintList(ColorStateList.valueOf(R.color.pending_status_selected_text));
-
         resetButtonInstant(
                 techComplaint.getStatus());
 
@@ -325,7 +263,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
     }
 
 
-    private void resetButtonInstant(ComplaintStatus state) {
+    private void resetButtonInstant(String state) {
         View button;
         @ColorRes int bg;
         @ColorRes int stroke;
@@ -334,7 +272,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         ImageView iv;
 
         switch(state){
-            case Ongoing:
+            case "Ongoing":
                 button = binding.layoutButtonOngoingState;
                 bg = R.color.chip_ongoing_status_bg;
                 stroke = R.color.chip_ongoing_status_stroke_color;
@@ -342,7 +280,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                 tv = binding.tvBottomOngoingStatusText;
                 iv = binding.ivBottomOngoingStatusIcon;
                 break;
-            case Pending:
+            case "Pending":
                 button = binding.layoutButtonPendingState;
                 bg = R.color.chip_pending_status_bg;
                 stroke = R.color.chip_pending_status_stroke_color;
@@ -350,7 +288,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                 tv = binding.tvBottomPendingStatusText;
                 iv = binding.ivBottomPendingStatusIcon;
                 break;
-            case Resolved:
+            case "Resolved":
                 button = binding.layoutButtonCompletedState;
                 bg = R.color.chip_completed_status_bg;
                 stroke = R.color.chip_completed_status_stroke_color;
@@ -424,8 +362,6 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
         anim.start();
     }
-
-
 
     @Override
     public void onDestroy() {

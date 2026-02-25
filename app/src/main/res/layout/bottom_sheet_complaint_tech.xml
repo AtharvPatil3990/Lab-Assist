@@ -63,22 +63,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-<!--            <com.google.android.material.chip.Chip-->
-<!--                android:id="@+id/chipComplaintStatus"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Completed"-->
-<!--                android:focusable="false"-->
-<!--                android:clickable="false"-->
-<!--                app:chipIcon="@drawable/complete_icon"-->
-<!--                app:chipIconVisible="true"-->
-<!--                app:chipStrokeWidth="1dp"-->
-<!--                app:chipIconTint="@color/completed_status"-->
-<!--                app:chipBackgroundColor="@color/chip_completed_status_bg"-->
-<!--                android:textColor="@color/completed_status"-->
-<!--                app:chipStrokeColor="@color/chip_completed_status_stroke_color"-->
-<!--                />-->
-
     <!--    Lab Location        -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardLabLocation"
@@ -389,75 +373,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 />
-
-<!--            Notes       -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardTechNotes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="16dp"
-                android:layout_marginTop="32dp"
-                android:backgroundTint="@color/card"
-                android:clickable="true"
-                android:focusable="true">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/tvTechNotesLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Technician Notes"
-                        android:textColor="@color/body_text"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
-
-                    <ImageView
-                        android:id="@+id/ivDownArrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/down_arrow_icon"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
-
-                    <LinearLayout
-                        android:id="@+id/notesContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/tvTechNotesLabel"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/tvNoTechNotesLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="No notes created yet"
-                            android:textSize="12sp"
-                            android:textColor="@color/subtext"
-                            android:visibility="gone"
-                            />
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rvTechNotes"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:nestedScrollingEnabled="false"
-                            android:visibility="gone"
-                            />
-                    </LinearLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvAttachedPhotoLabel"

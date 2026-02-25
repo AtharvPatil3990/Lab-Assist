@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.labassist.R;
+import com.android.labassist.auth.AuthEventBus;
+import com.android.labassist.auth.SessionManager;
+import com.android.labassist.database.AppDatabase;
 import com.android.labassist.databinding.FragmentUserProfileBinding;
 
 public class ProfileFragment extends Fragment {
@@ -23,7 +26,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        binding = FragmentUserProfileBinding.inflate(inflater, container, false);
+        binding = FragmentUserProfileBinding.bind(inflater.inflate(R.layout.fragment_user_profile, container, false));
 
         binding.btnSettings.setOnClickListener(v -> {
             NavHostFragment.findNavController(ProfileFragment.this)
@@ -50,6 +53,16 @@ public class ProfileFragment extends Fragment {
                 binding.tvRegID.setText(profile.regId);
                 binding.tvDepartment.setText(profile.department);
             }
+        });
+
+        binding.btnLogout.setOnClickListener(v -> {
+            SessionManager.getInstance(requireContext()).logout();
+            AppDatabase.getInstance(requireContext()).labAssistDao().clearLabs();
+            AppDatabase.getInstance(requireContext()).labAssistDao().clearComplaints();
+            AppDatabase.getInstance(requireContext()).labAssistDao().clearDevices();
+            AuthEventBus.getInstance().triggerLogout();
+
+//            Todo: retrofit call to clear fcm_token from supabase
         });
     }
 

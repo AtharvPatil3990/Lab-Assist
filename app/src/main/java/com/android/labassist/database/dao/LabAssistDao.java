@@ -94,4 +94,7 @@ public interface LabAssistDao {
 
     @Query("SELECT * FROM devices WHERE labId = :labId")
     LiveData<List<DeviceEntity>> getDevicesForLabLive(String labId);
+
+    @Query("SELECT * FROM complaints ORDER BY createdAt DESC")
+    LiveData<List<ComplaintEntity>> getAllComplaintsHistory();
 }

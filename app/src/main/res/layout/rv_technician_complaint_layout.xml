@@ -52,17 +52,6 @@
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <TextView
-        android:id="@+id/tvDepartmentName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Department: Computer"
-        android:textColor="@color/subtext"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/tvLocation"
-        app:layout_constraintStart_toStartOf="parent"
-        />
-
     <!-- TechComplaint ID -->
     <TextView
         android:id="@+id/tvComplaintId"
@@ -71,7 +60,7 @@
         android:text="ID: #CMP1023"
         android:textSize="12sp"
         android:textColor="@color/subtext"
-        app:layout_constraintTop_toBottomOf="@id/tvDepartmentName"
+        app:layout_constraintTop_toBottomOf="@id/tvLocation"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <!-- Time -->

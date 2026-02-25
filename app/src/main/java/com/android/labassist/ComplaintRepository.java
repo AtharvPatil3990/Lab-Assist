@@ -324,6 +324,14 @@ public class ComplaintRepository {
             }
         });
     }
+    public LiveData<List<ComplaintEntity>> getAllComplaintsHistory() {
+        // 1. Trigger a background sync so the history stays up-to-date
+        refreshComplaintsFromServer();
+
+        // 2. Return the LiveData stream from Room
+        // This allows the UI to update automatically whenever the database changes
+        return labAssistDao.getAllComplaintsHistory();
+    }
 
     public static interface ComplaintCallback {
         void onSuccess(RaiseComplaintResponse response);

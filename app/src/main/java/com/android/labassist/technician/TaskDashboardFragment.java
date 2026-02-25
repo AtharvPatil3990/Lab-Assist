@@ -1,17 +1,18 @@
 package com.android.labassist.technician;
 
 import android.os.Bundle;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.labassist.ComplaintStatus;
-import com.android.labassist.R;
 import com.android.labassist.auth.SessionManager;
+import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.databinding.FragmentTechnicianDashboardBinding;
 
 import java.text.SimpleDateFormat;
@@ -20,35 +21,56 @@ import java.util.Locale;
 
 public class TaskDashboardFragment extends Fragment {
 
-    FragmentTechnicianDashboardBinding binding;
+    private FragmentTechnicianDashboardBinding binding;
+    private TaskDashboardViewModel viewModel;
+    private ComplaintRVAdapterTech adapterTech;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-         binding = FragmentTechnicianDashboardBinding.bind(inflater.inflate(R.layout.fragment_technician_dashboard, container, false));
-
-         binding.rvAssignedComplaints.addItemDecoration(new RVItemDivider(requireContext()));
-
-         setUsernameAndDate();
-         ArrayList<TechComplaint> arrComplaintsList = new ArrayList<>();
-         arrComplaintsList.add(new TechComplaint(System.currentTimeMillis()-20000, "C245", "CO", "OS Crashed when opening blender", "PC-103", System.currentTimeMillis()-2000, ComplaintStatus.Ongoing, "OS Crash"));
-         arrComplaintsList.add(new TechComplaint(System.currentTimeMillis()-10000, "C672", "IT", "RAM is not present in this pc", "PC-215", System.currentTimeMillis()-2000, ComplaintStatus.Resolved, "Hardware not present"));
-         arrComplaintsList.add(new TechComplaint(System.currentTimeMillis()-50000, "C123", "ENTC", "Hardware is damaged", "PC-208", System.currentTimeMillis()-2000, ComplaintStatus.Cancelled, "Hardware Problem"));
-         arrComplaintsList.add(new TechComplaint(System.currentTimeMillis()-80000, "C097", "CO", "There is no pc here. where is the pc?", "PC-201", System.currentTimeMillis()-2000, ComplaintStatus.Pending, "Hardware Problem"));
-         arrComplaintsList.add(new TechComplaint(System.currentTimeMillis()-80000, "C097", "CO", "", "PC-201", System.currentTimeMillis()-2000, ComplaintStatus.Pending, "Hardware Problem"));
-
-         ComplaintRVAdapterTech adapterTech = new ComplaintRVAdapterTech(arrComplaintsList, requireContext());
-         binding.rvAssignedComplaints.setLayoutManager(new LinearLayoutManager(requireContext()));
-         binding.rvAssignedComplaints.setAdapter(adapterTech);
-
-         return binding.getRoot();
+        binding = FragmentTechnicianDashboardBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        binding = null;
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(this).get(TaskDashboardViewModel.class);
+
+        setupUI();
+        setupDataObserver();
+
+        // Initial sync from server
+        viewModel.refreshDashboard();
+    }
+
+    private void setupUI() {
+        setUsernameAndDate();
+
+        // 1. Initialize Adapter with an empty list initially
+        adapterTech = new ComplaintRVAdapterTech(new ArrayList<>(), requireContext());
+
+        binding.rvAssignedComplaints.addItemDecoration(new RVItemDivider(requireContext()));
+        binding.rvAssignedComplaints.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvAssignedComplaints.setAdapter(adapterTech);
+    }
+
+    private void setupDataObserver() {
+        viewModel.getAssignedComplaints().observe(getViewLifecycleOwner(), complaints -> {
+            if (complaints != null) {
+                // 4. Update existing adapter instead of creating a new one
+                // Wrap in ArrayList to avoid the casting crash!
+                adapterTech.updateData(new ArrayList<>(complaints));
+
+                if (complaints.isEmpty()) {
+                    binding.rvAssignedComplaints.setVisibility(View.GONE);
+                    // binding.tvEmptyMessage.setVisibility(View.VISIBLE);
+                } else {
+                    binding.rvAssignedComplaints.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     private void setUsernameAndDate(){
@@ -59,4 +81,9 @@ public class TaskDashboardFragment extends Fragment {
         binding.tvDate.setText(sdf.format(System.currentTimeMillis()));
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

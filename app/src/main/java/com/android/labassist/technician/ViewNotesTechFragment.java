@@ -1,4 +1,4 @@
-package com.android.labassist;
+package com.android.labassist.technician;
 
 import android.os.Bundle;
 
@@ -9,11 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.labassist.R;
+import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.databinding.FragmentViewNotesTechBinding;
-import com.android.labassist.technician.TechComplaint;
 
 public class ViewNotesTechFragment extends Fragment {
-    TechComplaint techComplaint;
+    ComplaintEntity techComplaint;
     FragmentViewNotesTechBinding binding;
     public static final String KEY_COMPLAINT_ID = "complaintID";
     private String complaint_id;
@@ -43,7 +44,7 @@ public class ViewNotesTechFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         super.onDestroy();
         binding = null;
     }

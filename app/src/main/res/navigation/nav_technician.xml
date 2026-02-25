@@ -22,7 +22,12 @@
         android:id="@+id/navigation_technician_profile"
         android:name="com.android.labassist.technician.TechnicianProfileFragment"
         tools:layout="@layout/fragment_technician_profile"
-        android:label="Profile"
-        />
+        android:label="Profile" >
+
+        <action
+            android:id="@+id/action_user_profile_to_settings"
+            app:destination="@id/navigation_settings"/>
+
+    </fragment>
 
 </navigation>
