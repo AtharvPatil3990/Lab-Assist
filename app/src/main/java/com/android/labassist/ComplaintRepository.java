@@ -11,9 +11,15 @@ import com.android.labassist.auth.SessionManager;
 import com.android.labassist.database.AppDatabase;
 import com.android.labassist.database.dao.LabAssistDao;
 import com.android.labassist.database.entities.ComplaintEntity;
+import com.android.labassist.database.entities.DeviceEntity;
+import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.network.APICalls;
 import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.ComplaintsResponse;
+import com.android.labassist.network.models.DeviceResponse;
+import com.android.labassist.network.models.LabResponse;
+import com.android.labassist.network.models.RaiseComplaintRequest;
+import com.android.labassist.network.models.RaiseComplaintResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,5 +180,153 @@ public class ComplaintRepository {
 
     public LiveData<Integer> getResolvedComplaintsCount() {
         return labAssistDao.getResolvedComplaintsCount();
+    }
+
+    // Inside your ComplaintRepository.java or a dedicated SyncRepository.java
+    public void fetchAndCacheDepartmentArchitecture() {
+        // 1. Get the department ID from the SessionManager
+        String departmentId = SessionManager.getInstance(context).getDepartmentID();
+
+        // Safety check: Don't sync if the user isn't logged in properly
+        if (departmentId == null || departmentId.isEmpty()) {
+            Log.e("SyncError", "Cannot sync: Department ID is missing.");
+            return;
+        }
+
+        // Supabase requires "eq." for exact matching in REST API queries
+        String deptFilter = "eq." + departmentId;
+
+        // 2. Fetch Labs from Supabase
+        ApiController.getInstance(context).getAuthApi().getLabsByDepartment(deptFilter, "*").enqueue(new Callback<List<LabResponse>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<LabResponse>> call, @NonNull Response<List<LabResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Map and save the Labs to Room
+                    saveLabsToDatabase(response.body());
+
+                    // 3. Chain the next call: Now fetch the Devices!
+                    fetchAndCacheDevices();
+
+                } else {
+                    Log.e("SyncError", "Failed to fetch Labs. Code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<LabResponse>> call, @NonNull Throwable t) {
+                    Log.e("SyncError", "Network error fetching Labs: " + t.getMessage());
+            }
+        });
+    }
+
+    private void fetchAndCacheDevices() {
+        String deptFilter = "eq." + SessionManager.getInstance(context).getDepartmentID();
+        // Fetch all devices. (If your backend requires a department filter here too, add it!)
+        ApiController.getInstance(context).getAuthApi().getDevicesByDepartment(deptFilter, "*").enqueue(new Callback<List<DeviceResponse>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<DeviceResponse>> call, @NonNull Response<List<DeviceResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    // Map and save the Devices to Room
+                    saveDevicesToDatabase(response.body());
+                    Log.d("SyncSuccess", "Department architecture fully synced to local database!");
+
+                } else {
+                    Log.e("SyncError", "Failed to fetch Devices. Code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<DeviceResponse>> call, @NonNull Throwable t) {
+                Log.e("SyncError", "Network error fetching Devices: " + t.getMessage());
+            }
+        });
+    }
+
+    private void saveLabsToDatabase(List<LabResponse> networkLabs) {
+        List<LabEntity> entitiesToSave = new ArrayList<>();
+
+        for (LabResponse dto : networkLabs) {
+            // Create a new Room Entity
+            LabEntity entity = new LabEntity();
+
+            // Map the data over
+            entity.id = dto.id;
+            entity.labName = dto.labName;
+            entity.labId = dto.labId;
+            entity.labType = dto.labType;
+            entity.isUnderMaintenance = dto.isUnderMaintenance;
+
+            entitiesToSave.add(entity);
+        }
+        executorService.execute(() -> {
+            AppDatabase.getInstance(context).labAssistDao().insertAllLabs(entitiesToSave);
+        });
+    }
+
+    // Inside your Repository class
+
+    private void saveDevicesToDatabase(List<DeviceResponse> networkDevices) {
+        // 1. Create an empty list to hold the translated database objects
+        List<DeviceEntity> entitiesToSave = new ArrayList<>();
+
+        // 2. Loop through the JSON data downloaded from Supabase
+        for (DeviceResponse dto : networkDevices) {
+
+            // Create a blank Database Entity
+            DeviceEntity entity = new DeviceEntity();
+
+            // 3. Map the fields one by one
+            entity.id = dto.id;
+            entity.labId = dto.labId;             // Crucial for the dropdown filtering later!
+            entity.deviceId = dto.deviceId;
+            entity.deviceName = dto.deviceName;
+            entity.deviceType = dto.deviceType;
+
+            // 4. Add the finished entity to our list
+            entitiesToSave.add(entity);
+        }
+
+        // 5. Shove the entire list into the local Room Database at once!
+        // Note: Room operations MUST be done on a background thread.
+        executorService.execute(() -> {
+            AppDatabase.getInstance(context).labAssistDao().insertAllDevices(entitiesToSave);
+        });
+    }
+
+    public LiveData<List<LabEntity>> getAllLabsLive() {
+        return AppDatabase.getInstance(context).labAssistDao().getAllLabsLive();
+    }
+
+    public LiveData<List<DeviceEntity>> getDevicesForLabLive(String labId) {
+        return AppDatabase.getInstance(context).labAssistDao().getDevicesForLabLive(labId);
+    }
+
+    public void raiseComplaint(RaiseComplaintRequest request, ComplaintCallback callback) {
+        ApiController.getInstance(context).getAuthApi().raiseComplaint(request).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<RaiseComplaintResponse> call, @NonNull Response<RaiseComplaintResponse> response) {
+                // 1. Check if the HTTP request was successful (Status code 200-299)
+                if (response.isSuccessful() && response.body() != null) {
+
+                    // Pass the parsed response object back to the ViewModel
+                    callback.onSuccess(response.body());
+
+                } else {
+                    // 2. The server was reached, but rejected the request (e.g., 400 Bad Request)
+                    callback.onError("Server error: " + response.code() + " " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<RaiseComplaintResponse> call, @NonNull Throwable t) {
+                callback.onError("Network failure: " + t.getLocalizedMessage());
+            }
+        });
+    }
+
+    public static interface ComplaintCallback {
+        void onSuccess(RaiseComplaintResponse response);
+        void onError(String error);
     }
 }

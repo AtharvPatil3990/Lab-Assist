@@ -11,7 +11,7 @@ public class DeviceEntity {
     @NonNull
     public String id = "";
     public String labId; // Foreign reference to the Lab
-    public String deviceCode;
+    public String deviceId;
     public String deviceName;
     public String deviceType;
 }

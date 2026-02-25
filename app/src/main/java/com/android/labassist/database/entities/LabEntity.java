@@ -10,7 +10,7 @@ public class LabEntity {
     @NonNull
     public String id = "";
     public String labName;
-    public String labCode;
+    public String labId;
     public String labType;
     public boolean isUnderMaintenance;
 }

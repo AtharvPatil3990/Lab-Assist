@@ -2,6 +2,7 @@ package com.android.labassist;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -22,13 +23,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.android.labassist.auth.AuthEventBus;
-import com.android.labassist.auth.SessionManager;
 import com.android.labassist.auth.TokenManager;
 import com.android.labassist.databinding.ActivityLoginBinding;
 import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.LoginRequest;
 import com.android.labassist.network.models.LoginResponse;
 import com.google.android.material.snackbar.Snackbar;
+
+import android.view.inputmethod.InputMethodManager;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,6 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         askNotificationPermission();
 
         binding.btnLogin.setOnClickListener(view -> {
+            hideKeyboardAndClearFocus();
+
             String email = binding.etEmail.getText().toString().trim();
             String password = binding.etPassword.getText().toString().trim();
 
@@ -138,6 +143,20 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void hideKeyboardAndClearFocus() {
+        View currentFocus = this.getCurrentFocus();
+        if (currentFocus != null) {
+            // 1. Remove the blinking cursor from the EditText
+            currentFocus.clearFocus();
+
+            // 2. Hide the soft keyboard
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
+        }
     }
 
     @Override

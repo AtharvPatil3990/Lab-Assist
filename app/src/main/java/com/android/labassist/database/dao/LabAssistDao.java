@@ -72,4 +72,26 @@ public interface LabAssistDao {
 
     @Query("SELECT COUNT(*) FROM complaints WHERE status = 'RESOLVED'")
     LiveData<Integer> getResolvedComplaintsCount();
+
+//    For LabsEntity
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAllLabs(List<LabEntity> labs);
+
+    @Query("DELETE FROM labs")
+    void deleteAllLabs();
+
+
+    // For DeviceEntity
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAllDevices(List<DeviceEntity> devices);
+
+    // Optional: Clear all devices
+    @Query("DELETE FROM devices")
+    void deleteAllDevices();
+
+    @Query("SELECT * FROM labs")
+    LiveData<List<LabEntity>> getAllLabsLive();
+
+    @Query("SELECT * FROM devices WHERE labId = :labId")
+    LiveData<List<DeviceEntity>> getDevicesForLabLive(String labId);
 }

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private ProgressBar progressBar;
     private SessionManager sessionManager;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         sessionManager = SessionManager.getInstance(MainActivity.this);
 
         Log.d("Token", "Outside the observe");
         ActivityMainBinding binding = ActivityMainBinding.bind(findViewById(R.id.activity_main));
-
 
 //    Observing Logout signal
         AuthEventBus.getInstance().getLogoutSignal().observe(this, shouldLogout -> {
@@ -65,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        TokenManager tokenManager = new TokenManager(getApplicationContext());
-        if(tokenManager.getRefreshToken() == null) {
+        if(sessionManager.getEmail() == null){
             navigateToLogin();
         }
 
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                         ProfileData userData = userProfile.getProfile();
                         String regID = getRegistrationId(userProfile.getRole(), userData);
 
+// TODO: add admin levels here
                         sessionManager.saveLogin(
                                 userData.getId(),
                                 userData.getEmail(),
@@ -166,6 +168,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         NavigationUI.setupWithNavController(bottomNav, navController);
+
+        if(!sessionManager.getRole().equals( SessionManager.ROLE_ADMIN))
+            viewModel.triggerMasterSync();
     }
 
     private void handleAuthFailure(String logMessage) {
@@ -180,5 +185,11 @@ public class MainActivity extends AppCompatActivity {
             case SessionManager.ROLE_TECH:  return data.getEmpCode();
             default:                        return data.getRollNumber();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        viewModel = null;
     }
 }

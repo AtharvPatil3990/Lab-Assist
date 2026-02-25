@@ -1,8 +1,13 @@
 package com.android.labassist.network;
 
+import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.network.models.ComplaintsResponse;
+import com.android.labassist.network.models.DeviceResponse;
+import com.android.labassist.network.models.LabResponse;
 import com.android.labassist.network.models.LoginRequest;
 import com.android.labassist.network.models.LoginResponse;
+import com.android.labassist.network.models.RaiseComplaintRequest;
+import com.android.labassist.network.models.RaiseComplaintResponse;
 import com.android.labassist.network.models.RefreshSessionRequest;
 import com.android.labassist.network.models.UserProfileResponse;
 
@@ -40,5 +45,21 @@ public interface APICalls {
     @GET("rest/v1/complaints?select=*,labs(lab_name,lab_code),devices(device_name),students(name),technicians(name)")
     Call<List<ComplaintsResponse>> getDepartmentComplaints(
             @Query("labs.department_id") String deptIdEq // e.g., "eq.uuid-here"
+    );
+
+    @POST("functions/v1/raise-complaint")
+    Call<RaiseComplaintResponse> raiseComplaint(@Body RaiseComplaintRequest request);
+
+
+    @GET("rest/v1/labs")
+    Call<List<LabResponse>> getLabsByDepartment(
+            @Query("department_id") String departmentIdFilter,
+            @Query("select") String select // Optional: pass "*" to get all columns
+    );
+
+    @GET("rest/v1/devices")
+    Call<List<DeviceResponse>> getDevicesByDepartment(
+            @Query("department_id") String departmentIdFilter, // "eq.YOUR_UUID"
+            @Query("select") String select
     );
 }
