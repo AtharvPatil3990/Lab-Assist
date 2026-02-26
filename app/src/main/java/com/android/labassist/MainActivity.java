@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        sessionManager = SessionManager.getInstance(MainActivity.this);
+        sessionManager = SessionManager.getInstance(getApplicationContext());
 
         Log.d("Token", "Outside the observe");
         ActivityMainBinding binding = ActivityMainBinding.bind(findViewById(R.id.activity_main));
@@ -66,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 navigateToLogin();
         });
 
-
-        if(sessionManager.getEmail() == null){
+        if(sessionManager.getId() == null && sessionManager.isRoleSet()){
             navigateToLogin();
         }
 
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     if(sessionManager != null) {
                         ProfileData userData = userProfile.getProfile();
                         String regID = getRegistrationId(userProfile.getRole(), userData);
-
+                        String dep = userProfile.getRole().equals(SessionManager.ROLE_ADMIN) ? "": userData.getDepartmentName();
 // TODO: add admin levels here
                         sessionManager.saveLogin(
                                 userData.getId(),
@@ -120,16 +119,16 @@ public class MainActivity extends AppCompatActivity {
                                 userData.getName(),
                                 userData.getOrganizationName(),
                                 userData.getOrganizationID(),
-                                userData.getDepartmentName(),
+                                dep,
                                 userData.getDepartmentID(),
                                 regID
                         );
+//                        Log.d("UserInfo", userData.getId()+" " +" "+ userData.getEmail()+" "+userProfile.getRole()+" "+userData.getName()+" "+userData.getOrganizationName()+" "+userData.getOrganizationID()+" "+" "+ userData.getDepartmentID()+" " + regID);
                         setupNavigation();
                     }
                 }
                 else handleAuthFailure(response.message());
             }
-
             @Override
             public void onFailure(@NonNull Call<UserProfileResponse> call, @NonNull Throwable t) {
                 handleAuthFailure(t.getMessage());
@@ -174,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleAuthFailure(String logMessage) {
-        Log.e("MainActivity", logMessage);
+        Log.e("MainError", logMessage);
         Toast.makeText(this, "Authentication failed. Please log in again.", Toast.LENGTH_SHORT).show();
         navigateToLogin();
     }

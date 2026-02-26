@@ -115,31 +115,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Organization Code"
-                    android:textSize="18sp"
-                    android:textColor="@color/body_text"
-                    android:layout_marginTop="15dp"
-                    />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvOrgCode"
-                    android:text="7077"
-                    android:textColor="@color/subtext"
-                    android:textSize="16sp"
-                    />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/divider"
-                    android:layout_marginTop="15dp"
-                    />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="Department"
                     android:textSize="18sp"
                     android:textColor="@color/body_text"
@@ -165,7 +140,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Registration ID"
+                    android:text="Roll Number"
                     android:textSize="18sp"
                     android:textColor="@color/body_text"
                     android:layout_marginTop="15dp"

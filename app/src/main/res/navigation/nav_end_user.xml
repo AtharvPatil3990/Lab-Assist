@@ -9,8 +9,11 @@
         android:id="@+id/navigation_home"
         android:name="com.android.labassist.endUser.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_user_home"
-        />
+        tools:layout="@layout/fragment_user_home">
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_raise_complaint"
+            app:destination="@id/navigation_raise_complaint" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_complaints"
@@ -30,6 +33,12 @@
             app:destination="@id/navigation_settings"/>
 
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_raise_complaint"
+        android:name="com.android.labassist.endUser.RaiseComplaintFragment"
+        android:label="Raise Complaint"
+        />
 
     <fragment
         android:id="@+id/navigation_settings"

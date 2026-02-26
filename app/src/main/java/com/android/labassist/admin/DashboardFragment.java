@@ -2,65 +2,89 @@ package com.android.labassist.admin;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.labassist.R;
+import com.android.labassist.auth.SessionManager;
+import com.android.labassist.databinding.FragmentAdminDashboardBinding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link DashboardFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class DashboardFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public DashboardFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DashboardFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DashboardFragment newInstance(String param1, String param2) {
-        DashboardFragment fragment = new DashboardFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private FragmentAdminDashboardBinding binding;
+    private DashboardViewModel viewModel;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_admin_dashboard, container, false);
+        binding = FragmentAdminDashboardBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
+
+        // 1. Set up the static UI (Greeting and Date)
+        setupHeader();
+
+        // 2. Setup Observers
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            binding.swipeRefreshAdmin.setRefreshing(isLoading);
+        });
+
+        viewModel.getTicketStats().observe(getViewLifecycleOwner(), stats -> {
+            if (stats != null) {
+                int pendingCount = stats.open + stats.queued;
+                binding.tvCountPending.setText(String.valueOf(pendingCount));
+                binding.tvCountOngoing.setText(String.valueOf(stats.inProgress));
+                binding.tvCountResolved.setText(String.valueOf(stats.resolved));
+                binding.tvCountTotal.setText(String.valueOf(stats.total));
+            }
+        });
+
+        viewModel.getPerformanceStats().observe(getViewLifecycleOwner(), perf -> {
+            if (perf != null) {
+                binding.tvAvgResolution.setText(String.format(Locale.getDefault(), "%.1f hrs", perf.avgResolutionHours));
+                binding.tvTotalDowntime.setText(String.format(Locale.getDefault(), "%.1f hrs", perf.totalDowntimeHours));
+            }
+        });
+
+        viewModel.getLabsStats().observe(getViewLifecycleOwner(), labs -> {
+            if (labs != null) {
+                binding.tvTotalLabs.setText(String.valueOf(labs.total));
+                binding.tvActiveLabs.setText(String.valueOf(labs.active));
+                binding.tvMaintenanceLabs.setText(String.valueOf(labs.maintenance));
+            }
+        });
+
+        // 3. Setup Pull-to-Refresh
+        binding.swipeRefreshAdmin.setOnRefreshListener(() -> viewModel.fetchStatistics());
+
+        // 4. Initial Fetch
+        viewModel.fetchStatistics();
+    }
+
+    private void setupHeader() {
+        SessionManager session = SessionManager.getInstance(requireContext());
+        binding.tvAdminGreeting.setText("Welcome, " + session.getUsername());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMM", Locale.getDefault());
+        binding.tvAdminDate.setText(sdf.format(System.currentTimeMillis()));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

@@ -11,55 +11,43 @@ import com.android.labassist.auth.SessionManager;
 public class TechnicianProfileViewModel extends AndroidViewModel {
 
     // 1. Container class representing a Technician's Profile
-    public static class TechProfileState {
-        public final String name, email, institute, orgCode, empId, department;
+    private final MutableLiveData<String> name = new MutableLiveData<>();
+    private final MutableLiveData<String> email = new MutableLiveData<>();
+    private final MutableLiveData<String> institute = new MutableLiveData<>();
+    private final MutableLiveData<String> orgCode = new MutableLiveData<>();
+    private final MutableLiveData<String> regId = new MutableLiveData<>();
+    private final MutableLiveData<String> department = new MutableLiveData<>();
 
-        public TechProfileState(String name, String email, String institute, String orgCode, String empId, String department) {
-            this.name = name;
-            this.email = email;
-            this.institute = institute;
-            this.orgCode = orgCode;
-            this.empId = empId; // Technicians usually have Employee IDs/Codes
-            this.department = department;
-        }
-    }
-
-    private final MutableLiveData<TechProfileState> techProfileData = new MutableLiveData<>();
-
-    public TechnicianProfileViewModel(@NonNull Application application) {
+    public TechnicianProfileViewModel(@NonNull Application application){
         super(application);
-        loadTechProfile();
     }
+        public void loadUserProfile() {
+            // The ViewModel handles the SessionManager logic
+            SessionManager session = SessionManager.getInstance(getApplication());
 
-    /**
-     * Pulls the latest technician data from the SessionManager
-     */
-    private void loadTechProfile() {
-        SessionManager session = SessionManager.getInstance(getApplication());
-
-        if (session.getEmail() != null) {
-            TechProfileState state = new TechProfileState(
-                    session.getUsername(),
-                    session.getEmail(),
-                    session.getInstitutionName(),
-                    session.getOrganisationId(),
-                    session.getId(), // For techs, this is often their primary ID/Employee code
-                    session.getDepartment()
-            );
-            techProfileData.setValue(state);
+            if (session.getId() != null) {
+                // Post the data individually to each LiveData stream
+                name.setValue(session.getUsername());
+                email.setValue(session.getEmail());
+                institute.setValue(session.getInstitutionName());
+                orgCode.setValue(session.getOrganisationId());
+                regId.setValue(session.getRegID());
+                department.setValue(session.getDepartment());
+            }
         }
-    }
 
-    // 2. Expose the data for the Fragment to observe
-    public LiveData<TechProfileState> getTechProfileData() {
-        return techProfileData;
-    }
-
+        // 2. Expose the individual streams to the Fragment
+        public LiveData<String> getName() { return name; }
+        public LiveData<String> getEmail() { return email; }
+        public LiveData<String> getInstitute() { return institute; }
+        public LiveData<String> getOrgCode() { return orgCode; }
+        public LiveData<String> getRegId() { return regId; }
+        public LiveData<String> getDepartment() { return department; }
     /**
      * Call this if data is updated (e.g., after a name change)
      * to refresh the UI stream.
      */
     public void refreshProfile() {
-        loadTechProfile();
+        loadUserProfile();
     }
 }

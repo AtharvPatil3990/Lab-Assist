@@ -11,48 +11,38 @@ import com.android.labassist.auth.SessionManager;
 
 public class ProfileViewModel extends AndroidViewModel {
 
-    // 1. Create a simple container class to hold all the profile data
-    public static class UserProfileState {
-        public final String name, email, institute, orgCode, regId, department;
-
-        public UserProfileState(String name, String email, String institute, String orgCode, String regId, String department) {
-            this.name = name;
-            this.email = email;
-            this.institute = institute;
-            this.orgCode = orgCode;
-            this.regId = regId;
-            this.department = department;
-        }
-    }
-
-    // 2. The LiveData stream that the Fragment will observe
-    private final MutableLiveData<UserProfileState> profileData = new MutableLiveData<>();
+    // 1. Create individual MutableLiveData objects for each field
+    private final MutableLiveData<String> name = new MutableLiveData<>();
+    private final MutableLiveData<String> email = new MutableLiveData<>();
+    private final MutableLiveData<String> institute = new MutableLiveData<>();
+    private final MutableLiveData<String> orgCode = new MutableLiveData<>();
+    private final MutableLiveData<String> regId = new MutableLiveData<>();
+    private final MutableLiveData<String> department = new MutableLiveData<>();
 
     public ProfileViewModel(@NonNull Application application) {
         super(application);
-        loadUserProfile();
     }
 
-    private void loadUserProfile() {
-        // The ViewModel handles the SessionManager logic instead of the UI
+    public void loadUserProfile() {
+        // The ViewModel handles the SessionManager logic
         SessionManager session = SessionManager.getInstance(getApplication());
 
-        if (session.getEmail() != null) {
-            UserProfileState state = new UserProfileState(
-                    session.getUsername(),
-                    session.getEmail(),
-                    session.getInstitutionName(),
-                    session.getOrganisationId(),
-                    session.getRegID(),
-                    session.getDepartment()
-            );
-            // Post the data to the LiveData stream
-            profileData.setValue(state);
+        if (session.getId() != null) {
+            // Post the data individually to each LiveData stream
+            name.setValue(session.getUsername());
+            email.setValue(session.getEmail());
+            institute.setValue(session.getInstitutionName());
+            orgCode.setValue(session.getOrganisationId());
+            regId.setValue(session.getRegID());
+            department.setValue(session.getDepartment());
         }
     }
 
-    // 3. Expose the stream to the Fragment
-    public LiveData<UserProfileState> getProfileData() {
-        return profileData;
-    }
+    // 2. Expose the individual streams to the Fragment
+    public LiveData<String> getName() { return name; }
+    public LiveData<String> getEmail() { return email; }
+    public LiveData<String> getInstitute() { return institute; }
+    public LiveData<String> getOrgCode() { return orgCode; }
+    public LiveData<String> getRegId() { return regId; }
+    public LiveData<String> getDepartment() { return department; }
 }

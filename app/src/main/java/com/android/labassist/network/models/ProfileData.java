@@ -19,10 +19,10 @@ public class ProfileData {
     private String email;
 
     @SerializedName("organization_name")
-    private String organizationName;
+    private Organization organizationName;
 
     @SerializedName("department_name")
-    private String departmentName;
+    private Department departmentName;
 
     @SerializedName("department_id")
     private String departmentID;
@@ -88,11 +88,11 @@ public class ProfileData {
     }
 
     public String getOrganizationName() {
-        return organizationName;
+        return organizationName.name;
     }
 
     public void setOrganizationName(String organization) {
-        this.organizationName = organization;
+        this.organizationName.name = organization;
     }
 
     public String getName() {
@@ -136,11 +136,11 @@ public class ProfileData {
     }
 
     public String getDepartmentName() {
-        return departmentName;
+        return departmentName.name;
     }
 
     public void setDepartmentName(String department) {
-        this.departmentName = department;
+        this.departmentName.name = department;
     }
 
     public String getAuthUserID() {
@@ -150,5 +150,8 @@ public class ProfileData {
     public void setAuthUserID(String authUserID) {
         this.authUserID = authUserID;
     }
+
+    static class Organization{String name;}
+    static class Department {String name;}
 }
 

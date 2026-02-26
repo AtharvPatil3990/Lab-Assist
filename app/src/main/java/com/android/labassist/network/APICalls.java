@@ -1,6 +1,7 @@
 package com.android.labassist.network;
 
 import com.android.labassist.database.entities.LabEntity;
+import com.android.labassist.network.models.AdminStatsResponse;
 import com.android.labassist.network.models.ComplaintsResponse;
 import com.android.labassist.network.models.DeviceResponse;
 import com.android.labassist.network.models.LabResponse;
@@ -9,7 +10,9 @@ import com.android.labassist.network.models.LoginResponse;
 import com.android.labassist.network.models.RaiseComplaintRequest;
 import com.android.labassist.network.models.RaiseComplaintResponse;
 import com.android.labassist.network.models.RefreshSessionRequest;
+import com.android.labassist.network.models.UserModel;
 import com.android.labassist.network.models.UserProfileResponse;
+import com.android.labassist.network.models.UsersResponse;
 
 import java.util.List;
 
@@ -62,4 +65,12 @@ public interface APICalls {
             @Query("department_id") String departmentIdFilter, // "eq.YOUR_UUID"
             @Query("select") String select
     );
+
+    @POST("functions/v1/get-lab-statistics")
+    Call<AdminStatsResponse> getAdminStatistics(
+            @Query("organization_id") String organizationId
+    );
+
+    @POST("functions/v1/get-students-technicians")
+    Call<UsersResponse> getOrgUsers(@Query("organization_id") String organizationId);
 }

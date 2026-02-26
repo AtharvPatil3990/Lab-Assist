@@ -17,6 +17,7 @@ retrofit = "3.0.0"
 roomCompiler = "2.8.4"
 roomRuntime = "2.8.4"
 securityCrypto = "1.1.0"
+swiperefreshlayout = "1.2.0"
 
 [libraries]
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
@@ -39,6 +40,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
