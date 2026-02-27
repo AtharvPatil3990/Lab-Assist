@@ -15,9 +15,6 @@ public class ProfileData {
     @SerializedName("name")
     private String name;
 
-    @SerializedName("email")
-    private String email;
-
     @SerializedName("organization_name")
     private Organization organizationName;
 
@@ -125,14 +122,6 @@ public class ProfileData {
 
     public void setEmpCode(String empCode) {
         this.empCode = empCode;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getDepartmentName() {

@@ -2,8 +2,6 @@ package com.android.labassist.network.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 public class RaiseComplaintRequest {
     @SerializedName("student_id")
     private String studentId;
@@ -26,8 +24,8 @@ public class RaiseComplaintRequest {
     @SerializedName("priority")
     private String priority;
 
-    @SerializedName("image_paths")
-    private List<String> imagePaths;
+//    @SerializedName("image_paths")
+//    private List<String> imagePaths;
 
     // Constructor
     public RaiseComplaintRequest(String studentId, String organizationId, String labId, String deviceId,
@@ -39,7 +37,7 @@ public class RaiseComplaintRequest {
         this.title = title;
         this.description = description;
         this.priority = priority;
-        this.imagePaths = null; // Passing null as requested for now
+//        this.imagePaths = null; // Passing null as requested for now
     }
 
     public String getDescription() {
@@ -50,13 +48,13 @@ public class RaiseComplaintRequest {
         this.description = description;
     }
 
-    public List<String> getImagePaths() {
-        return imagePaths;
-    }
-
-    public void setImagePaths(List<String> imagePaths) {
-        this.imagePaths = imagePaths;
-    }
+//    public List<String> getImagePaths() {
+//        return imagePaths;
+//    }
+//
+//    public void setImagePaths(List<String> imagePaths) {
+//        this.imagePaths = imagePaths;
+//    }
 
     public String getLabId() {
         return labId;

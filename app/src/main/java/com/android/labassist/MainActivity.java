@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 // TODO: add admin levels here
                         sessionManager.saveLogin(
                                 userData.getId(),
-                                userData.getEmail(),
+                                userProfile.getEmail(),
                                 userProfile.getRole(),
                                 userData.getName(),
                                 userData.getOrganizationName(),
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                                 userData.getDepartmentID(),
                                 regID
                         );
-//                        Log.d("UserInfo", userData.getId()+" " +" "+ userData.getEmail()+" "+userProfile.getRole()+" "+userData.getName()+" "+userData.getOrganizationName()+" "+userData.getOrganizationID()+" "+" "+ userData.getDepartmentID()+" " + regID);
+
                         setupNavigation();
                     }
                 }
@@ -167,9 +167,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         NavigationUI.setupWithNavController(bottomNav, navController);
-
-        if(!sessionManager.getRole().equals( SessionManager.ROLE_ADMIN))
-            viewModel.triggerMasterSync();
     }
 
     private void handleAuthFailure(String logMessage) {

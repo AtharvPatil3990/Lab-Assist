@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
@@ -39,6 +38,8 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentUserHomeBinding.bind(inflater.inflate(R.layout.fragment_user_home, container, false));
+        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+
 
 // 1. Initialize empty data and adapter
         ArrayList<Map<String, String>> data = new ArrayList<>();
@@ -102,6 +103,14 @@ public class HomeFragment extends Fragment {
                     findNavController(HomeFragment.this).
                     navigate(R.id.action_navigation_home_to_navigation_raise_complaint);
         });
+
+        // Add last sync time with 24 hrs
+        SessionManager session =  SessionManager.getInstance(requireContext());
+        long lastSyncTime = session.getLastLabSyncTime() + (86400000);
+
+        if(lastSyncTime <= System.currentTimeMillis()) {
+            homeViewModel.triggerLabSync();
+        }
 
         return binding.getRoot();
     }

@@ -2,21 +2,13 @@ package com.android.labassist.auth;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKey;
-
-import com.android.labassist.network.models.Organization;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 public class SessionManager {
     public static final String PREF_NAME = "LabAssistSession";
 
     public static final String ACTION_LOGOUT_EXPIRED = "com.android.labassist.ACTION_LOGOUT_EXPIRED";
     public static final String ROLE_AUTHENTICATED = "authenticated";
+    public static final String LAST_LAB_SYNC_TIME = "last_lab_sync_time";
 
     // Keys
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
@@ -89,6 +81,14 @@ public class SessionManager {
         editor.putString(KEY_ROLE, role).putBoolean(KEY_IS_LOGGED_IN, true);
 
         editor.apply();
+    }
+
+    public void setLastLabSyncTime(long timeInMills){
+        prefs.edit().putLong(LAST_LAB_SYNC_TIME, timeInMills).apply();
+    }
+
+    public long getLastLabSyncTime(){
+        return prefs.getLong(LAST_LAB_SYNC_TIME, 0);
     }
 
     public String getRole() {

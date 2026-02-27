@@ -34,7 +34,7 @@ public class RaiseComplaintViewModel extends AndroidViewModel {
     // --- 1. Dropdown Data Streams ---
 
     public LiveData<List<LabEntity>> getAvailableLabs() {
-        return repository.getAllLabsLive(); // Assuming you added this to your repo!
+        return repository.getLabsForLabLive();
     }
 
     public void selectLab(String labId) {

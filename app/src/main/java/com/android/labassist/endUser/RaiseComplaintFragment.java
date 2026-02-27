@@ -35,7 +35,7 @@ public class RaiseComplaintFragment extends Fragment {
     private final HashMap<String, String> deviceMap = new HashMap<>(); // ADDED: Device map
 
     // Hardcoded priorities as they don't change
-    private final String[] priorities = {"Low", "Medium", "High", "Critical"};
+    private final String[] priorities = {"LOW", "MEDIUM", "HIGH", "CRITICAL"};
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -143,40 +143,31 @@ public class RaiseComplaintFragment extends Fragment {
 
     private void handleSubmission() {
         String labName = binding.tvLabSelection.getText().toString().trim();
-        String pcName = binding.tvPcSelection.getText().toString().trim(); // Might be empty!
+        String deviceName = binding.tvPcSelection.getText().toString().trim(); // Might be empty!
         String priority = binding.tvPrioritySelection.getText().toString().trim();
         String title = binding.etIssueTitle.getText().toString().trim();
         String description = binding.etIssueDescription.getText().toString().trim();
 
         // REMOVED pcName from the strict empty check!
-        if (labName.isEmpty() || priority.isEmpty() || title.isEmpty() || description.isEmpty()) {
+        if (labName.isEmpty() || priority.isEmpty() || title.isEmpty() || description.isEmpty() || deviceName.isEmpty()) {
             Toast.makeText(requireContext(), "Please fill in all required fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String labId = labMap.get(labName);
-
-        // SAFELY GET DEVICE ID: If pcName is empty, deviceId becomes null.
-        // Otherwise, it grabs the UUID from the map.
-        String deviceId = pcName.isEmpty() ? null : deviceMap.get(pcName);
+        String deviceId = deviceMap.get(deviceName);
 
         String studentId = sessionManager.getId();
         String orgId = sessionManager.getOrganisationId();
 
-        if (studentId == null || orgId == null || labId == null) {
+        if (studentId == null || orgId == null || labId == null ) {
             Toast.makeText(requireContext(), "Session/Data error. Please try again.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Conditionally combine the PC name into the description for legacy support
-        String finalDescription = description;
-        if (!pcName.isEmpty()) {
-            finalDescription = "Device: " + pcName + "\n\n" + description;
-        }
-
         // Pass all 7 parameters, including our potentially null deviceId!
         RaiseComplaintRequest request = new RaiseComplaintRequest(
-                studentId, orgId, labId, deviceId, title, finalDescription, priority
+                studentId, orgId, labId, deviceId, title, description, priority
         );
 
         viewModel.submitComplaint(request);

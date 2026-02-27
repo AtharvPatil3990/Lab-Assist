@@ -13,9 +13,4 @@ public class MainViewModel extends AndroidViewModel {
         // Initialize your repository here
         repository = new ComplaintRepository(application);
     }
-
-    // The single command to kick off the background sync
-    public void triggerMasterSync() {
-        repository.fetchAndCacheDepartmentArchitecture();
-    }
 }

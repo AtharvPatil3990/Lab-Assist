@@ -60,8 +60,6 @@ public interface LabAssistDao {
     @Query("DELETE FROM complaints")
     void clearComplaints();
 
-
-
     // 📊 DASHBOARD STATS
     @Query("SELECT COUNT(*) FROM complaints")
     LiveData<Integer> getTotalComplaintsCount();
@@ -90,7 +88,7 @@ public interface LabAssistDao {
     void deleteAllDevices();
 
     @Query("SELECT * FROM labs")
-    LiveData<List<LabEntity>> getAllLabsLive();
+    LiveData<List<LabEntity>> getAllLabsForLabLive();
 
     @Query("SELECT * FROM devices WHERE labId = :labId")
     LiveData<List<DeviceEntity>> getDevicesForLabLive(String labId);
