@@ -68,15 +68,18 @@ public class ComplaintsViewModel extends AndroidViewModel{
 
     // 2. THE ENUM CONVERTER
     private ComplaintStatus mapStatusStringToEnum(String dbStatus) {
-        if (dbStatus == null) return ComplaintStatus.Pending;
+        if (dbStatus == null) return ComplaintStatus.ASSIGNED;
         switch (dbStatus.toUpperCase()) {
             case "RESOLVED":
-                return ComplaintStatus.Resolved;
+                return ComplaintStatus.RESOLVED;
             case "IN_PROGRESS":
-                return ComplaintStatus.Ongoing;
+                return ComplaintStatus.IN_PROGRESS;
+            case "QUEUED":
+                return ComplaintStatus.QUEUED;
             case "OPEN":
+                return ComplaintStatus.OPEN;
             default:
-                return ComplaintStatus.Pending;
+                return ComplaintStatus.ASSIGNED;
         }
     }
 }

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.android.labassist.auth.SessionManager;
 import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.databinding.FragmentTechnicianDashboardBinding;
+import com.android.labassist.network.models.ComplaintsResponse;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,6 +44,35 @@ public class TaskDashboardFragment extends Fragment {
 
         // Initial sync from server
         viewModel.refreshDashboard();
+        viewModel.getStats().observe(getViewLifecycleOwner(), this::updateDashboardCard);
+    }
+
+    private void updateDashboardCard(ComplaintsResponse.Stats stats) {
+        if (stats == null) return;
+
+        // 1. Fill the main 3 columns (Assigned, Ongoing, On Hold)
+        binding.tvAssignedComplaintsCount.setText(String.valueOf(stats.assigned));
+        binding.tvOngoingCount.setText(String.valueOf(stats.ongoing));
+        binding.tvOnHoldCount.setText(String.valueOf(stats.onHold));
+
+        // 2. Handle the "Resolved Today" Morale Booster
+        if (stats.resolvedToday > 0) {
+            binding.tvResolvedToday.setVisibility(View.VISIBLE);
+            binding.tvResolvedToday.setText("You have resolved " + stats.resolvedToday + " complaints today!");
+        } else {
+            // Keep the UI clean if they haven't finished anything yet today
+            binding.tvResolvedToday.setVisibility(View.GONE);
+        }
+
+        // 3. Handle the High Priority Alert Banner
+        if (stats.highPriority > 0) {
+            // Show the red banner and update the number
+            binding.cardHighPriority.setVisibility(View.VISIBLE);
+            binding.tvHighPriorityCount.setText(String.valueOf(stats.highPriority));
+        } else {
+            // Hide the red banner completely when there are no emergencies
+            binding.cardHighPriority.setVisibility(View.GONE);
+        }
     }
 
     private void setupUI() {

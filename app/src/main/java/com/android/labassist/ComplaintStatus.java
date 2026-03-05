@@ -1,8 +1,5 @@
 package com.android.labassist;
 
 public enum ComplaintStatus {
-    Pending,
-    Ongoing,
-    Resolved,
-    Cancelled
+    OPEN, ASSIGNED, IN_PROGRESS, ON_HOLD, RESOLVED, CANCELLED, CLOSED, QUEUED
 }

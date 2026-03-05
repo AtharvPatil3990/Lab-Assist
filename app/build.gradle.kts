@@ -98,4 +98,10 @@ dependencies {
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
 
+//    Google Sign-in
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
+
+    implementation("androidx.lifecycle:lifecycle-livedata:2.6.2")
 }

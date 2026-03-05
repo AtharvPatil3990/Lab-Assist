@@ -43,7 +43,7 @@ public interface LabAssistDao {
     void insertComplaints(List<ComplaintEntity> complaints);
 
     // For Technicians: Get active complaints assigned to them or their labs
-    @Query("SELECT * FROM complaints WHERE status != 'RESOLVED' ORDER BY priority DESC, createdAt ASC")
+    @Query("SELECT * FROM complaints WHERE status != 'RESOLVED' ORDER BY createdAt DESC")
     LiveData<List<ComplaintEntity>> getActiveComplaints();
 
     // Local optimistic update (Updates UI instantly before server confirms)
@@ -95,4 +95,13 @@ public interface LabAssistDao {
 
     @Query("SELECT * FROM complaints ORDER BY createdAt DESC")
     LiveData<List<ComplaintEntity>> getAllComplaintsHistory();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertComplaint(ComplaintEntity complaint);
+
+    @Query("SELECT * FROM labs WHERE labId = :labId")
+    LabEntity getLabFromId(String labId);
+
+    @Query("SELECT * FROM devices WHERE deviceId = :deviceId")
+    DeviceEntity getDeviceFromId(String deviceId);
 }

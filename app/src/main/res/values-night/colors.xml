@@ -56,4 +56,9 @@
 
     <color name="profile_header_bg">#1E293B</color>
 
+<!--    High priority complaints    -->
+    <color name="priority_high_bg">#3E1414</color>
+    <color name="priority_high_stroke">#702626</color>
+    <color name="priority_high_text">#FFB4AB</color>
+
 </resources>

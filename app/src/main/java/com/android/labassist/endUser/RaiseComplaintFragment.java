@@ -36,6 +36,7 @@ public class RaiseComplaintFragment extends Fragment {
 
     // Hardcoded priorities as they don't change
     private final String[] priorities = {"LOW", "MEDIUM", "HIGH", "CRITICAL"};
+    private final String[] categories = {"SOFTWARE", "HARDWARE", "NETWORK", "OTHER"};
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,8 +58,8 @@ public class RaiseComplaintFragment extends Fragment {
     }
 
     private void setupStaticDropdowns() {
-        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, priorities);
-        binding.tvPrioritySelection.setAdapter(priorityAdapter);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, categories);
+        binding.tvCategorySelection.setAdapter(categoryAdapter);
     }
 
     private void setupObservers() {
@@ -144,18 +145,20 @@ public class RaiseComplaintFragment extends Fragment {
     private void handleSubmission() {
         String labName = binding.tvLabSelection.getText().toString().trim();
         String deviceName = binding.tvPcSelection.getText().toString().trim(); // Might be empty!
-        String priority = binding.tvPrioritySelection.getText().toString().trim();
+//        String priority = binding.tvPrioritySelection.getText().toString().trim();
+        String category = binding.tvCategorySelection.getText().toString();
         String title = binding.etIssueTitle.getText().toString().trim();
         String description = binding.etIssueDescription.getText().toString().trim();
 
         // REMOVED pcName from the strict empty check!
-        if (labName.isEmpty() || priority.isEmpty() || title.isEmpty() || description.isEmpty() || deviceName.isEmpty()) {
+        if (labName.isEmpty() || category.isEmpty() || title.isEmpty() || description.isEmpty() || deviceName.isEmpty()) {
             Toast.makeText(requireContext(), "Please fill in all required fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String labId = labMap.get(labName);
         String deviceId = deviceMap.get(deviceName);
+        String priority = calculatePriority(category, deviceId);
 
         String studentId = sessionManager.getId();
         String orgId = sessionManager.getOrganisationId();
@@ -180,6 +183,30 @@ public class RaiseComplaintFragment extends Fragment {
             InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
+        }
+    }
+
+    private String calculatePriority(String category, String deviceId) {
+        boolean isWholeLabIssue = (deviceId == null || deviceId.isEmpty());
+
+        String cat = category.toUpperCase();
+
+        if (isWholeLabIssue) {
+            if (cat.contains("NETWORK") || cat.contains("POWER")) {
+                return "HIGH";
+            } else if (cat.contains("HARDWARE")) {
+                return "MEDIUM";
+            } else {
+                return "MEDIUM";
+            }
+        } else {
+            if (cat.contains("NETWORK")) {
+                return "MEDIUM";
+            } else if (cat.contains("SOFTWARE") || cat.contains("HARDWARE")) {
+                return "LOW";
+            } else {
+                return "LOW";
             }
         }
     }

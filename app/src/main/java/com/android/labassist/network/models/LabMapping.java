@@ -8,4 +8,13 @@ public class LabMapping {
     public boolean isPrimary;
     @SerializedName("labs")
     public LabInfo labs;
+
+
+    public static class LabInfo {
+        @SerializedName("lab_name")
+        public String name;
+        @SerializedName("lab_code")
+        public String code;
+
+    }
 }

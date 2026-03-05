@@ -1,6 +1,7 @@
 package com.android.labassist.network;
 
 import com.android.labassist.network.models.AdminStatsResponse;
+import com.android.labassist.network.models.ComplaintsRequest;
 import com.android.labassist.network.models.ComplaintsResponse;
 import com.android.labassist.network.models.DeviceResponse;
 import com.android.labassist.network.models.LabModel;
@@ -32,23 +33,8 @@ public interface APICalls {
     @GET("functions/v1/get-user-profile")
     Call<UserProfileResponse> getUserProfile();
 
-    // 🎓 STUDENT CALL (Hardcoded select)
-    @GET("rest/v1/complaints?select=*,labs(lab_name,lab_code),devices(device_name),technicians(name)")
-    Call<List<ComplaintsResponse>> getStudentComplaints(
-            @Query("student_id") String studentIdEq
-    );
-
-    // 🔧 TECHNICIAN CALL (Hardcoded select)
-    @GET("rest/v1/complaints?select=*,labs(lab_name,lab_code),devices(device_name),students(name)")
-    Call<List<ComplaintsResponse>> getTechnicianComplaints(
-            @Query("assigned_technician_id") String techIdEq
-    );
-
-    // 🏢 ADMIN CALL (Hardcoded select)
-    @GET("rest/v1/complaints?select=*,labs(lab_name,lab_code),devices(device_name),students(name),technicians(name)")
-    Call<List<ComplaintsResponse>> getDepartmentComplaints(
-            @Query("labs.department_id") String deptIdEq // e.g., "eq.uuid-here"
-    );
+    @POST("functions/v1/get-complaints")
+    Call<ComplaintsResponse> getComplaints(@Body ComplaintsRequest request);
 
     @POST("functions/v1/raise-complaint")
     Call<RaiseComplaintResponse> raiseComplaint(@Body RaiseComplaintRequest request);

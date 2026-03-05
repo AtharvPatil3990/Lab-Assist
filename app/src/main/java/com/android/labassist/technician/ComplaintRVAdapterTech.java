@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.labassist.ComplaintStatus;
 import com.android.labassist.R;
 import com.android.labassist.database.entities.ComplaintEntity;
 import com.google.android.material.chip.Chip;
@@ -49,7 +50,7 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
             for (ComplaintEntity item : originalList) {
                 // Check Title or ID
                 if ((item.title != null && item.title.toLowerCase().contains(filterPattern)) ||
-                        (item.id != null && item.id.toLowerCase().contains(filterPattern))) {
+                        (item.id.toLowerCase().contains(filterPattern))) {
                     filteredList.add(item);
                 }
             }
@@ -77,8 +78,28 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
 
         holder.tvAllocatedTime.setText(String.format("Assigned: %s", getDateTime(techComplaint.createdAt)));
 
+        ComplaintStatus status;
+        switch (techComplaint.status){
+            case "RESOLVED": status = ComplaintStatus.RESOLVED;
+                        break;
+            case "OPEN": status = ComplaintStatus.OPEN;
+                        break;
+            case "IN_PROGRESS": status = ComplaintStatus.IN_PROGRESS;
+                        break;
+            case "ON_HOLD": status = ComplaintStatus.ON_HOLD;
+                        break;
+            case "CANCELLED": status = ComplaintStatus.CANCELLED;
+                        break;
+            case "CLOSED": status = ComplaintStatus.CLOSED;
+                        break;
+            case "QUEUED": status = ComplaintStatus.QUEUED;
+                        break;
+            case "ASSIGNED":
+            default: status = ComplaintStatus.ASSIGNED;
+        }
+
         // Apply status and style
-        setComplaintChipStatus(holder.chipStatus, techComplaint.status);
+        setComplaintChipStatus(holder.chipStatus, status);
         holder.chipStatus.setText(techComplaint.status);
 
         holder.layout.setOnClickListener(v -> animateAndOpen(v, () -> {
@@ -96,34 +117,31 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
     }
 
     // Helper to keep onBindViewHolder clean
-    public void setComplaintChipStatus(Chip chipStatus, String status) {
+    public void setComplaintChipStatus(Chip chipStatus, ComplaintStatus status) {
         if (status == null) return;
 
-        // Use a consistent case check
-        String normalizedStatus = status.toLowerCase();
-
-        switch (normalizedStatus) {
-            case "resolved":
-                chipStatus.setTextColor(context.getColor(R.color.completed_status));
-                chipStatus.setChipBackgroundColorResource(R.color.chip_completed_status_bg);
-                chipStatus.setChipStrokeColorResource(R.color.chip_completed_status_stroke_color);
-                break;
-            case "cancelled":
-                chipStatus.setTextColor(context.getColor(R.color.cancelled_status));
-                chipStatus.setChipBackgroundColorResource(R.color.chip_cancelled_status_bg);
-                chipStatus.setChipStrokeColorResource(R.color.chip_cancelled_status_stroke_color);
-                break;
-            case "ongoing":
-            case "in progress": // Added an extra common case
-                chipStatus.setTextColor(context.getColor(R.color.ongoing_status));
-                chipStatus.setChipBackgroundColorResource(R.color.chip_ongoing_status_bg);
-                chipStatus.setChipStrokeColorResource(R.color.chip_ongoing_status_stroke_color);
-                break;
-            default: // Default to Pending style
-                chipStatus.setTextColor(context.getColor(R.color.pending_status));
-                chipStatus.setChipBackgroundColorResource(R.color.chip_pending_status_bg);
-                chipStatus.setChipStrokeColorResource(R.color.chip_pending_status_stroke_color);
-                break;
+        // Default to Pending style
+//        OPEN, ASSIGNED, IN_PROGRESS, ON_HOLD, RESOLVED, CANCELLED, CLOSED, QUEUED
+        if (status == ComplaintStatus.RESOLVED || status == ComplaintStatus.CLOSED) {
+            chipStatus.setTextColor(context.getColor(R.color.completed_status));
+            chipStatus.setChipBackgroundColorResource(R.color.chip_completed_status_bg);
+            chipStatus.setChipStrokeColorResource(R.color.chip_completed_status_stroke_color);
+        }
+        else if (status == ComplaintStatus.CANCELLED || status == ComplaintStatus.QUEUED) {
+            chipStatus.setTextColor(context.getColor(R.color.cancelled_status));
+            chipStatus.setChipBackgroundColorResource(R.color.chip_cancelled_status_bg);
+            chipStatus.setChipStrokeColorResource(R.color.chip_cancelled_status_stroke_color);
+        }
+        else if (status == ComplaintStatus.IN_PROGRESS || status == ComplaintStatus.OPEN) { // Added an extra common case
+            chipStatus.setTextColor(context.getColor(R.color.ongoing_status));
+            chipStatus.setChipBackgroundColorResource(R.color.chip_ongoing_status_bg);
+            chipStatus.setChipStrokeColorResource(R.color.chip_ongoing_status_stroke_color);
+        }
+        else {
+//          Assigned, pending, on_hold
+            chipStatus.setTextColor(context.getColor(R.color.pending_status));
+            chipStatus.setChipBackgroundColorResource(R.color.chip_pending_status_bg);
+            chipStatus.setChipStrokeColorResource(R.color.chip_pending_status_stroke_color);
         }
     }
 
@@ -172,4 +190,3 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
                 .start();
     }
 }
-//•

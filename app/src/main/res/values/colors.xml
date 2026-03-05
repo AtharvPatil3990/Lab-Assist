@@ -100,4 +100,9 @@
     <color name="completed_status_selected_text">#FFFFFF</color>
     <color name="completed_status_selected_stroke">#388E3C</color>
 
+<!--    Priority tasks  -->
+    <color name="priority_high_bg">#FFF0F0</color>
+    <color name="priority_high_stroke">#FFCDD2</color>
+    <color name="priority_high_text">#D32F2F</color>
+
 </resources>

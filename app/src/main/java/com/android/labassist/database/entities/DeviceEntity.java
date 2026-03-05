@@ -13,5 +13,6 @@ public class DeviceEntity {
     public String labId; // Foreign reference to the Lab
     public String deviceId;
     public String deviceName;
+    public String deviceCode;
     public String deviceType;
 }

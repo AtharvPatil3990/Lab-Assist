@@ -38,11 +38,6 @@ public class AuthInterceptor implements Interceptor {
         Request.Builder builder = originalRequest.newBuilder();
 
         String freshToken = BuildConfig.SUPABASE_ANON_KEY;
-        SessionManager sessionManager = SessionManager.getInstance(context);
-        Log.d("Token", "interceptor intercept method outside the if block");
-        Log.d("Token", "interceptor intercept method session isRoleSet" + sessionManager.isRoleSet());
-
-        Log.d("Token", "interceptor intercept method passed isRoleSet, Role: " + SessionManager.getInstance(context).getRole());
 
         // 1. Check & Refresh Token (Synchronized to prevent multiple simultaneous refreshes)
         synchronized (lock) {
@@ -50,8 +45,6 @@ public class AuthInterceptor implements Interceptor {
             String accessToken = tokenManager.getAccessToken();
 
             if (accessToken != null && tokenManager.isAccessTokenExpired()) {
-                Log.d("Token", "Inside synchronized block, Access Token: " + accessToken);
-
                 boolean success = refreshAccessToken();
                 if (!success) {
                     // Force a logout and stop the chain
@@ -61,10 +54,6 @@ public class AuthInterceptor implements Interceptor {
             }
         }
         freshToken = tokenManager.getAccessToken();
-
-
-        // 2. Add fresh headers
-        Log.d("Token", "AuthInterceptor, didnt execute ");
 
         builder.header("Authorization", "Bearer " + freshToken);
         builder.header("apikey", BuildConfig.SUPABASE_ANON_KEY);
@@ -91,8 +80,11 @@ public class AuthInterceptor implements Interceptor {
                 tokenManager.saveTokens(body.getAccessToken(), body.getRefreshToken());
                 return true;
             }
+            else{
+                Log.e("AuthInterceptor", "onSuccess, Refresh failed: " + response.code() + " " + response.message());
+            }
         } catch (Exception e) {
-            Log.e("AuthInterceptor", "Refresh failed: " + e.getMessage());
+            Log.e("AuthInterceptor", "Catch Block, Refresh failed: " + e.getMessage());
         }
         return false;
     }

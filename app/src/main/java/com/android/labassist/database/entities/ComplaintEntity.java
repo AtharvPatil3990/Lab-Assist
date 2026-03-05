@@ -20,11 +20,55 @@ public class ComplaintEntity {
     // Flattened Relational Data (Saves complex SQL JOINs on the phone)
     public String labId;
     public String labName;
+    public String labCode;
 
     public String deviceId;
     public String deviceName;
+    public String deviceCode;
     public String studentName;
+    public String studentId;
+    public String studentRollNo;
     public String technicianName;
+    public String technicianEmpCode;
+    public String technicianId;
+
+    public ComplaintEntity(){}
+
+    public ComplaintEntity(String title, long createdAt, String description, String deviceCode, String deviceId, String deviceName, @NonNull String id, String labCode, String labId, String labName, String priority, String status, String studentId, String studentName, String studentRollNo) {
+        this.createdAt = createdAt;
+        this.description = description;
+        this.deviceCode = deviceCode;
+        this.deviceId = deviceId;
+        this.deviceName = deviceName;
+        this.id = id;
+        this.labCode = labCode;
+        this.labId = labId;
+        this.labName = labName;
+        this.priority = priority;
+        this.status = status;
+        this.studentId = studentId;
+        this.studentName = studentName;
+        this.studentRollNo = studentRollNo;
+        this.title = title;
+    }
+
+    public ComplaintEntity(long createdAt, String description, String deviceCode, String deviceId, String deviceName, @NonNull String id, String labCode, String labId, String labName, String priority, String status, String technicianEmpCode, String technicianId, String technicianName, String title) {
+        this.createdAt = createdAt;
+        this.description = description;
+        this.deviceCode = deviceCode;
+        this.deviceId = deviceId;
+        this.deviceName = deviceName;
+        this.id = id;
+        this.labCode = labCode;
+        this.labId = labId;
+        this.labName = labName;
+        this.priority = priority;
+        this.status = status;
+        this.technicianEmpCode = technicianEmpCode;
+        this.technicianId = technicianId;
+        this.technicianName = technicianName;
+        this.title = title;
+    }
 
     public long getCreatedAt() {
         return createdAt;
@@ -50,6 +94,14 @@ public class ComplaintEntity {
         this.deviceId = deviceId;
     }
 
+    public String getDeviceCode() {
+        return deviceCode;
+    }
+
+    public void setDeviceCode(String deviceCode) {
+        this.deviceCode = deviceCode;
+    }
+
     public String getDeviceName() {
         return deviceName;
     }
@@ -73,6 +125,14 @@ public class ComplaintEntity {
 
     public void setLabId(String labId) {
         this.labId = labId;
+    }
+
+    public String getLabCode() {
+        return labCode;
+    }
+
+    public void setLabCode(String labCode) {
+        this.labCode = labCode;
     }
 
     public String getLabName() {

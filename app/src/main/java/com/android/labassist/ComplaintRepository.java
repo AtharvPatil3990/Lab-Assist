@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.android.labassist.auth.SessionManager;
 import com.android.labassist.database.AppDatabase;
@@ -15,6 +16,7 @@ import com.android.labassist.database.entities.DeviceEntity;
 import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.network.APICalls;
 import com.android.labassist.network.ApiController;
+import com.android.labassist.network.models.ComplaintsRequest;
 import com.android.labassist.network.models.ComplaintsResponse;
 import com.android.labassist.network.models.LabModel;
 import com.android.labassist.network.models.LabRequestStudent;
@@ -34,6 +36,8 @@ import retrofit2.Response;
 public class ComplaintRepository {
     private final LabAssistDao labAssistDao;
     private final APICalls authApi;
+
+    private MutableLiveData<ComplaintsResponse.Stats> statsLiveData = new MutableLiveData<>();
     private final Context context;
 
     // Industrial standard: Use an ExecutorService for background database writes
@@ -55,33 +59,30 @@ public class ComplaintRepository {
         supabaseDateFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
     }
 
-    /**
-     * The UI (ViewModel) calls this. It instantly returns whatever is currently in the local Room cache,
-     * allowing the UI to load in milliseconds, even without Wi-Fi.
-     */
+    public LiveData<ComplaintsResponse.Stats> getStats() { return statsLiveData; }
+
     public LiveData<List<ComplaintEntity>> getActiveComplaints() {
         // Trigger a background network sync every time the UI asks for data
         refreshComplaintsFromServer();
-
+//  TODO: Move this refreshComplaintsFromServer() to master Sync
         // Return the local LiveData stream immediately
         return labAssistDao.getActiveComplaints();
     }
 
-    public void refreshComplaintsFromServer(){
-        Call<List<ComplaintsResponse>> call;
+    public void refreshComplaintsFromServer() {
         SessionManager sessionManager = SessionManager.getInstance(context);
-        if (sessionManager.getRole().equals(SessionManager.ROLE_TECH)) {
-            call = authApi.getTechnicianComplaints("eq." +sessionManager.getId());
-        }
-        else {
-            call = authApi.getStudentComplaints("eq." +sessionManager.getId());
-        }
 
-        call.enqueue(new Callback<>() {
+        Call<ComplaintsResponse> call =
+                ApiController
+                        .getInstance(context)
+                        .getAuthApi().
+                        getComplaints(new ComplaintsRequest(sessionManager.getRole()));
+
+        call.enqueue(new Callback<ComplaintsResponse>() {
             @Override
-            public void onResponse(@NonNull Call<List<ComplaintsResponse>> call, @NonNull Response<List<ComplaintsResponse>> response) {
+            public void onResponse(@NonNull Call<ComplaintsResponse> call, @NonNull Response<ComplaintsResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<ComplaintsResponse> networkData = response.body();
+                    List<ComplaintsResponse.Complaint> networkData = response.body().complaints;
 
                     // The "Clean Sync" happens here in the background thread
                     executorService.execute(() -> {
@@ -89,22 +90,31 @@ public class ComplaintRepository {
                         labAssistDao.syncComplaints(localEntities);
                         Log.d("ComplaintRepo", "Synced " + localEntities.size() + " complaints.");
                     });
+
+                    if(sessionManager.getRole().equals(SessionManager.ROLE_TECH) && response.body().stats!=null){
+                        statsLiveData.postValue(response.body().stats);
+                    }
+
+                }
+                else {
+
+                    Log.e("ComplaintRepo", "Failed to fetch complaints from server.");
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<ComplaintsResponse>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ComplaintsResponse> call, @NonNull Throwable t) {
                 Log.e("ComplaintRepo", "Offline mode active. Serving cached data.");
             }
         });
-    }
 
-    private List<ComplaintEntity> mapToComplaintEntity(List<ComplaintsResponse> networkData, SessionManager sessionManager){
+    }
+    private List<ComplaintEntity> mapToComplaintEntity(List<ComplaintsResponse.Complaint> networkData, SessionManager sessionManager){
         List<ComplaintEntity> localEntities = new ArrayList<>();
 
         if (networkData == null) return localEntities;
 
-        for (ComplaintsResponse dto : networkData) {
+        for (ComplaintsResponse.Complaint dto : networkData) {
             ComplaintEntity entity = new ComplaintEntity();
 
             // 1. Map direct flat fields
@@ -121,11 +131,15 @@ public class ComplaintRepository {
             // Supabase will return null if the foreign key is empty or if it wasn't requested
             if (dto.labs != null) {
                 entity.labName = dto.labs.labName;
+                entity.labCode = dto.labs.labCode;
+                entity.labId = dto.labs.labId;
             } else {
                 entity.labName = "Unknown Lab";
             }
 
             if (dto.devices != null) {
+                entity.deviceId = dto.devices.deviceId;
+                entity.deviceCode = dto.devices.deviceCode;
                 entity.deviceName = dto.devices.deviceName;
             } else {
                 entity.deviceName = "General/No Device";
@@ -136,6 +150,8 @@ public class ComplaintRepository {
             if (dto.students != null && dto.students.name != null) {
                 // API provided it (Tech/Admin view)
                 entity.studentName = dto.students.name;
+                entity.studentId = dto.students.id;
+                entity.studentRollNo = dto.students.rollNumber;
             } else if (SessionManager.ROLE_STUDENT.equals(sessionManager.getRole())) {
                 // API omitted it to save bandwidth, so we use the local user's name
                 entity.studentName = sessionManager.getUsername();
@@ -147,6 +163,8 @@ public class ComplaintRepository {
             if (dto.technicians != null && dto.technicians.name != null) {
                 // API provided it (Student/Admin view)
                 entity.technicianName = dto.technicians.name;
+                entity.technicianId = dto.technicians.id;
+                entity.technicianEmpCode = dto.technicians.employeeCode;
             } else if (SessionManager.ROLE_TECH.equals(sessionManager.getRole())) {
                 // API omitted it, so we use the local tech's name
                 entity.technicianName = sessionManager.getUsername();
@@ -164,7 +182,9 @@ public class ComplaintRepository {
         if (isoDateString == null) return System.currentTimeMillis();
         try {
             // Supabase format example: "2026-02-24T10:05:49.000Z"
-            java.util.Date date = supabaseDateFormat.parse(isoDateString);
+            String cleanDate = isoDateString.split("\\.")[0];
+
+            java.util.Date date = supabaseDateFormat.parse(cleanDate);
             return date != null ? date.getTime() : System.currentTimeMillis();
         } catch (java.text.ParseException e) {
             android.util.Log.e("DateParse", "Failed to parse date: " + isoDateString);
@@ -231,6 +251,7 @@ public class ComplaintRepository {
             entity.labName = dto.labName;
             entity.labId = dto.id;
             entity.labType = dto.labType;
+            entity.labCode = dto.labCode;
             entity.isUnderMaintenance = dto.isUnderMaintenance;
 
             entitiesToSave.add(entity);
@@ -258,6 +279,7 @@ public class ComplaintRepository {
                 entity.deviceId = dto.id;
                 entity.deviceName = dto.deviceName;
                 entity.deviceType = dto.deviceType;
+                entity.deviceCode = dto.deviceCode;
 
                 // 4. Add the finished entity to our list
                 entitiesToSave.add(entity);

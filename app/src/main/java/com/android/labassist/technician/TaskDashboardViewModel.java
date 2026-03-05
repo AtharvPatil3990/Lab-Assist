@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 
 import com.android.labassist.ComplaintRepository;
 import com.android.labassist.database.entities.ComplaintEntity;
+import com.android.labassist.network.models.ComplaintsResponse;
 
 import java.util.List;
 
@@ -21,6 +22,10 @@ public class TaskDashboardViewModel extends AndroidViewModel {
 
     public LiveData<List<ComplaintEntity>> getAssignedComplaints() {
         return repository.getActiveComplaints();
+    }
+
+    public LiveData<ComplaintsResponse.Stats> getStats() {
+        return repository.getStats();
     }
 
     public void refreshDashboard() {

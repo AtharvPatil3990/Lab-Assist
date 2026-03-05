@@ -8,8 +8,6 @@ import android.os.Bundle;
 
 import androidx.annotation.ColorRes;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.animation.ArgbEvaluator;
 
@@ -28,20 +26,14 @@ import com.android.labassist.databinding.BottomSheetComplaintTechBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
     private BottomSheetComplaintTechBinding binding;
     private final ComplaintEntity techComplaint;
-    private boolean isNotesOpen;
 
     public  BottomSheetComplaintTech(ComplaintEntity techComplaint){
         this.techComplaint = techComplaint;

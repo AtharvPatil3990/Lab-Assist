@@ -44,7 +44,7 @@ public class ComplaintRecyclerViewAdapter extends RecyclerView.Adapter<Complaint
         holder.tvTitle.setText(complaint.getIssue());
         holder.tvDate.setText(setDate(complaint.getReportedDate()));
         ComplaintStatus status = complaint.getStatus();
-        if(status == ComplaintStatus.Resolved)
+        if(status == ComplaintStatus.RESOLVED)
             holder.tvStatus.setTextColor(context.getColor(R.color.completed_status));
         holder.tvStatus.setText(complaint.getStatus().toString());
     }

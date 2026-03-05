@@ -11,6 +11,7 @@ public class LabEntity {
     public String id = "";
     public String labName;
     public String labId;
+    public String labCode;
     public String labType;
     public boolean isUnderMaintenance;
 }

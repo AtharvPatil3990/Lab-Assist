@@ -8,6 +8,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.android.labassist.ComplaintRepository;
+import com.android.labassist.auth.SessionManager;
+import com.android.labassist.database.AppDatabase;
+import com.android.labassist.database.dao.LabAssistDao;
+import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.database.entities.DeviceEntity;
 import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.network.models.RaiseComplaintRequest;
@@ -15,10 +19,15 @@ import com.android.labassist.network.models.RaiseComplaintResponse;
 
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RaiseComplaintViewModel extends AndroidViewModel {
 
     private final ComplaintRepository repository;
+    LabAssistDao labAssistDao;
+    SessionManager sessionManager;
 
     // UI State for the submission (Loading/Success/Error)
     private final MutableLiveData<String> submissionStatus = new MutableLiveData<>();
@@ -29,6 +38,8 @@ public class RaiseComplaintViewModel extends AndroidViewModel {
     public RaiseComplaintViewModel(@NonNull Application application) {
         super(application);
         repository = new ComplaintRepository(application);
+        labAssistDao = AppDatabase.getInstance(application.getApplicationContext()).labAssistDao();
+        sessionManager = SessionManager.getInstance(application.getApplicationContext());
     }
 
     // --- 1. Dropdown Data Streams ---
@@ -59,7 +70,13 @@ public class RaiseComplaintViewModel extends AndroidViewModel {
             @Override
             public void onSuccess(RaiseComplaintResponse response) {
                 if (response.isSuccess()) {
+
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        insertComplaintInDatabase(request, response);                            }
+                    );
+
                     submissionStatus.postValue("SUCCESS");
+
                 } else {
                     submissionStatus.postValue("ERROR: Server returned failure.");
                 }
@@ -70,6 +87,32 @@ public class RaiseComplaintViewModel extends AndroidViewModel {
                 submissionStatus.postValue("ERROR: " + error);
             }
         });
+    }
+
+    public void insertComplaintInDatabase(RaiseComplaintRequest request, RaiseComplaintResponse response){
+        String complaintId = response.getComplaintId();
+        LabEntity lab = labAssistDao.getLabFromId(request.getLabId());
+        DeviceEntity device = labAssistDao.getDeviceFromId(request.getDeviceId());
+
+
+        ComplaintEntity complaint = new ComplaintEntity(
+                request.getTitle(),
+                System.currentTimeMillis(),
+                request.getDescription(),
+                device.deviceCode,
+                device.deviceId,
+                device.deviceName,
+                complaintId,
+                lab.labCode,
+                lab.id,
+                lab.labName,
+                request.getPriority(),
+                response.getStatus(),
+                request.getStudentId(),
+                sessionManager.getUsername(),
+                sessionManager.getRegID()
+        );
+        labAssistDao.insertComplaint(complaint);
     }
 
     public void resetStatus() {
