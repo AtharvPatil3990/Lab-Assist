@@ -6,7 +6,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
-import com.android.labassist.ComplaintRepository;
+import com.android.labassist.repositories.ComplaintRepository;
 import com.android.labassist.ComplaintStatus;
 import com.android.labassist.database.entities.ComplaintEntity;
 

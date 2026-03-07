@@ -6,7 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.android.labassist.ComplaintRepository;
+import com.android.labassist.auth.SessionManager;
+import com.android.labassist.repositories.ComplaintRepository;
 import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.network.models.ComplaintsResponse;
 
@@ -26,6 +27,10 @@ public class TaskDashboardViewModel extends AndroidViewModel {
 
     public LiveData<ComplaintsResponse.Stats> getStats() {
         return repository.getStats();
+    }
+
+    public void syncLabArchitecture() {
+        repository.fetchAndCacheDepartmentArchitecture(SessionManager.ROLE_TECH);
     }
 
     public void refreshDashboard() {

@@ -1,4 +1,4 @@
-package com.android.labassist;
+package com.android.labassist.repositories;
 
 import android.app.Application;
 import android.content.Context;
@@ -19,8 +19,8 @@ import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.ComplaintsRequest;
 import com.android.labassist.network.models.ComplaintsResponse;
 import com.android.labassist.network.models.LabModel;
-import com.android.labassist.network.models.LabRequestStudent;
-import com.android.labassist.network.models.LabResponseStudent;
+import com.android.labassist.network.models.LabRequest;
+import com.android.labassist.network.models.LabResponse;
 import com.android.labassist.network.models.RaiseComplaintRequest;
 import com.android.labassist.network.models.RaiseComplaintResponse;
 
@@ -205,7 +205,7 @@ public class ComplaintRepository {
     }
 
     // Inside your ComplaintRepository.java or a dedicated SyncRepository.java
-    public void fetchAndCacheDepartmentArchitecture() {
+    public void fetchAndCacheDepartmentArchitecture(String role) {
         // 1. Get the department ID from the SessionManager
         String departmentId = SessionManager.getInstance(context).getDepartmentID();
 
@@ -216,11 +216,19 @@ public class ComplaintRepository {
         }
 
         // Supabase requires "eq." for exact matching in REST API queries
-
+        Call<LabResponse> labReq = null;
         // 2. Fetch Labs from Supabase
-        ApiController.getInstance(context).getAuthApi().getDepartmentArchitecture(new LabRequestStudent(departmentId)).enqueue(new Callback<LabResponseStudent>() {
+        if(role.equals( SessionManager.ROLE_STUDENT))
+            labReq = ApiController.getInstance(context).getAuthApi().getDepartmentArchitecture(new LabRequest(departmentId));
+        else if(role.equals(SessionManager.ROLE_TECH))
+            labReq = ApiController.getInstance(context).getAuthApi().getDepartmentArchitecture(new LabRequest());
+
+        if(labReq == null)
+            return;
+
+        labReq.enqueue(new Callback<LabResponse>() {
             @Override
-            public void onResponse(@NonNull Call<LabResponseStudent> call, @NonNull Response<LabResponseStudent> response) {
+            public void onResponse(@NonNull Call<LabResponse> call, @NonNull Response<LabResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     // Map and save the Labs to Room
                     saveLabsToDatabase(response.body().data.labs);
@@ -232,7 +240,7 @@ public class ComplaintRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<LabResponseStudent> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<LabResponse> call, @NonNull Throwable t) {
                 Log.d("SyncError", "onFailure " + t.toString());
                 Log.d("SyncError", "onFailure " + t.getMessage());
             }

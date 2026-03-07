@@ -30,4 +30,26 @@
 
     </fragment>
 
+    <action
+        android:id="@+id/action_global_view_notes"
+        app:destination="@id/navigation_view_notes" />
+
+    <fragment
+        android:id="@+id/navigation_complaint_bottom_sheet"
+        android:name="com.android.labassist.technician.BottomSheetComplaintTech"
+        tools:layout="@layout/bottom_sheet_complaint_tech"
+        android:label="Complaint Bottom Sheet">
+
+        <action
+            android:id="@+id/action_complaint_bottom_sheet_to_view_notes"
+            app:destination="@id/navigation_view_notes" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_view_notes"
+        android:name="com.android.labassist.technician.ViewTechNotesFragment"
+        tools:layout="@layout/fragment_view_tech_notes"
+        android:label="View Notes of Device" />
+
 </navigation>

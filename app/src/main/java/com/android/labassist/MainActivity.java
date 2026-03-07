@@ -127,7 +127,9 @@ public class MainActivity extends AppCompatActivity {
                         setupNavigation();
                     }
                 }
-                else handleAuthFailure(response.message());
+                else {
+                    handleAuthFailure(response.message());
+                }
             }
             @Override
             public void onFailure(@NonNull Call<UserProfileResponse> call, @NonNull Throwable t) {

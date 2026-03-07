@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
-import com.android.labassist.ComplaintRepository;
+import com.android.labassist.repositories.ComplaintRepository;
 import com.android.labassist.auth.SessionManager;
 import com.android.labassist.database.AppDatabase;
 import com.android.labassist.database.dao.LabAssistDao;
@@ -19,8 +19,6 @@ import com.android.labassist.network.models.RaiseComplaintResponse;
 
 
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RaiseComplaintViewModel extends AndroidViewModel {

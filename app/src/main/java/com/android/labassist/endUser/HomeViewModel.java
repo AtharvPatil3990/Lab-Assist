@@ -5,7 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.android.labassist.ComplaintRepository;
+import com.android.labassist.repositories.ComplaintRepository;
 
 public class HomeViewModel extends AndroidViewModel {
     ComplaintRepository repository;
@@ -15,6 +15,6 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void triggerLabSync(){
-        repository.fetchAndCacheDepartmentArchitecture();
+        repository.fetchAndCacheDepartmentArchitecture("STUDENT");
     }
 }

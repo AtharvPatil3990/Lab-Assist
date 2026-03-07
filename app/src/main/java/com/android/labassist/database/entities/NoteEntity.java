@@ -4,14 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "complaint_notes")
-
+@Entity(tableName = "device_notes")
 public class NoteEntity {
     @PrimaryKey
     @NonNull
-    public String noteId = "";
-    public String complaintId; // Foreign key linking back to the complaint
-    public String technicianName;
-    public String content;
+    public String id = "";
+    public String noteText;
+    public String createdByRole;
+    public boolean isInternal;
+    public String authorName;
+    public String deviceId; // Used to filter
+    public String labId;    // Used to filter
     public long createdAt;
+    // We flatten the complaint context to keep the local DB simple
+    public String complaintTitle;
 }

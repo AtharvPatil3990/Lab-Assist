@@ -10,6 +10,7 @@ import androidx.room.Transaction;
 import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.database.entities.DeviceEntity;
 import com.android.labassist.database.entities.LabEntity;
+import com.android.labassist.database.entities.NoteEntity;
 
 import java.util.List;
 
@@ -71,6 +72,9 @@ public interface LabAssistDao {
     @Query("SELECT COUNT(*) FROM complaints WHERE status = 'RESOLVED'")
     LiveData<Integer> getResolvedComplaintsCount();
 
+    @Query("SELECT * FROM complaints WHERE id = :complaintId")
+    ComplaintEntity getComplaintById(String complaintId);
+
 //    For LabsEntity
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAllLabs(List<LabEntity> labs);
@@ -104,4 +108,21 @@ public interface LabAssistDao {
 
     @Query("SELECT * FROM devices WHERE deviceId = :deviceId")
     DeviceEntity getDeviceFromId(String deviceId);
+
+    @Query("SELECT * FROM devices WHERE deviceId = :deviceId")
+    LiveData<DeviceEntity> getLiveDeviceById(String deviceId);
+
+    @Query("SELECT * FROM labs WHERE labId = :labId")
+    LiveData<LabEntity> getLiveLabById(String labId);
+
+    // The UI listens to this!
+    @Query("SELECT * FROM device_notes WHERE deviceId = :deviceId ORDER BY createdAt DESC")
+    LiveData<List<NoteEntity>> getNotesForDevice(String deviceId);
+
+    @Query("SELECT * FROM device_notes WHERE labId = :labId AND deviceId IS NULL ORDER BY createdAt DESC")
+    LiveData<List<NoteEntity>> getNotesForLab(String labId);
+
+    // The Repository uses this to save fresh network data
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertNotes(List<NoteEntity> notes);
 }

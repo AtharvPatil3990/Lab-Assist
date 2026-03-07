@@ -18,7 +18,7 @@
 
     <!--    Toolbar     -->
     <color name="toolbar_bg">#80FFFFFF</color>
-    <color name="toolbar_icon">#FFFFFF</color>
+        <color name="toolbar_icon">#808080 </color>
     <color name="toolbar_text">#084A7A</color>
 
     <!--    Bottom Navigation   -->
@@ -104,5 +104,15 @@
     <color name="priority_high_bg">#FFF0F0</color>
     <color name="priority_high_stroke">#FFCDD2</color>
     <color name="priority_high_text">#D32F2F</color>
+
+<!--    Technician Notes    -->
+    <color name="note_internal_bg">#FFF9C4</color>
+    <color name="note_internal_stroke">#FBC02D</color>
+
+    <color name="role_tech_bg">#E3F2FD</color>
+    <color name="role_tech_text">#1976D2</color>
+
+    <color name="role_admin_bg">#FFEBEE</color>
+    <color name="role_admin_text">#D32F2F</color>
 
 </resources>

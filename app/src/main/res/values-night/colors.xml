@@ -61,4 +61,13 @@
     <color name="priority_high_stroke">#702626</color>
     <color name="priority_high_text">#FFB4AB</color>
 
+    <!--    Technician Notes    -->
+    <color name="note_internal_bg">#332B00</color>
+    <color name="note_internal_stroke">#FFCA28</color>
+
+    <color name="role_tech_bg">#0D2A45</color>
+    <color name="role_tech_text">#90CAF9</color>
+
+    <color name="role_admin_bg">#3B1115</color>
+    <color name="role_admin_text">#EF9A9A</color>
 </resources>

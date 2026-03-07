@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.android.labassist.ComplaintRepository;
+import com.android.labassist.repositories.ComplaintRepository;
 import com.android.labassist.database.entities.ComplaintEntity;
 
 import java.util.List;

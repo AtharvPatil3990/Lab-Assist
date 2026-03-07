@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.ColorRes;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.animation.ArgbEvaluator;
 
@@ -58,6 +59,8 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
         setBottomButtonSelectedStatus(techComplaint.getStatus());
 
+//        TODO: Add change complaint state via calling RestAPI function
+
         binding.layoutButtonPendingState.setOnClickListener(v->{
             setBottomButtonStatePending();
             techComplaint.setStatus("Pending");
@@ -94,11 +97,24 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                         .invoke(menuPopupHelper, true);
             }catch (Exception ignored){}
 
-//            popupMenu.setOnMenuItemClickListener(item -> {
-//                int itemID = item.getItemId();
-////                todo: check for id
-//
-//            });
+            popupMenu.setOnMenuItemClickListener(item -> {
+                int itemID = item.getItemId();
+                if(itemID == R.id.menu_view_notes_of_complaint){
+                    Bundle bundle = new Bundle();
+                    bundle.putString("COMPLAINT_ID", techComplaint.getId());
+                    bundle.putString("DEVICE_ID", techComplaint.getDeviceId());
+                    bundle.putString("LAB_ID", techComplaint.getLabId());
+                    bundle.putInt("action", ViewTechNotesFragment.actionDeviceNotes);
+
+                    dismiss();
+
+                    NavHostFragment
+                            .findNavController(this)
+                            .navigate(R.id.action_global_view_notes, bundle);
+                    return true;
+                }
+                return false;
+            });
             popupMenu.show();
         });
 

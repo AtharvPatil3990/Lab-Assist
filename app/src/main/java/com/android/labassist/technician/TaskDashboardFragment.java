@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.labassist.auth.SessionManager;
-import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.databinding.FragmentTechnicianDashboardBinding;
 import com.android.labassist.network.models.ComplaintsResponse;
 
@@ -45,6 +44,9 @@ public class TaskDashboardFragment extends Fragment {
         // Initial sync from server
         viewModel.refreshDashboard();
         viewModel.getStats().observe(getViewLifecycleOwner(), this::updateDashboardCard);
+
+        if(SessionManager.getInstance(requireContext()).getLastLabSyncTime() <= System.currentTimeMillis() + 18000000)
+            viewModel.syncLabArchitecture();
     }
 
     private void updateDashboardCard(ComplaintsResponse.Stats stats) {
