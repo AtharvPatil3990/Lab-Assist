@@ -13,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.animation.ArgbEvaluator;
 
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,8 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         binding.tvLabLocation.setText(techComplaint.getLabName());
         binding.tvAppointedDate.setText(setDate(techComplaint.getCreatedAt()));
         String description = techComplaint.getDescription();
+        binding.tvDeviceCode.setText(techComplaint.deviceName + " • " + techComplaint.deviceCode);
+
         if(description == null || description.isBlank()) {
             binding.tvProblemDescription.setText("No description set");
         }
@@ -81,7 +84,6 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
             techComplaint.setStatus("Cancelled");
         });
 
-//        TODO: Load notes with real data
 //        setting notes recycler view adapter
 
         binding.ivOverflowMenu.setOnClickListener(v -> {
@@ -104,13 +106,19 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                     bundle.putString("COMPLAINT_ID", techComplaint.getId());
                     bundle.putString("DEVICE_ID", techComplaint.getDeviceId());
                     bundle.putString("LAB_ID", techComplaint.getLabId());
-                    bundle.putInt("action", ViewTechNotesFragment.actionDeviceNotes);
+                    if(techComplaint.deviceId == null || techComplaint.deviceId.isEmpty())
+                       bundle.putInt("action", ViewTechNotesFragment.actionLabNotes);
+                    else bundle.putInt("action", ViewTechNotesFragment.actionDeviceNotes);
 
-                    dismiss();
+                    Log.d("BottomSheet", "Complaint ID: " + techComplaint.getId());
+                    Log.d("BottomSheet", "Device ID: " + techComplaint.getDeviceId());
+                    Log.d("BottomSheet", "Lab ID: " + techComplaint.getLabId());
 
                     NavHostFragment
                             .findNavController(this)
                             .navigate(R.id.action_global_view_notes, bundle);
+
+                    dismiss();
                     return true;
                 }
                 return false;
@@ -120,18 +128,15 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
 //        Assigning Last updated date / completed date
         String lastUpdateDateLabel;
-        switch (techComplaint.getStatus()){
-            case "Resolved":
-                    lastUpdateDateLabel = "Resolved on";
-                    binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.completed_date_icon);
-                    break;
-            case "Cancelled":
-                    lastUpdateDateLabel = "Rejected on";
-                    binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.reject_icon);
-                    break;
-            default: lastUpdateDateLabel = "Status Updated On";
-                     binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.last_update_date_icon);
-                     break;
+        if (techComplaint.getStatus().equals(ComplaintStatus.RESOLVED)) {
+            lastUpdateDateLabel = "Resolved on";
+            binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.completed_date_icon);
+        } else if (techComplaint.getStatus().equals(ComplaintStatus.CANCELLED)) {
+            lastUpdateDateLabel = "Rejected on";
+            binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.reject_icon);
+        } else {
+            lastUpdateDateLabel = "Status Updated On";
+            binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.last_update_date_icon);
         }
         binding.tvLastUpdatedDateLabel.setText(lastUpdateDateLabel);
 

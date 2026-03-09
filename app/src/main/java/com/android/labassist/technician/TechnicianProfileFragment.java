@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.android.labassist.R;
 import com.android.labassist.auth.AuthEventBus;
 import com.android.labassist.auth.SessionManager;
+import com.android.labassist.auth.TokenManager;
 import com.android.labassist.database.AppDatabase;
 import com.android.labassist.databinding.FragmentTechnicianProfileBinding;
 import com.android.labassist.endUser.ProfileFragment;
@@ -39,7 +40,7 @@ public class TechnicianProfileFragment extends Fragment {
 
         binding.btnSettings.setOnClickListener(v -> {
             NavHostFragment.findNavController(TechnicianProfileFragment.this)
-                    .navigate(R.id.action_user_profile_to_settings);
+                    .navigate(R.id.action_tech_profile_to_settings);
         });
 
         // 1. Initialize the ViewModel
@@ -57,6 +58,10 @@ public class TechnicianProfileFragment extends Fragment {
             if (institute != null) binding.tvInstituteName.setText(institute);
         });
 
+        viewModel.getOrgCode().observe(getViewLifecycleOwner(), orgCode -> {
+            if(orgCode != null) binding.tvOrgCode.setText(orgCode);
+        });
+
         viewModel.getRegId().observe(getViewLifecycleOwner(), regId -> {
             if (regId != null) binding.tvRegID.setText(regId);
         });
@@ -65,31 +70,33 @@ public class TechnicianProfileFragment extends Fragment {
             if (department != null) binding.tvDepartment.setText(department);
         });
 
+        viewModel.loadUserProfile();
+
         // 3. Setup Click Listeners
         binding.btnSettings.setOnClickListener(v -> {
             NavHostFragment.findNavController(TechnicianProfileFragment.this)
-                    .navigate(R.id.action_user_profile_to_settings);
+                    .navigate(R.id.action_tech_profile_to_settings);
         });
 
         binding.btnLogout.setOnClickListener(v -> {
             SessionManager.getInstance(requireContext()).logout();
+            TokenManager.getInstance(requireContext()).clearTokens();
 
             // Run database clearing on a managed background thread
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.execute(() -> {
-                AppDatabase db = AppDatabase.getInstance(requireContext());
-                db.labAssistDao().clearLabs();
-                db.labAssistDao().clearComplaints();
-                db.labAssistDao().clearDevices();
-            });
+             Executors.newSingleThreadExecutor()
+                    .execute(() -> AppDatabase.getInstance(requireContext()).clearAllTables());
 
             // Trigger the logout event to send the user back to the Login screen
             AuthEventBus.getInstance().triggerLogout();
 //            Todo: retrofit call to clear fcm_token from supabase
         });
 
-        return inflater.inflate(R.layout.fragment_technician_profile, container, false);
+        return binding.getRoot();
     }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

@@ -37,6 +37,9 @@ public class NotesResponse {
         @SerializedName("device_id")
         public String deviceId; // Nullable (will be null for LAB notes)
 
+        @SerializedName("lab_id")
+        public String labId;
+
         @SerializedName("author_name")
         public String authorName; // The mapped name from our Edge Function
 
@@ -55,8 +58,5 @@ public class NotesResponse {
 
         @SerializedName("status")
         public String status;
-
-        @SerializedName("lab_id")
-        public String labId;
     }
 }

@@ -88,6 +88,9 @@ public class ProfileData {
         return organizationName.name;
     }
 
+    public String getOrganizationCode() {
+        return organizationName.code;
+    }
     public void setOrganizationName(String organization) {
         this.organizationName.name = organization;
     }
@@ -128,6 +131,10 @@ public class ProfileData {
         return departmentName.name;
     }
 
+    public String getDepartmentCode() {
+        return departmentName.code;
+    }
+
     public void setDepartmentName(String department) {
         this.departmentName.name = department;
     }
@@ -140,7 +147,7 @@ public class ProfileData {
         this.authUserID = authUserID;
     }
 
-    static class Organization{String name;}
-    static class Department {String name;}
+    static class Organization{String name, code;}
+    static class Department {String name, code;}
 }
 

@@ -20,6 +20,7 @@
     <color name="toolbar_bg">#80FFFFFF</color>
         <color name="toolbar_icon">#808080 </color>
     <color name="toolbar_text">#084A7A</color>
+    <color name="toolbar_subtitle">#6D7A84</color>
 
     <!--    Bottom Navigation   -->
     <color name="bottom_nav_bg">#FFFFFF</color>
@@ -115,4 +116,6 @@
     <color name="role_admin_bg">#FFEBEE</color>
     <color name="role_admin_text">#D32F2F</color>
 
+    <color name="overlay_background">#B3FFFFFF</color>
+    <color name="loading_spinner">#0A6CA8</color>
 </resources>

@@ -220,9 +220,10 @@ public class ComplaintRepository {
         // 2. Fetch Labs from Supabase
         if(role.equals( SessionManager.ROLE_STUDENT))
             labReq = ApiController.getInstance(context).getAuthApi().getDepartmentArchitecture(new LabRequest(departmentId));
-        else if(role.equals(SessionManager.ROLE_TECH))
+        else if(role.equals(SessionManager.ROLE_TECH)) {
+            Log.d("TechLab", "Fetching Architecture for Tech");
             labReq = ApiController.getInstance(context).getAuthApi().getDepartmentArchitecture(new LabRequest());
-
+        }
         if(labReq == null)
             return;
 
@@ -231,18 +232,20 @@ public class ComplaintRepository {
             public void onResponse(@NonNull Call<LabResponse> call, @NonNull Response<LabResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     // Map and save the Labs to Room
+                    Log.d("TechLab", "raw" + response.raw().body().toString());
+                    Log.d("TechLab", "Response in onResponse: successful, Response body: " + response.body().data.toString());
                     saveLabsToDatabase(response.body().data.labs);
 
                 } else {
                     Log.e("SyncError", "Failed to fetch Labs. Code: " + response.code());
-
+                    Log.d("TechLab", "response fail, Error: " + response.body());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<LabResponse> call, @NonNull Throwable t) {
-                Log.d("SyncError", "onFailure " + t.toString());
-                Log.d("SyncError", "onFailure " + t.getMessage());
+                Log.e("SyncError", "Failed to fetch Labs. Error: " + t.getMessage());
+                Log.d("TechLab", "onFailure: " + t.getMessage());
             }
         });
     }

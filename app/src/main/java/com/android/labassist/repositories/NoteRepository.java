@@ -11,6 +11,8 @@ import com.android.labassist.database.dao.LabAssistDao;
 import com.android.labassist.database.entities.NoteEntity;
 import com.android.labassist.network.APICalls;
 import com.android.labassist.network.ApiController;
+import com.android.labassist.network.models.CreateNoteRequest;
+import com.android.labassist.network.models.CreateNoteResponse;
 import com.android.labassist.network.models.NotesRequest;
 import com.android.labassist.network.models.NotesResponse;
 
@@ -117,11 +119,12 @@ public class NoteRepository {
             entity.isInternal = netNote.isInternal;
             entity.authorName = netNote.authorName;
             entity.deviceId = netNote.deviceId;
+            entity.labId = netNote.labId;
+            entity.complaintId = netNote.complaint.id;
             entity.createdAt = parseSupabaseDateToLong(netNote.createdAt);
 
             if (netNote.complaint != null) {
                 entity.complaintTitle = netNote.complaint.title;
-                entity.labId = netNote.complaint.labId;
             }
             localNotes.add(entity);
         }
@@ -137,5 +140,9 @@ public class NoteRepository {
             Log.e("DateParse", "Failed to parse date: " + supabaseDate, e);
             return 0L;
         }
+    }
+
+    public void createNote(CreateNoteRequest request, Callback<CreateNoteResponse> callback){
+        api.addNote(request).enqueue(callback);
     }
 }

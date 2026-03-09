@@ -255,7 +255,7 @@
                                 android:id="@+id/ivComplaintID"
                                 android:layout_width="wrap_content"
                                 android:layout_height="0dp"
-                                android:src="@drawable/id_icon"
+                                android:src="@drawable/device_icon"
                                 app:tint="@color/icon"
                                 android:contentDescription="Complaint ID Icon"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -268,7 +268,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="14sp"
-                                android:text="Complaint ID"
+                                android:text="Device"
                                 android:textColor="@color/body_text"
                                 android:textStyle="bold"
                                 android:layout_marginStart="16dp"
@@ -277,10 +277,10 @@
                                 />
 
                             <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tvComplaintID"
+                                android:id="@+id/tvDeviceCode"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="#PC123"
+                                android:text="Pc 12"
                                 android:textColor="@color/subtext"
                                 android:textSize="12sp"
                                 android:layout_marginStart="16dp"

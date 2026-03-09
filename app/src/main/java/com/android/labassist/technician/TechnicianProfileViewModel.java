@@ -21,20 +21,20 @@ public class TechnicianProfileViewModel extends AndroidViewModel {
     public TechnicianProfileViewModel(@NonNull Application application){
         super(application);
     }
-        public void loadUserProfile() {
-            // The ViewModel handles the SessionManager logic
-            SessionManager session = SessionManager.getInstance(getApplication());
+    public void loadUserProfile() {
+        // The ViewModel handles the SessionManager logic
+        SessionManager session = SessionManager.getInstance(getApplication());
 
-            if (session.getId() != null) {
-                // Post the data individually to each LiveData stream
-                name.setValue(session.getUsername());
-                email.setValue(session.getEmail());
-                institute.setValue(session.getInstitutionName());
-                orgCode.setValue(session.getOrganisationId());
-                regId.setValue(session.getRegID());
-                department.setValue(session.getDepartment());
-            }
+        if (session.getId() != null) {
+            // Post the data individually to each LiveData stream
+            name.setValue(session.getUsername());
+            email.setValue(session.getEmail());
+            institute.setValue(session.getInstitutionName());
+            orgCode.setValue(session.getOrganisationCode());
+            regId.setValue(session.getRegID());
+            department.setValue(session.getDepartment());
         }
+    }
 
         // 2. Expose the individual streams to the Fragment
         public LiveData<String> getName() { return name; }

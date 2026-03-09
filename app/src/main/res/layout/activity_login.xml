@@ -81,7 +81,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-
+            app:boxStrokeColor="@color/text_input_outline"
+            app:hintTextColor="@color/label"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintTop_toBottomOf="@id/tvLogin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -104,6 +106,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            app:boxStrokeColor="@color/text_input_outline"
+            app:hintTextColor="@color/label"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintTop_toBottomOf="@id/etUsernameLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -113,7 +118,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password"
-
+                app:boxStrokeColor="@color/text_input_outline"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:textColor="@color/body_text"
                 android:textColorHint="@color/hint"
                 android:textSize="18sp"

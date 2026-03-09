@@ -23,7 +23,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.android.labassist.auth.AuthEventBus;
 import com.android.labassist.auth.SessionManager;
-import com.android.labassist.auth.TokenManager;
 import com.android.labassist.databinding.ActivityMainBinding;
 import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.ProfileData;
@@ -114,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 // TODO: add admin levels here
                         sessionManager.saveLogin(
                                 userData.getId(),
+                                userData.getOrganizationCode(),
                                 userProfile.getEmail(),
                                 userProfile.getRole(),
                                 userData.getName(),

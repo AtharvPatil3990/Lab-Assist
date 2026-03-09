@@ -17,6 +17,8 @@ public class SessionManager {
     private static final String KEY_ID = "id";
     private static final String KEY_ORGANISATION_NAME = "organisation_name";
     private static final String KEY_ORGANISATION_ID = "organisation_id";
+    private static final String KEY_ORGANISATION_CODE = "organisation_codd";
+
     private static final String KEY_DEPARTMENT = "department";
     private static final String KEY_DEPARTMENT_ID = "department_id";
     private static final String KEY_REGISTRATION_ID = "registration_id";
@@ -58,7 +60,7 @@ public class SessionManager {
         return instance;
     }
 
-    public void saveLogin(String id, String email, String role, String username,
+    public void saveLogin(String id, String orgCode, String email, String role, String username,
                           String orgName, String orgId, String departmentName, String depId, String regID) {
         prefs.edit()
                 .putBoolean(KEY_IS_LOGGED_IN, true)
@@ -71,6 +73,7 @@ public class SessionManager {
                 .putString(KEY_REGISTRATION_ID, regID)
                 .putString(KEY_ORGANISATION_ID, orgId)
                 .putString(KEY_DEPARTMENT_ID, depId)
+                .putString(KEY_ORGANISATION_CODE, orgCode)
                 .apply();
     }
     public void saveLogin(Context context, String email, String role) {
@@ -112,6 +115,8 @@ public class SessionManager {
     public String getEmail() { return prefs.getString(KEY_EMAIL, null); }
     public String getOrganisationName() { return prefs.getString(KEY_ORGANISATION_NAME, null); }
     public String getOrganisationId() { return prefs.getString(KEY_ORGANISATION_ID, null); }
+    public String getOrganisationCode() { return prefs.getString(KEY_ORGANISATION_CODE, null); }
+
     public String getDepartment() { return prefs.getString(KEY_DEPARTMENT, null); }
     public String getDepartmentID() { return prefs.getString(KEY_DEPARTMENT_ID, null); }
     public String getRegID() { return prefs.getString(KEY_REGISTRATION_ID, null); }

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.labassist.ComplaintStatus;
 import com.android.labassist.R;
 import com.android.labassist.database.entities.ComplaintEntity;
+import com.android.labassist.databinding.RvTechnicianComplaintLayoutBinding;
 import com.google.android.material.chip.Chip;
 
 import java.text.SimpleDateFormat;
@@ -72,11 +73,11 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
     public void onBindViewHolder(@NonNull ComplaintViewHolder holder, int position) {
         ComplaintEntity techComplaint = displayList.get(position);
 
-        holder.tvTitle.setText(techComplaint.title); // Using direct access if public, or getters
-        holder.tvComplaintID.setText(String.format("ID: %s", techComplaint.id));
-        holder.tvLab.setText(String.format("Lab: %s", techComplaint.labName));
+        holder.binding.tvTitle.setText(techComplaint.title); // Using direct access if public, or getters
+        holder.binding.tvDeviceCode.setText(String.format("Device: %s", techComplaint.deviceName + " • " + techComplaint.deviceCode));
+        holder.binding.tvLocation.setText(String.format("Lab: %s", techComplaint.labName));
 
-        holder.tvAllocatedTime.setText(String.format("Assigned: %s", getDateTime(techComplaint.createdAt)));
+        holder.binding.tvAllocatedTime.setText(String.format("Assigned: %s", getDateTime(techComplaint.createdAt)));
 
         ComplaintStatus status;
         switch (techComplaint.status){
@@ -99,10 +100,10 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
         }
 
         // Apply status and style
-        setComplaintChipStatus(holder.chipStatus, status);
-        holder.chipStatus.setText(techComplaint.status);
+        setComplaintChipStatus(holder.binding.chipStatus, status);
+        holder.binding.chipStatus.setText(techComplaint.status);
 
-        holder.layout.setOnClickListener(v -> animateAndOpen(v, () -> {
+        holder.binding.MainConstLayout.setOnClickListener(v -> animateAndOpen(v, () -> {
             // SAFE CASTING CHECK
             if (context instanceof FragmentActivity) {
                 new BottomSheetComplaintTech(techComplaint)
@@ -146,19 +147,12 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
     }
 
     public static class ComplaintViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvLab, tvComplaintID, tvAllocatedTime;
-        Chip chipStatus;
-        ViewGroup layout;
+        RvTechnicianComplaintLayoutBinding binding;
         public ComplaintViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvLab = itemView.findViewById(R.id.tvLocation);
-            tvComplaintID = itemView.findViewById(R.id.tvComplaintId);
-            tvAllocatedTime = itemView.findViewById(R.id.tvAllocatedTime);
-            chipStatus = itemView.findViewById(R.id.chipStatus);
-
-            layout = itemView.findViewById(R.id.MainConstLayout);
+            binding = RvTechnicianComplaintLayoutBinding.bind(itemView);
         }
+
     }
 
     private String getDateTime(long dateInMilli){

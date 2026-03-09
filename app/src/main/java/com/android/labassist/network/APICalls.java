@@ -3,6 +3,8 @@ package com.android.labassist.network;
 import com.android.labassist.network.models.AdminStatsResponse;
 import com.android.labassist.network.models.ComplaintsRequest;
 import com.android.labassist.network.models.ComplaintsResponse;
+import com.android.labassist.network.models.CreateNoteRequest;
+import com.android.labassist.network.models.CreateNoteResponse;
 import com.android.labassist.network.models.DeviceResponse;
 import com.android.labassist.network.models.LabRequest;
 import com.android.labassist.network.models.LabResponse;
@@ -59,4 +61,7 @@ public interface APICalls {
 
     @POST("functions/v1/get-notes")
     Call<NotesResponse> getNotes(@Body NotesRequest notesRequest);
+
+    @POST("functions/v1/create-note")
+    Call<CreateNoteResponse> addNote(@Body CreateNoteRequest request);
 }

@@ -31,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
         AuthEventBus.getInstance();
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (new TokenManager(getApplicationContext()).getRefreshToken() != null) {
+            if (TokenManager.getInstance(getApplicationContext()).getRefreshToken() != null) {
                 startActivity(new Intent(this, MainActivity.class));
             } else {
                 startActivity(new Intent(this, LoginActivity.class));

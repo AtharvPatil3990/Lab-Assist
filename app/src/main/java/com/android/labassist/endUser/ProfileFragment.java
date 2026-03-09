@@ -14,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.android.labassist.R;
 import com.android.labassist.auth.AuthEventBus;
 import com.android.labassist.auth.SessionManager;
+import com.android.labassist.auth.TokenManager;
 import com.android.labassist.database.AppDatabase;
 import com.android.labassist.databinding.FragmentUserProfileBinding;
 
@@ -72,15 +73,11 @@ public class ProfileFragment extends Fragment {
         binding.btnLogout.setOnClickListener(v -> {
             // Clear session data
             SessionManager.getInstance(requireContext()).logout();
+            TokenManager.getInstance(requireContext()).clearTokens();
 
             // Run database clearing on a managed background thread
             ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.execute(() -> {
-                AppDatabase db = AppDatabase.getInstance(requireContext());
-                 db.labAssistDao().clearLabs();
-                 db.labAssistDao().clearComplaints();
-                 db.labAssistDao().clearDevices();
-            });
+            executor.execute(() -> AppDatabase.getInstance(requireContext()).clearAllTables());
 
             // Trigger the logout event to send the user back to the Login screen
             AuthEventBus.getInstance().triggerLogout();

@@ -16,6 +16,7 @@
 
     <!--    Toolbar     -->
     <color name="toolbar_text">#EAF5FF</color>
+    <color name="toolbar_subtitle">#9AA8B5</color>
     <color name="toolbar_bg">#0A1F2C</color>
     <color name="toolbar_icon">#FFFFFF</color>
 
@@ -70,4 +71,7 @@
 
     <color name="role_admin_bg">#3B1115</color>
     <color name="role_admin_text">#EF9A9A</color>
+
+    <color name="overlay_background">#B30E141A</color>
+    <color name="loading_spinner">#4DA6E4</color>
 </resources>

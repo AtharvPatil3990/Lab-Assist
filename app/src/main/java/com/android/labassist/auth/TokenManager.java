@@ -15,10 +15,17 @@ public class TokenManager {
     private static final long REFRESH_BUFFER_MS = 300000;
 
     private SharedPreferences preferences;
+    private static TokenManager instance;
 
-    public TokenManager(Context context) {
-        initializePref(context.getApplicationContext());
+    public static TokenManager getInstance(Context context){
+        if(instance == null) {
+            instance = new TokenManager();
+            instance.initializePref(context.getApplicationContext());
+        }
+        return instance;
     }
+
+    private TokenManager() {}
 
     private void initializePref(Context context) {
         try {

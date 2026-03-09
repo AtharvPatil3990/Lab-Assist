@@ -27,7 +27,7 @@ public class AuthInterceptor implements Interceptor {
 
     public AuthInterceptor(Context context) {
         this.context = context.getApplicationContext();
-        this.tokenManager = new TokenManager(this.context);
+        this.tokenManager = TokenManager.getInstance(this.context);
         Log.d("Token", "interceptor constructor");
     }
 

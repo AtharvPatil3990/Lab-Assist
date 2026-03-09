@@ -25,7 +25,7 @@
         android:label="Profile" >
 
         <action
-            android:id="@+id/action_user_profile_to_settings"
+            android:id="@+id/action_tech_profile_to_settings"
             app:destination="@id/navigation_settings"/>
 
     </fragment>
@@ -38,13 +38,7 @@
         android:id="@+id/navigation_complaint_bottom_sheet"
         android:name="com.android.labassist.technician.BottomSheetComplaintTech"
         tools:layout="@layout/bottom_sheet_complaint_tech"
-        android:label="Complaint Bottom Sheet">
-
-        <action
-            android:id="@+id/action_complaint_bottom_sheet_to_view_notes"
-            app:destination="@id/navigation_view_notes" />
-
-    </fragment>
+        android:label="Complaint Bottom Sheet" />
 
     <fragment
         android:id="@+id/navigation_view_notes"

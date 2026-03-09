@@ -54,7 +54,7 @@
 
     <!-- TechComplaint ID -->
     <TextView
-        android:id="@+id/tvComplaintId"
+        android:id="@+id/tvDeviceCode"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="ID: #CMP1023"
@@ -71,7 +71,7 @@
         android:text="Assigned: Today, 10:30 AM"
         android:textSize="12sp"
         android:textColor="@color/subtext"
-        app:layout_constraintTop_toBottomOf="@id/tvComplaintId"
+        app:layout_constraintTop_toBottomOf="@id/tvDeviceCode"
         app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

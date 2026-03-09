@@ -17,5 +17,6 @@ public class NoteEntity {
     public String labId;    // Used to filter
     public long createdAt;
     // We flatten the complaint context to keep the local DB simple
+    public String complaintId;
     public String complaintTitle;
 }

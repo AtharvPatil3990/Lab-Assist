@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
                 if(response.isSuccessful() && response.body()!=null) {
                     LoginResponse body = response.body();
-                    new TokenManager(LoginActivity.this).saveTokens(body.getAccessToken(), body.getRefreshToken());
+                    TokenManager.getInstance(LoginActivity.this).saveTokens(body.getAccessToken(), body.getRefreshToken());
                     Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
 

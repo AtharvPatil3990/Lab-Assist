@@ -109,11 +109,11 @@ public interface LabAssistDao {
     @Query("SELECT * FROM devices WHERE deviceId = :deviceId")
     DeviceEntity getDeviceFromId(String deviceId);
 
-    @Query("SELECT * FROM devices WHERE deviceId = :deviceId")
-    LiveData<DeviceEntity> getLiveDeviceById(String deviceId);
+    @Query("SELECT deviceName  FROM devices WHERE deviceId = :deviceId")
+    LiveData<String> getDeviceNameById(String deviceId);
 
-    @Query("SELECT * FROM labs WHERE labId = :labId")
-    LiveData<LabEntity> getLiveLabById(String labId);
+    @Query("SELECT labName FROM labs WHERE labId = :labId")
+    LiveData<String> getLabNameById(String labId);
 
     // The UI listens to this!
     @Query("SELECT * FROM device_notes WHERE deviceId = :deviceId ORDER BY createdAt DESC")
@@ -125,4 +125,7 @@ public interface LabAssistDao {
     // The Repository uses this to save fresh network data
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertNotes(List<NoteEntity> notes);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertNote(NoteEntity note);
 }
