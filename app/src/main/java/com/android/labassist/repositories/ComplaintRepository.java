@@ -215,7 +215,6 @@ public class ComplaintRepository {
             return;
         }
 
-        // Supabase requires "eq." for exact matching in REST API queries
         Call<LabResponse> labReq = null;
         // 2. Fetch Labs from Supabase
         if(role.equals( SessionManager.ROLE_STUDENT))

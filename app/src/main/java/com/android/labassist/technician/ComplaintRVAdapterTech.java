@@ -106,8 +106,12 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
         holder.binding.MainConstLayout.setOnClickListener(v -> animateAndOpen(v, () -> {
             // SAFE CASTING CHECK
             if (context instanceof FragmentActivity) {
-                new BottomSheetComplaintTech(techComplaint)
-                        .show(((FragmentActivity) context).getSupportFragmentManager(), "ComplaintBottomSheet");
+
+                // 1. Use the newInstance method and pass ONLY the ID
+                BottomSheetComplaintTech complaintDetail = BottomSheetComplaintTech.newInstance(techComplaint.getId());
+
+                // 2. Show the bottom sheet (this automatically triggers the slide-up animation)
+                complaintDetail.show(((FragmentActivity) context).getSupportFragmentManager(), "ComplaintBottomSheet");
             }
         }));
     }

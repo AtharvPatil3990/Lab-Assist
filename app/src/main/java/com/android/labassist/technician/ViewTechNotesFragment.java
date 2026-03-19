@@ -41,12 +41,50 @@ public class ViewTechNotesFragment extends Fragment {
     private int action;
     public static int actionDeviceNotes = 1;
     public static int actionLabNotes = 0;
+    boolean showTitleBar = true;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentViewTechNotesBinding.bind(inflater.inflate(R.layout.fragment_view_tech_notes, container, false));
         return binding.getRoot();
+    }
+
+    public static ViewTechNotesFragment newInstance(String complaintId, String deviceId, String labId, int action, boolean showTitleBar){
+        ViewTechNotesFragment fragment = new ViewTechNotesFragment();
+        Bundle args = new Bundle();
+
+        args.putString("COMPLAINT_ID", complaintId);
+        args.putString("DEVICE_ID", deviceId);
+        args.putString("LAB_ID", labId);
+        args.putInt("action", action);
+        args.putBoolean("SHOW_TITLE_BAR", showTitleBar);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+    public static ViewTechNotesFragment newInstance(String deviceId, String labId, int action, boolean showTitleBar){
+        ViewTechNotesFragment fragment = new ViewTechNotesFragment();
+        Bundle args = new Bundle();
+        args.putString("DEVICE_ID", deviceId);
+        args.putString("LAB_ID", labId);
+        args.putInt("action", action);
+        args.putBoolean("SHOW_TITLE_BAR", showTitleBar);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    public static ViewTechNotesFragment newInstance(String labId, int action, boolean showTitleBar){
+        ViewTechNotesFragment fragment = new ViewTechNotesFragment();
+        Bundle args = new Bundle();
+
+        args.putString("LAB_ID", labId);
+        args.putInt("action", action);
+        args.putBoolean("SHOW_TITLE_BAR", showTitleBar);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     @Override
@@ -59,6 +97,7 @@ public class ViewTechNotesFragment extends Fragment {
             deviceId = getArguments().getString("DEVICE_ID", "");
             labId = getArguments().getString("LAB_ID", "");
             action = getArguments().getInt("action", actionDeviceNotes);
+            showTitleBar = getArguments().getBoolean("SHOW_TITLE_BAR", true);
         }
 
         binding.toolbarNotes.setNavigationOnClickListener(v -> NavHostFragment.findNavController(requireParentFragment()).navigateUp());
@@ -77,6 +116,9 @@ public class ViewTechNotesFragment extends Fragment {
         adapter = new NotesRVAdapter(requireContext());
         binding.rvNotes.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvNotes.setAdapter(adapter);
+
+        if(!showTitleBar)
+            binding.toolbarNotes.setVisibility(View.GONE);
     }
 
     private void setupViewModel() {

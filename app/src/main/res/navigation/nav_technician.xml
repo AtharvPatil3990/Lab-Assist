@@ -46,4 +46,45 @@
         tools:layout="@layout/fragment_view_tech_notes"
         android:label="View Notes of Device" />
 
+    <fragment
+        android:id="@+id/navigation_assigned_labs"
+        android:name="com.android.labassist.technician.AssignedLabsFragment"
+        tools:layout="@layout/fragment_assigned_labs"
+        android:label="Assigned Labs">
+
+        <action
+            android:id="@+id/action_assigned_lab_to_lab_detail"
+            app:destination="@id/navigation_tech_lab_detail"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_tech_lab_detail"
+        android:name="com.android.labassist.technician.TechLabDetailFragment"
+        tools:layout="@layout/fragment_tech_lab_detail"
+        android:label="Lab Details"
+        >
+        <action
+            android:id="@+id/action_lab_devices_to_device_details"
+            app:destination="@id/navigation_device_detail"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_tech_lab_devices"
+        android:name="com.android.labassist.technician.TechLabDevicesFragment"
+        tools:layout="@layout/fragment_tech_lab_devices" >
+
+        <action
+            android:id="@+id/action_lab_devices_to_device_details"
+            app:destination="@id/navigation_device_detail"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_device_detail"
+        android:name="com.android.labassist.technician.TechDeviceDetailsFragment"
+        tools:layout="@layout/fragment_tech_device_details"
+        />
+
 </navigation>

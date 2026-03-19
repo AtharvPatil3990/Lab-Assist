@@ -44,7 +44,7 @@ public interface LabAssistDao {
     void insertComplaints(List<ComplaintEntity> complaints);
 
     // For Technicians: Get active complaints assigned to them or their labs
-    @Query("SELECT * FROM complaints WHERE status != 'RESOLVED' ORDER BY createdAt DESC")
+    @Query("SELECT * FROM complaints WHERE status != 'RESOLVED' and status != 'QUEUE' ORDER BY createdAt DESC")
     LiveData<List<ComplaintEntity>> getActiveComplaints();
 
     // Local optimistic update (Updates UI instantly before server confirms)
@@ -75,6 +75,11 @@ public interface LabAssistDao {
     @Query("SELECT * FROM complaints WHERE id = :complaintId")
     ComplaintEntity getComplaintById(String complaintId);
 
+    @Query("SELECT * FROM complaints WHERE id = :complaintId")
+    LiveData<ComplaintEntity> getLiveComplaintById(String complaintId);
+
+
+
 //    For LabsEntity
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAllLabs(List<LabEntity> labs);
@@ -100,6 +105,13 @@ public interface LabAssistDao {
     @Query("SELECT * FROM complaints ORDER BY createdAt DESC")
     LiveData<List<ComplaintEntity>> getAllComplaintsHistory();
 
+    @Query("SELECT * FROM complaints WHERE labId = :labId")
+    LiveData<List<ComplaintEntity>> getComplaintsForLab(String labId);
+
+    // Scenario B: The technician is in the Device Hub looking at a specific PC
+    @Query("SELECT * FROM complaints WHERE deviceId = :deviceId")
+    LiveData<List<ComplaintEntity>> getComplaintsForDevice(String deviceId);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertComplaint(ComplaintEntity complaint);
 
@@ -108,6 +120,9 @@ public interface LabAssistDao {
 
     @Query("SELECT * FROM devices WHERE deviceId = :deviceId")
     DeviceEntity getDeviceFromId(String deviceId);
+
+    @Query("SELECT * FROM devices WHERE deviceId = :deviceId")
+    LiveData<DeviceEntity> getLiveDeviceFromId(String deviceId);
 
     @Query("SELECT deviceName  FROM devices WHERE deviceId = :deviceId")
     LiveData<String> getDeviceNameById(String deviceId);

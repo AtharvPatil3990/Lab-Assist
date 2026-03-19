@@ -5,11 +5,19 @@
         android:title="@string/tasks"
         android:icon="@drawable/home_icon"
         />
+
     <item
         android:id="@+id/navigation_history"
         android:title="@string/history"
         android:icon="@drawable/history_icon"
         />
+
+    <item
+        android:id="@+id/navigation_assigned_labs"
+        android:title="Labs"
+        android:icon="@drawable/labs"
+        />
+
     <item
         android:id="@+id/navigation_technician_profile"
         android:title="@string/profile"

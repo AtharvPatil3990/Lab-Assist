@@ -1,17 +1,12 @@
 package com.android.labassist.technician;
 
+import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-
-import androidx.annotation.ColorRes;
-import androidx.core.content.ContextCompat;
-import androidx.navigation.fragment.NavHostFragment;
-
-import android.animation.ArgbEvaluator;
-
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,71 +16,148 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
+
 import com.android.labassist.ComplaintStatus;
 import com.android.labassist.R;
+import com.android.labassist.database.AppDatabase;
 import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.databinding.BottomSheetComplaintTechBinding;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.lang.reflect.Field;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
-    private BottomSheetComplaintTechBinding binding;
-    private final ComplaintEntity techComplaint;
 
-    public  BottomSheetComplaintTech(ComplaintEntity techComplaint){
-        this.techComplaint = techComplaint;
+    private BottomSheetComplaintTechBinding binding;
+
+    // The currently loaded complaint object (Not final anymore!)
+    private ComplaintEntity techComplaint;
+
+    private String currentComplaintId;
+    private BottomSheetComplaintTechViewModel viewModel;
+
+    private static final String ARG_COMPLAINT_ID = "COMPLAINT_ID";
+
+    // 1. Empty constructor required for Fragments
+    public BottomSheetComplaintTech() {}
+
+    // 2. The Factory Method passing only the ID
+    public static BottomSheetComplaintTech newInstance(String complaintId) {
+        BottomSheetComplaintTech bottomSheet = new BottomSheetComplaintTech();
+        Bundle args = new Bundle();
+        args.putString(ARG_COMPLAINT_ID, complaintId);
+        bottomSheet.setArguments(args);
+        return bottomSheet;
+    }
+
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+
+        // This forces the sheet to animate to its fully expanded state instantly
+        dialog.setOnShowListener(dialogInterface -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialogInterface;
+            View bottomSheetInternal = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheetInternal != null) {
+                BottomSheetBehavior.from(bottomSheetInternal).setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
+
+        return dialog;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Unpack the ID
+        if (getArguments() != null) {
+            currentComplaintId = getArguments().getString(ARG_COMPLAINT_ID);
+        }
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = BottomSheetComplaintTechBinding.bind(inflater.inflate(R.layout.bottom_sheet_complaint_tech, container, false));
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // 3. Initialize the ViewModel
+        viewModel = new ViewModelProvider(this).get(BottomSheetComplaintTechViewModel.class);
+        AppDatabase db = AppDatabase.getInstance(requireContext());
+        viewModel.init(db.labAssistDao(), currentComplaintId);
+
+        // 4. Observe the data from Room
+        viewModel.getComplaint().observe(getViewLifecycleOwner(), complaint -> {
+            if (complaint != null) {
+                // Save the latest instance to our local variable
+                this.techComplaint = complaint;
+
+                // Now populate the UI!
+                populateUI();
+            }
+        });
     }
 
     @SuppressLint("SetTextI18n")
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = BottomSheetComplaintTechBinding.bind(inflater.inflate(R.layout.bottom_sheet_complaint_tech, container, false));
+    private void populateUI() {
+        // All your original onCreateView logic goes here!
         binding.tvComplaintTitle.setText(techComplaint.getTitle());
         binding.tvLabLocation.setText(techComplaint.getLabName());
-        binding.tvAppointedDate.setText(setDate(techComplaint.getCreatedAt()));
+        binding.tvAppointedDate.setText(parseDate(techComplaint.getCreatedAt()));
+
         String description = techComplaint.getDescription();
         binding.tvDeviceCode.setText(techComplaint.deviceName + " • " + techComplaint.deviceCode);
 
-        if(description == null || description.isBlank()) {
+        if (description == null || description.isBlank()) {
             binding.tvProblemDescription.setText("No description set");
-        }
-        else {
+        } else {
             binding.tvProblemDescription.setText(techComplaint.getDescription());
         }
 
         setBottomButtonSelectedStatus(techComplaint.getStatus());
 
-//        TODO: Add change complaint state via calling RestAPI function
+        // TODO: Add change complaint state via calling RestAPI function and update Room DB!
+        // NOTE: Make sure your ViewModel handles saving these changes back to the database!
 
-        binding.layoutButtonPendingState.setOnClickListener(v->{
+        binding.layoutButtonPendingState.setOnClickListener(v -> {
             setBottomButtonStatePending();
             techComplaint.setStatus("Pending");
         });
 
-        binding.layoutButtonOngoingState.setOnClickListener(v->{
+        binding.layoutButtonOngoingState.setOnClickListener(v -> {
             setBottomButtonStateOngoing();
             techComplaint.setStatus("Ongoing");
         });
 
-        binding.layoutButtonCompletedState.setOnClickListener(v->{
+        binding.layoutButtonCompletedState.setOnClickListener(v -> {
             setBottomButtonStateComplete();
             techComplaint.setStatus("Resolved");
         });
 
-        binding.layoutButtonCancelState.setOnClickListener(v->{
+        binding.layoutButtonCancelState.setOnClickListener(v -> {
             setBottomButtonStateCancel();
             techComplaint.setStatus("Cancelled");
         });
 
-//        setting notes recycler view adapter
-
+        // Overflow Menu for Notes
         binding.ivOverflowMenu.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(requireContext(), v);
             popupMenu.inflate(R.menu.menu_advance_options_tech);
@@ -97,18 +169,20 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                 menuPopupHelper.getClass()
                         .getDeclaredMethod("setForceShowIcon", boolean.class)
                         .invoke(menuPopupHelper, true);
-            }catch (Exception ignored){}
+            } catch (Exception ignored) {}
 
             popupMenu.setOnMenuItemClickListener(item -> {
                 int itemID = item.getItemId();
-                if(itemID == R.id.menu_view_notes_of_complaint){
+                if (itemID == R.id.menu_view_notes_of_complaint) {
                     Bundle bundle = new Bundle();
                     bundle.putString("COMPLAINT_ID", techComplaint.getId());
                     bundle.putString("DEVICE_ID", techComplaint.getDeviceId());
                     bundle.putString("LAB_ID", techComplaint.getLabId());
-                    if(techComplaint.deviceId == null || techComplaint.deviceId.isEmpty())
-                       bundle.putInt("action", ViewTechNotesFragment.actionLabNotes);
-                    else bundle.putInt("action", ViewTechNotesFragment.actionDeviceNotes);
+
+                    if (techComplaint.deviceId == null || techComplaint.deviceId.isEmpty())
+                        bundle.putInt("action", ViewTechNotesFragment.actionLabNotes);
+                    else
+                        bundle.putInt("action", ViewTechNotesFragment.actionDeviceNotes);
 
                     Log.d("BottomSheet", "Complaint ID: " + techComplaint.getId());
                     Log.d("BottomSheet", "Device ID: " + techComplaint.getDeviceId());
@@ -126,7 +200,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
             popupMenu.show();
         });
 
-//        Assigning Last updated date / completed date
+        // Assigning Last updated date / completed date
         String lastUpdateDateLabel;
         if (techComplaint.getStatus().equals(ComplaintStatus.RESOLVED)) {
             lastUpdateDateLabel = "Resolved on";
@@ -139,8 +213,6 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
             binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.last_update_date_icon);
         }
         binding.tvLastUpdatedDateLabel.setText(lastUpdateDateLabel);
-
-        return binding.getRoot();
     }
 
     private void setBottomButtonSelectedStatus(String status){
@@ -255,24 +327,45 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
     }
 
-    private String setDate(long dateInMills){
-        String date;
-        LocalDateTime noteDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateInMills), ZoneId.systemDefault());
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter;
-        if(DateUtils.isToday(dateInMills)){
-            formatter = DateTimeFormatter.ofPattern("hh:mm a");
-            date = "Today • " + noteDate.format(formatter);
+    private String parseDate(long dateInMills) {
+        // 1. Safety check for invalid dates
+        if (dateInMills <= 0) {
+            return "Unknown Date";
         }
-        else if(noteDate.getYear() == now.getYear()){
-            formatter = DateTimeFormatter.ofPattern("dd MMM yyyy • hh:mm a");
-            date = noteDate.format(formatter);
+
+        Date dateObj = new Date(dateInMills);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
+
+        // 2. Is it Today? (e.g., "Today, 10:30 AM")
+        if (DateUtils.isToday(dateInMills)) {
+            return "Today • " + timeFormat.format(dateObj);
         }
-        else{
-            formatter = DateTimeFormatter.ofPattern("dd MMM • hh:mm a");
-            date = noteDate.format(formatter);
+
+        // Setup Calendars to check for Yesterday and the Year
+        Calendar now = Calendar.getInstance();
+        Calendar target = Calendar.getInstance();
+        target.setTimeInMillis(dateInMills);
+
+        // 3. Is it Yesterday? (e.g., "Yesterday, 10:30 AM")
+        now.add(Calendar.DAY_OF_YEAR, -1);
+        if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR) &&
+                now.get(Calendar.DAY_OF_YEAR) == target.get(Calendar.DAY_OF_YEAR)) {
+            return "Yesterday • " + timeFormat.format(dateObj);
         }
-        return date;
+
+        // Reset the 'now' calendar back to today
+        now = Calendar.getInstance();
+
+        // 4. Is it from this current year? (e.g., "Oct 24 • 10:30 AM")
+        if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR)) {
+            SimpleDateFormat sameYearFormat = new SimpleDateFormat("dd MMM • h:mm a", Locale.getDefault());
+            return sameYearFormat.format(dateObj);
+        }
+        // 5. It must be from a previous year (e.g., "24 Oct 2023 • 10:30 AM")
+        else {
+            SimpleDateFormat diffYearFormat = new SimpleDateFormat("dd MMM yyyy • h:mm a", Locale.getDefault());
+            return diffYearFormat.format(dateObj);
+        }
     }
 
 
