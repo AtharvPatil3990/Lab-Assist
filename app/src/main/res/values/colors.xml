@@ -118,4 +118,9 @@
 
     <color name="overlay_background">#B3FFFFFF</color>
     <color name="loading_spinner">#0A6CA8</color>
+
+
+<!--    Warning colors    -->
+    <color name="warning_color">#D97706</color>
+    <color name="warning_text_color">#FFFFFF</color>
 </resources>

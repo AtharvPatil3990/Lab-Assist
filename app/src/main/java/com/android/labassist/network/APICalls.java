@@ -15,6 +15,8 @@ import com.android.labassist.network.models.NotesResponse;
 import com.android.labassist.network.models.RaiseComplaintRequest;
 import com.android.labassist.network.models.RaiseComplaintResponse;
 import com.android.labassist.network.models.RefreshSessionRequest;
+import com.android.labassist.network.models.UpdateComplaintStatusRequest;
+import com.android.labassist.network.models.UpdateComplaintStatusResponse;
 import com.android.labassist.network.models.UserProfileResponse;
 import com.android.labassist.network.models.UsersResponse;
 
@@ -64,4 +66,8 @@ public interface APICalls {
 
     @POST("functions/v1/create-note")
     Call<CreateNoteResponse> addNote(@Body CreateNoteRequest request);
+
+
+    @POST("functions/v1/update-complaint-status")
+    Call<UpdateComplaintStatusResponse> updateComplaintStatus(@Body UpdateComplaintStatusRequest request);
 }

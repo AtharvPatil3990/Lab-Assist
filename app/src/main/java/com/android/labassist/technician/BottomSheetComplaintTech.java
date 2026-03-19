@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -28,9 +29,13 @@ import com.android.labassist.R;
 import com.android.labassist.database.AppDatabase;
 import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.databinding.BottomSheetComplaintTechBinding;
+import com.android.labassist.network.ApiController;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -92,6 +97,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = BottomSheetComplaintTechBinding.bind(inflater.inflate(R.layout.bottom_sheet_complaint_tech, container, false));
+
         return binding.getRoot();
     }
 
@@ -102,21 +108,54 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         // 3. Initialize the ViewModel
         viewModel = new ViewModelProvider(this).get(BottomSheetComplaintTechViewModel.class);
         AppDatabase db = AppDatabase.getInstance(requireContext());
-        viewModel.init(db.labAssistDao(), currentComplaintId);
+        viewModel.init(db.labAssistDao(), ApiController.getInstance(requireContext()), currentComplaintId);
 
         // 4. Observe the data from Room
         viewModel.getComplaint().observe(getViewLifecycleOwner(), complaint -> {
             if (complaint != null) {
                 // Save the latest instance to our local variable
                 this.techComplaint = complaint;
-
                 // Now populate the UI!
                 populateUI();
+                setBottomButtonStateOngoing();
             }
         });
+
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading) {
+                // Show the dark overlay and block all touches
+                binding.loadingOverlay.setVisibility(View.VISIBLE);
+
+                // Optional: Prevent them from swiping the bottom sheet down to close it
+                // while the API call is running!
+                if(getDialog() != null)
+                    getDialog().setCancelable(false);
+            } else {
+                // Hide the overlay and restore functionality
+                binding.loadingOverlay.setVisibility(View.GONE);
+                if(getDialog() != null)
+                    getDialog().setCancelable(true);
+            }
+        });
+
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
+            // Check if there is actually an error to show
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+
+                // Create and show a Material Snackbar
+                Snackbar.make(requireView(), errorMessage, Snackbar.LENGTH_LONG)
+                        // Optional: Make it look like an error by setting a red background
+                        // .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.design_default_color_error))
+                        .show();
+
+                // VERY IMPORTANT: Clear the error after showing it!
+                viewModel.clearError();
+            }
+        });
+
     }
 
-    @SuppressLint("SetTextI18n")
+//    @SuppressLint("SetTextI18n")
     private void populateUI() {
         // All your original onCreateView logic goes here!
         binding.tvComplaintTitle.setText(techComplaint.getTitle());
@@ -134,28 +173,144 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
         setBottomButtonSelectedStatus(techComplaint.getStatus());
 
-        // TODO: Add change complaint state via calling RestAPI function and update Room DB!
-        // NOTE: Make sure your ViewModel handles saving these changes back to the database!
 
-        binding.layoutButtonPendingState.setOnClickListener(v -> {
-            setBottomButtonStatePending();
-            techComplaint.setStatus("Pending");
-        });
+        // Get the current status safely
+        String currentStatus = techComplaint.getStatus() != null ? techComplaint.getStatus().toUpperCase() : "OPEN";
 
-        binding.layoutButtonOngoingState.setOnClickListener(v -> {
-            setBottomButtonStateOngoing();
-            techComplaint.setStatus("Ongoing");
-        });
+        // 1. Reset everything to hidden by default
+        binding.btnAcceptTicket.setVisibility(View.GONE);
+        binding.btnStartWork.setVisibility(View.GONE);
+        binding.layoutStatusButtons.setVisibility(View.GONE);
 
-        binding.layoutButtonCompletedState.setOnClickListener(v -> {
-            setBottomButtonStateComplete();
-            techComplaint.setStatus("Resolved");
-        });
+        // 2. The State Machine Routing
+        switch (currentStatus) {
+            case "OPEN":
+                // Standard Accept Button
+                binding.btnAcceptTicket.setVisibility(View.VISIBLE);
+                binding.btnAcceptTicket.setText("Accept Complaint");
+                binding.btnAcceptTicket.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_btn_bg));
+                binding.btnAcceptTicket.setEnabled(true);
 
-        binding.layoutButtonCancelState.setOnClickListener(v -> {
-            setBottomButtonStateCancel();
-            techComplaint.setStatus("Cancelled");
-        });
+                binding.btnAcceptTicket.setOnClickListener(v -> {
+                    /* API Call */
+                });
+                break;
+
+            case "QUEUED":
+                // Warning Accept Button
+                binding.btnAcceptTicket.setVisibility(View.VISIBLE);
+                binding.btnAcceptTicket.setText("Override Queue & Accept");
+
+                // Set the dynamic warning background
+                binding.btnAcceptTicket.setBackgroundTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.warning_color)
+                ));
+
+                // Set the dynamic text color so it's always readable
+                binding.btnAcceptTicket.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.warning_text_color)
+                );
+
+                // You can even tint the icon to match the text!
+                binding.btnAcceptTicket.setIconTint(ColorStateList.valueOf(
+                        ContextCompat.getColor(requireContext(), R.color.warning_text_color)
+                ));
+
+                binding.btnAcceptTicket.setEnabled(true);
+                binding.btnAcceptTicket.setOnClickListener(v -> {
+                    new MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Override System Queue?")
+                            .setMessage("This complaint is queued because you have other pending tasks.\nAre you sure you want to prioritize this one?")
+                            .setPositiveButton("Accept Complaint", (dialog, which) -> {
+                                 viewModel.updateComplaintStatus(techComplaint.getId(), "ASSIGNED");
+                            })
+                            .setNegativeButton("Cancel", (dialog, which) -> {
+                                dialog.dismiss();
+                            })
+                            .show();
+                });
+                break;
+
+            case "ASSIGNED":
+                // STATE 2: Accepted but not started - Show only the Start Work button
+                binding.btnStartWork.setVisibility(View.VISIBLE);
+
+                binding.btnStartWork.setOnClickListener(v -> {
+                     viewModel.updateComplaintStatus(techComplaint.getId(), "IN_PROGRESS");
+                });
+                break;
+
+            case "IN_PROGRESS":
+            case "ON_HOLD":
+                // STATE 3: Actively Working - Show the 3-button grid
+                binding.layoutStatusButtons.setVisibility(View.VISIBLE);
+
+                // Attach click listeners to your 3 custom chips
+                binding.layoutButtonOngoingState.setOnClickListener(v -> {
+                     viewModel.updateComplaintStatus(techComplaint.getId(), "IN_PROGRESS");
+//                    setBottomButtonStateOngoing();
+
+                });
+
+                binding.layoutButtonCompletedState.setOnClickListener(v -> {
+//                    setBottomButtonStateComplete();
+//                     TODO: Add an image path while calling API updateComplaintStatus
+                    viewModel.updateComplaintStatusWithImagePath(techComplaint.getId(), "RESOLVED", "tempPath");
+                });
+
+                binding.layoutButtonCancelState.setOnClickListener(v -> {
+
+                    // 1. Inflate our custom XML layout
+                    View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_cancel_reason, null);
+                    TextInputEditText etReason = dialogView.findViewById(R.id.etCancelReason);
+
+                    // 2. Build the Material Dialog
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Reject Complaint")
+                            .setMessage("Please explain why this ticket is being cancelled or rejected.")
+                            .setView(dialogView)
+                            // We set the positive listener to null for now. We will override it below!
+                            .setPositiveButton("Submit", null)
+                            .setNegativeButton("Back", (dialog, which) -> dialog.dismiss());
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                    // 3. THE SENIOR DEV TRICK: Override the positive button
+                    // Standard dialogs close immediately when you click "Submit".
+                    // By overriding it here, we stop it from closing if the box is empty!
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(buttonView -> {
+
+                        String reason = etReason.getText() != null ? etReason.getText().toString().trim() : "";
+
+                        if (reason.isEmpty()) {
+                            // Show an error state on the text box and DO NOT close the dialog
+                            etReason.setError("A reason is required to reject a ticket.");
+                            etReason.requestFocus();
+                        } else {
+                            // 4. SUCCESS! We have a valid reason.
+
+                            // TODO: Call your ViewModel, but you will need to pass the 'reason' string now!
+                             viewModel.updateComplaintStatusWithReason(techComplaint.getId(), "CANCELLED", reason);
+
+                            dialog.dismiss(); // Now we can safely close the dialog
+                        }
+                    });
+                });
+                break;
+
+            case "RESOLVED":
+            case "CLOSED":
+            case "CANCELLED":
+                // STATE 4: Terminal States - Leave everything GONE!
+                // The technician can only read the ticket, they cannot change it anymore.
+                break;
+
+            default:
+                // Fallback just in case a weird status string gets into the database
+                binding.btnAcceptTicket.setVisibility(View.VISIBLE);
+                break;
+        }
 
         // Overflow Menu for Notes
         binding.ivOverflowMenu.setOnClickListener(v -> {
@@ -183,10 +338,6 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                         bundle.putInt("action", ViewTechNotesFragment.actionLabNotes);
                     else
                         bundle.putInt("action", ViewTechNotesFragment.actionDeviceNotes);
-
-                    Log.d("BottomSheet", "Complaint ID: " + techComplaint.getId());
-                    Log.d("BottomSheet", "Device ID: " + techComplaint.getDeviceId());
-                    Log.d("BottomSheet", "Lab ID: " + techComplaint.getLabId());
 
                     NavHostFragment
                             .findNavController(this)
@@ -217,45 +368,18 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
     private void setBottomButtonSelectedStatus(String status){
         switch(status){
-            case "Pending":
-                    setBottomButtonStatePending();
-                    break;
-            case "Ongoing":
+            case "IN_PROGRESS":
                     setBottomButtonStateOngoing();
                     break;
-            case "Resolved":
+            case "RESOLVED":
                     setBottomButtonStateComplete();
                     break;
-            case "Cancelled":
+            case "CANCELLED":
                     setBottomButtonStateCancel();
                     break;
         }
     }
 
-    private void setBottomButtonStatePending(){
-        resetButtonInstant(
-                techComplaint.getStatus());
-
-        animateStatusChange(binding.layoutButtonPendingState,
-                R.color.chip_pending_status_bg,
-                R.color.pending_status_selected_bg,
-                R.color.chip_pending_status_stroke_color,
-                R.color.pending_status_selected_stroke,
-                R.color.white,
-                binding.tvBottomPendingStatusText,
-                binding.ivBottomPendingStatusIcon);
-
-//        binding.layoutButtonPendingState.setClickable(false);
-//        binding.layoutButtonOngoingState.setClickable(true);
-//        binding.layoutButtonCompletedState.setClickable(true);
-//        binding.layoutButtonCancelState.setClickable(true);
-
-        binding.layoutButtonPendingState.setAlpha(1);
-        binding.layoutButtonOngoingState.setAlpha(0.4f);
-        binding.layoutButtonCompletedState.setAlpha(0.4f);
-        binding.layoutButtonCancelState.setAlpha(0.4f);
-
-    }
 
     private void setBottomButtonStateOngoing(){
 //        setting color of pending layout button
@@ -282,7 +406,6 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
         binding.layoutButtonOngoingState.setAlpha(1);
         binding.layoutButtonCompletedState.setAlpha(0.4f);
-        binding.layoutButtonPendingState.setAlpha(0.4f);
         binding.layoutButtonCancelState.setAlpha(0.4f);
 
 
@@ -302,7 +425,6 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
         binding.layoutButtonCompletedState.setAlpha(1);
         binding.layoutButtonOngoingState.setAlpha(0.4f);
-        binding.layoutButtonPendingState.setAlpha(0.4f);
         binding.layoutButtonCancelState.setAlpha(0.4f);
 
 
@@ -323,7 +445,6 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         binding.layoutButtonCancelState.setAlpha(1);
         binding.layoutButtonCompletedState.setAlpha(0.4f);
         binding.layoutButtonOngoingState.setAlpha(0.4f);
-        binding.layoutButtonPendingState.setAlpha(0.4f);
 
     }
 
@@ -378,7 +499,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         ImageView iv;
 
         switch(state){
-            case "Ongoing":
+            case "IN_PROGRESS":
                 button = binding.layoutButtonOngoingState;
                 bg = R.color.chip_ongoing_status_bg;
                 stroke = R.color.chip_ongoing_status_stroke_color;
@@ -386,15 +507,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                 tv = binding.tvBottomOngoingStatusText;
                 iv = binding.ivBottomOngoingStatusIcon;
                 break;
-            case "Pending":
-                button = binding.layoutButtonPendingState;
-                bg = R.color.chip_pending_status_bg;
-                stroke = R.color.chip_pending_status_stroke_color;
-                content = R.color.pending_status;
-                tv = binding.tvBottomPendingStatusText;
-                iv = binding.ivBottomPendingStatusIcon;
-                break;
-            case "Resolved":
+            case "RESOLVED":
                 button = binding.layoutButtonCompletedState;
                 bg = R.color.chip_completed_status_bg;
                 stroke = R.color.chip_completed_status_stroke_color;

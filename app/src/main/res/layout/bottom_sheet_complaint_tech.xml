@@ -1,76 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".technician.BottomSheetComplaintTech"
     android:background="@color/secondary_bg"
     android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    >
+    android:paddingEnd="16dp">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         android:id="@+id/dragHandle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvComplaintTitle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        >
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvComplaintTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:textSize="20sp"
-            android:text="Monitor Display Failure"
-            android:textStyle="bold"
-            android:layout_weight="1"
-            android:textColor="@color/heading_text"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            />
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Monitor Display Failure"
+        android:textColor="@color/heading_text"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/ivOverflowMenu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dragHandle" />
 
-        <ImageButton
-            android:id="@+id/ivOverflowMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="Close Page"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/overflow_menu_icon" />
+    <ImageButton
+        android:id="@+id/ivOverflowMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:contentDescription="Close Page"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/overflow_menu_icon"
+        app:layout_constraintBottom_toBottomOf="@id/tvComplaintTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvComplaintTitle" />
 
-    </LinearLayout>
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/bottomBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="btnAcceptTicket,btnStartWork,layoutStatusButtons" />
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:paddingBottom="8dp"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
         android:clipToPadding="false"
-        android:layout_weight="150">
+        android:paddingBottom="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomBarrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvComplaintTitle">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-    <!--    Lab Location        -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardLabLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/card"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/card" >
+                app:cardElevation="4dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -81,52 +87,46 @@
                         android:id="@+id/ivLabLocation"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
-                        android:src="@drawable/location_icon"
-                        app:tint="@color/icon"
                         android:contentDescription="Location Icon"
+                        android:src="@drawable/location_icon"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        />
+                        app:tint="@color/icon" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tvLabLocationLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:layout_marginStart="16dp"
                         android:text="Lab Location"
                         android:textColor="@color/body_text"
+                        android:textSize="14sp"
                         android:textStyle="bold"
-                        android:layout_marginStart="16dp"
                         app:layout_constraintStart_toEndOf="@id/ivLabLocation"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tvLabLocation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
                         android:text="Lab: PC-103"
                         android:textColor="@color/subtext"
                         android:textSize="12sp"
-                        android:layout_marginStart="16dp"
                         app:layout_constraintStart_toEndOf="@id/ivLabLocation"
-                        app:layout_constraintTop_toBottomOf="@+id/tvLabLocationLabel"
-                        />
-
+                        app:layout_constraintTop_toBottomOf="@+id/tvLabLocationLabel" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
-    <!--        Department      -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardDepartment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
+                android:layout_marginTop="16dp"
                 app:cardBackgroundColor="@color/card"
-                android:layout_marginTop="16dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -137,170 +137,156 @@
                         android:id="@+id/ivDepartmentIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
-                        android:src="@drawable/department_icon"
-                        app:tint="@color/icon"
                         android:contentDescription="Department Icon"
+                        android:src="@drawable/department_icon"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        />
+                        app:tint="@color/icon" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tvDepartmentNameLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:layout_marginStart="16dp"
                         android:text="Department"
                         android:textColor="@color/body_text"
+                        android:textSize="14sp"
                         android:textStyle="bold"
-                        android:layout_marginStart="16dp"
                         app:layout_constraintStart_toEndOf="@id/ivDepartmentIcon"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tvDepartment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
                         android:text="Computer"
                         android:textColor="@color/subtext"
                         android:textSize="12sp"
-                        android:layout_marginStart="16dp"
                         app:layout_constraintStart_toEndOf="@id/ivDepartmentIcon"
-                        app:layout_constraintTop_toBottomOf="@+id/tvDepartmentNameLabel"
-                        />
-
+                        app:layout_constraintTop_toBottomOf="@+id/tvDepartmentNameLabel" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                    <!--    Appointed Date      -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardAppointedDate"
-                        android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardAppointedDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/card"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="4dp"
-                        android:layout_weight="1"
-                        app:cardBackgroundColor="@color/card"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="10dp">
+                        android:padding="8dp">
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
+                        <ImageView
+                            android:id="@+id/ivAppointedDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:contentDescription="Appointed Date Icon"
+                            android:src="@drawable/appointed_date_icon"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/icon" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tvAppointedDateLabel"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="8dp">
+                            android:layout_marginStart="16dp"
+                            android:text="Appointed Date"
+                            android:textColor="@color/body_text"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@id/ivAppointedDate"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                            <ImageView
-                                android:id="@+id/ivAppointedDate"
-                                android:layout_width="wrap_content"
-                                android:layout_height="0dp"
-                                android:src="@drawable/appointed_date_icon"
-                                app:tint="@color/icon"
-                                android:contentDescription="Appointed Date Icon"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                />
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tvAppointedDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="12 Jan 2024"
+                            android:textColor="@color/subtext"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toEndOf="@id/ivAppointedDate"
+                            app:layout_constraintTop_toBottomOf="@+id/tvAppointedDateLabel" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tvAppointedDateLabel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="14sp"
-                                android:text="Appointed Date"
-                                android:textColor="@color/body_text"
-                                android:textStyle="bold"
-                                android:layout_marginStart="16dp"
-                                app:layout_constraintStart_toEndOf="@id/ivAppointedDate"
-                                app:layout_constraintTop_toTopOf="parent"
-                                />
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardComplaintID"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/card"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp">
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tvAppointedDate"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="12 Jan 2024"
-                                android:textColor="@color/subtext"
-                                android:textSize="12sp"
-                                android:layout_marginStart="16dp"
-                                app:layout_constraintStart_toEndOf="@id/ivAppointedDate"
-                                app:layout_constraintTop_toBottomOf="@+id/tvAppointedDateLabel"
-                                />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                <!--    TechComplaint ID      -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardComplaintID"
-                        android:layout_width="0dp"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="4dp"
-                        android:layout_weight="1"
-                        app:cardBackgroundColor="@color/card"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginStart="10dp">
+                        android:padding="8dp">
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
+                        <ImageView
+                            android:id="@+id/ivComplaintID"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:contentDescription="Complaint ID Icon"
+                            android:src="@drawable/device_icon"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/icon" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tvComplaintIDLabel"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="8dp">
+                            android:layout_marginStart="16dp"
+                            android:text="Device"
+                            android:textColor="@color/body_text"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toEndOf="@id/ivComplaintID"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                            <ImageView
-                                android:id="@+id/ivComplaintID"
-                                android:layout_width="wrap_content"
-                                android:layout_height="0dp"
-                                android:src="@drawable/device_icon"
-                                app:tint="@color/icon"
-                                android:contentDescription="Complaint ID Icon"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                />
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tvComplaintIDLabel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="14sp"
-                                android:text="Device"
-                                android:textColor="@color/body_text"
-                                android:textStyle="bold"
-                                android:layout_marginStart="16dp"
-                                app:layout_constraintStart_toEndOf="@id/ivComplaintID"
-                                app:layout_constraintTop_toTopOf="parent"
-                                />
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tvDeviceCode"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Pc 12"
-                                android:textColor="@color/subtext"
-                                android:textSize="12sp"
-                                android:layout_marginStart="16dp"
-                                app:layout_constraintStart_toEndOf="@id/ivComplaintID"
-                                app:layout_constraintTop_toBottomOf="@+id/tvComplaintIDLabel"
-                                />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/tvDeviceCode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="Pc 12"
+                            android:textColor="@color/subtext"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toEndOf="@id/ivComplaintID"
+                            app:layout_constraintTop_toBottomOf="@+id/tvComplaintIDLabel" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardLastUpdatedDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
+                android:layout_marginTop="16dp"
                 app:cardBackgroundColor="@color/card"
-                android:layout_marginTop="16dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -311,259 +297,297 @@
                         android:id="@+id/ivLastUpdatedDateIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
-                        android:src="@drawable/completed_date_icon"
-                        app:tint="@color/icon"
                         android:contentDescription="Completed Icon"
+                        android:src="@drawable/completed_date_icon"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        />
+                        app:tint="@color/icon" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tvLastUpdatedDateLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:layout_marginStart="16dp"
                         android:text="Resolved Date"
                         android:textColor="@color/body_text"
+                        android:textSize="14sp"
                         android:textStyle="bold"
-                        android:layout_marginStart="16dp"
                         app:layout_constraintStart_toEndOf="@id/ivLastUpdatedDateIcon"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tvLastUpdatedDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
                         android:text="12 Dec 2024"
                         android:textColor="@color/subtext"
                         android:textSize="12sp"
-                        android:layout_marginStart="16dp"
                         app:layout_constraintStart_toEndOf="@id/ivLastUpdatedDateIcon"
-                        app:layout_constraintTop_toBottomOf="@+id/tvLastUpdatedDateLabel"
-                        />
-
+                        app:layout_constraintTop_toBottomOf="@+id/tvLastUpdatedDateLabel" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
-
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvProblemDescriptionLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:drawableStart="@drawable/description_icon"
+                android:drawablePadding="8dp"
                 android:text="Problem Description"
+                android:textColor="@color/body_text"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:drawableStart="@drawable/description_icon"
-                app:drawableTint="@color/icon"
-                android:drawablePadding="8dp"
-
-                android:layout_marginTop="32dp"
-                />
+                app:drawableTint="@color/icon" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvProblemDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Description of techComplaint"
-                android:textSize="14sp"
-                android:textColor="@color/subtext"
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                />
+                android:text="Description of techComplaint"
+                android:textColor="@color/subtext"
+                android:textSize="14sp" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvAttachedPhotoLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Attached Photo"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/body_text"
+                android:layout_marginTop="32dp"
                 android:drawableStart="@drawable/photo_icon"
                 android:drawablePadding="8dp"
-                app:drawableTint="@color/icon"
-                android:layout_marginTop="32dp"
-                />
+                android:text="Attached Photo"
+                android:textColor="@color/body_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:drawableTint="@color/icon" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivAttachedPhoto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:src="@drawable/lab_assist_logo"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/RoundImage"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                />
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/lab_assist_logo"
+                app:shapeAppearanceOverlay="@style/RoundImage" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutButtons"
-        android:layout_width="match_parent"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAcceptTicket"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/background_color"
-        android:layout_weight="1"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginBottom="16dp"
+        android:paddingVertical="14dp"
+        android:text="Accept Complaint"
+        android:textColor="@color/primary_btn_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:backgroundTint="@color/primary_btn_bg"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/complete_icon"
+        app:iconGravity="textStart"
+        app:iconPadding="12dp"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        app:layout_constraintHorizontal_chainStyle="spread"
-        android:layout_marginBottom="8dp">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStartWork"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginBottom="16dp"
+        android:paddingVertical="14dp"
+        android:text="Start Work"
+        android:textColor="@color/primary_btn_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:backgroundTint="@color/ongoing_status"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/start_work_icon"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:iconSize="24dp"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutStatusButtons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/background_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/updateStatesLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Update States"
-            android:textSize="16sp"
             android:textColor="@color/heading_text"
+            android:textSize="16sp"
             android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
-<!--        Pending Bottom Button     -->
-        <LinearLayout
-            android:id="@+id/layoutButtonPendingState"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:background="@drawable/button_bg_status_pending"
-            android:gravity="center"
-            android:layout_margin="6dp"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintTop_toBottomOf="@id/updateStatesLabel"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/layoutButtonOngoingState">
-
-            <ImageView
-                android:id="@+id/ivBottomPendingStatusIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/pending_icon"
-                app:tint="@color/pending_status"/>
-
-            <TextView
-                android:id="@+id/tvBottomPendingStatusText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pending"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="@color/pending_status"
-                android:layout_marginTop="6dp"/>
-        </LinearLayout>
-
-<!--        Ongoing Bottom Button     -->
         <LinearLayout
             android:id="@+id/layoutButtonOngoingState"
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:background="@drawable/button_bg_status_ongoing"
-            android:gravity="center"
             android:layout_margin="6dp"
+            android:background="@drawable/button_bg_status_ongoing"
+            android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintTop_toBottomOf="@id/updateStatesLabel"
+            android:gravity="center"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/layoutButtonPendingState"
-            app:layout_constraintEnd_toStartOf="@id/layoutButtonCompletedState">
+            app:layout_constraintEnd_toStartOf="@id/layoutButtonCompletedState"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/updateStatesLabel">
 
             <ImageView
                 android:id="@+id/ivBottomOngoingStatusIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ongoing_icon"
-                app:tint="@color/ongoing_status"/>
+                app:tint="@color/ongoing_status" />
 
             <TextView
                 android:id="@+id/tvBottomOngoingStatusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text="Ongoing"
-                android:textSize="12sp"
-                android:textStyle="bold"
                 android:textColor="@color/ongoing_status"
-                android:layout_marginTop="6dp"/>
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
-<!--        Completed Bottom Button     -->
         <LinearLayout
             android:id="@+id/layoutButtonCompletedState"
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:background="@drawable/button_bg_status_complete"
-            android:gravity="center"
             android:layout_margin="6dp"
+            android:background="@drawable/button_bg_status_complete"
+            android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintTop_toBottomOf="@id/updateStatesLabel"
+            android:gravity="center"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/layoutButtonCancelState"
             app:layout_constraintStart_toEndOf="@id/layoutButtonOngoingState"
-            app:layout_constraintEnd_toStartOf="@id/layoutButtonCancelState">
+            app:layout_constraintTop_toBottomOf="@id/updateStatesLabel">
 
             <ImageView
                 android:id="@+id/ivBottomCompleteStatus"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/complete_icon"
-                app:tint="@color/completed_status"/>
+                app:tint="@color/completed_status" />
 
             <TextView
                 android:id="@+id/tvBottomCompleteStatusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text="Resolved"
-                android:textSize="12sp"
-                android:textStyle="bold"
                 android:textColor="@color/completed_status"
-                android:layout_marginTop="6dp"/>
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutButtonCancelState"
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:importantForAccessibility="no"
-            android:background="@drawable/button_bg_status_cancel"
-            android:gravity="center"
             android:layout_margin="6dp"
+            android:background="@drawable/button_bg_status_cancel"
+            android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintTop_toBottomOf="@id/updateStatesLabel"
+            android:gravity="center"
+            android:importantForAccessibility="no"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/layoutButtonCompletedState"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/updateStatesLabel">
 
             <ImageView
                 android:id="@+id/ivBottomCancelStatus"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/reject_icon"
-                app:tint="@color/cancelled_status"/>
+                app:tint="@color/cancelled_status" />
 
             <TextView
                 android:id="@+id/tvBottomCancelStatusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text="Reject"
-                android:textSize="12sp"
-                android:textStyle="bold"
                 android:textColor="@color/cancelled_status"
-                android:layout_marginTop="6dp"/>
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/overlay_background"
+        android:clickable="true"
+        android:elevation="10dp"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/loading_spinner"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Updating status..."
+            android:textColor="@color/heading_text"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progressBar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

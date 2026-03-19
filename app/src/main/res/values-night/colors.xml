@@ -74,4 +74,9 @@
 
     <color name="overlay_background">#B30E141A</color>
     <color name="loading_spinner">#4DA6E4</color>
+
+<!--    Warning colors  -->
+    <color name="warning_color">#F59E0B</color>
+    <color name="warning_text_color">#1F2937</color>
+
 </resources>
