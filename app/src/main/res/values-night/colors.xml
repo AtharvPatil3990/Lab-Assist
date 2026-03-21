@@ -51,7 +51,7 @@
 
     <!--    Status Colors-->
     <color name="pending_status">#FFC470</color>
-    <color name="ongoing_status">#60A5FA</color>
+    <color name="ongoing_status">#3B82F6</color>
     <color name="cancelled_status">#EF9A9A</color>
     <color name="completed_status">#81C784</color>
 
@@ -78,5 +78,23 @@
 <!--    Warning colors  -->
     <color name="warning_color">#F59E0B</color>
     <color name="warning_text_color">#1F2937</color>
+
+<!--    Reject Button   -->
+    <color name="reject_btn_color">#EF5350</color>
+
+
+<!--   Complaint status chip colors -->
+    <color name="pending_status_selected_bg">#FBBF24</color>
+    <color name="pending_status_selected_text">#FFFBEB</color> <color name="pending_status_selected_stroke">#F59E0B</color>
+
+    <color name="ongoing_status_selected_bg">#3B82F6</color>
+    <color name="ongoing_status_selected_text">#EFF6FF</color>
+    <color name="ongoing_status_selected_stroke">#2563EB</color>
+
+    <color name="cancelled_status_selected_bg">#F87171</color>
+    <color name="cancelled_status_selected_text">#FEF2F2</color> <color name="cancelled_status_selected_stroke">#EF4444</color>
+
+    <color name="completed_status_selected_bg">#34D399</color>
+    <color name="completed_status_selected_text">#ECFDF5</color> <color name="completed_status_selected_stroke">#10B981</color>
 
 </resources>

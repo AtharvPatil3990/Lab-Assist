@@ -2,13 +2,12 @@ package com.android.labassist.technician;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -178,7 +177,8 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         String currentStatus = techComplaint.getStatus() != null ? techComplaint.getStatus().toUpperCase() : "OPEN";
 
         // 1. Reset everything to hidden by default
-        binding.btnAcceptTicket.setVisibility(View.GONE);
+        binding.btnAcceptComplaint.setVisibility(View.GONE);
+        binding.btnReassignComplaint.setVisibility(View.GONE);
         binding.btnStartWork.setVisibility(View.GONE);
         binding.layoutStatusButtons.setVisibility(View.GONE);
 
@@ -186,38 +186,41 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         switch (currentStatus) {
             case "OPEN":
                 // Standard Accept Button
-                binding.btnAcceptTicket.setVisibility(View.VISIBLE);
-                binding.btnAcceptTicket.setText("Accept Complaint");
-                binding.btnAcceptTicket.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_btn_bg));
-                binding.btnAcceptTicket.setEnabled(true);
+                binding.btnAcceptComplaint.setVisibility(View.VISIBLE);
+                binding.btnAcceptComplaint.setText("Accept Complaint");
+                binding.btnAcceptComplaint.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_btn_bg));
+                binding.btnAcceptComplaint.setEnabled(true);
 
-                binding.btnAcceptTicket.setOnClickListener(v -> {
-                    /* API Call */
+                binding.btnAcceptComplaint.setOnClickListener(v -> {
+                    viewModel.updateComplaintStatus(techComplaint.id, "ASSIGNED");
                 });
+
+                showReassignButton();
+
                 break;
 
             case "QUEUED":
                 // Warning Accept Button
-                binding.btnAcceptTicket.setVisibility(View.VISIBLE);
-                binding.btnAcceptTicket.setText("Override Queue & Accept");
+                binding.btnAcceptComplaint.setVisibility(View.VISIBLE);
+                binding.btnAcceptComplaint.setText("Override Queue & Accept");
 
                 // Set the dynamic warning background
-                binding.btnAcceptTicket.setBackgroundTintList(ColorStateList.valueOf(
+                binding.btnAcceptComplaint.setBackgroundTintList(ColorStateList.valueOf(
                         ContextCompat.getColor(requireContext(), R.color.warning_color)
                 ));
 
                 // Set the dynamic text color so it's always readable
-                binding.btnAcceptTicket.setTextColor(
+                binding.btnAcceptComplaint.setTextColor(
                         ContextCompat.getColor(requireContext(), R.color.warning_text_color)
                 );
 
                 // You can even tint the icon to match the text!
-                binding.btnAcceptTicket.setIconTint(ColorStateList.valueOf(
+                binding.btnAcceptComplaint.setIconTint(ColorStateList.valueOf(
                         ContextCompat.getColor(requireContext(), R.color.warning_text_color)
                 ));
 
-                binding.btnAcceptTicket.setEnabled(true);
-                binding.btnAcceptTicket.setOnClickListener(v -> {
+                binding.btnAcceptComplaint.setEnabled(true);
+                binding.btnAcceptComplaint.setOnClickListener(v -> {
                     new MaterialAlertDialogBuilder(requireContext())
                             .setTitle("Override System Queue?")
                             .setMessage("This complaint is queued because you have other pending tasks.\nAre you sure you want to prioritize this one?")
@@ -229,6 +232,9 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                             })
                             .show();
                 });
+
+                showReassignButton();
+
                 break;
 
             case "ASSIGNED":
@@ -308,7 +314,8 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
             default:
                 // Fallback just in case a weird status string gets into the database
-                binding.btnAcceptTicket.setVisibility(View.VISIBLE);
+                binding.btnAcceptComplaint.setVisibility(View.VISIBLE);
+                showReassignButton();
                 break;
         }
 
@@ -366,6 +373,43 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
         binding.tvLastUpdatedDateLabel.setText(lastUpdateDateLabel);
     }
 
+    private void showReassignButton() {
+        binding.btnReassignComplaint.setVisibility(View.VISIBLE);
+        binding.btnReassignComplaint.setEnabled(true);
+        binding.btnReassignComplaint.setOnClickListener(v -> {
+            // 1. Inflate your custom text input layout
+            View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_cancel_reason, null);
+            TextInputEditText etReason = dialogView.findViewById(R.id.etCancelReason);
+
+            // 2. Build the Material Dialog
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Reassign Complaint")
+                    .setMessage("This Complaint will be reassigned to another technician,\nPlease provide a reason for reassigning")
+                    .setView(dialogView)
+                    .setPositiveButton("Reassign", null) // We override this below
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            // 3. The "Senior Dev Trick" to prevent empty submissions
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(buttonView -> {
+                String reason = etReason.getText() != null ? etReason.getText().toString().trim() : "";
+
+                if (reason.isEmpty()) {
+                    etReason.setError("A reason is required.");
+                    etReason.requestFocus();
+                } else {
+                    // SUCCESS! Call the ViewModel.
+                    // The dialog closes, the dark overlay appears, and the Edge Function fires!
+                    viewModel.rerouteAssignedComplaint(techComplaint.getId(), reason);
+                    dialog.dismiss();
+                }
+            });
+            BottomSheetComplaintTech.this.dismiss();
+        });
+    }
+
     private void setBottomButtonSelectedStatus(String status){
         switch(status){
             case "IN_PROGRESS":
@@ -382,11 +426,6 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
 
     private void setBottomButtonStateOngoing(){
-//        setting color of pending layout button
-//        binding.layoutButtonOngoingState.setBackgroundResource(R.drawable.button_bg_status_ongoing_selected);
-//        binding.ivBottomPendingStatusIcon.setImageTintList(ColorStateList.valueOf(R.color.ongoing_status_selected_text));
-//        binding.tvBottomPendingStatusText.setBackgroundTintList(ColorStateList.valueOf(R.color.ongoing_status_selected_text));
-
         resetButtonInstant(
                 techComplaint.getStatus());
 
@@ -399,14 +438,9 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                 binding.tvBottomOngoingStatusText,
                 binding.ivBottomOngoingStatusIcon);
 
-//        binding.layoutButtonOngoingState.setClickable(false);
-//        binding.layoutButtonCompletedState.setClickable(true);
-//        binding.layoutButtonPendingState.setClickable(true);
-//        binding.layoutButtonCancelState.setClickable(true);
-
         binding.layoutButtonOngoingState.setAlpha(1);
-        binding.layoutButtonCompletedState.setAlpha(0.4f);
-        binding.layoutButtonCancelState.setAlpha(0.4f);
+        binding.layoutButtonCompletedState.setAlpha(0.8f);
+        binding.layoutButtonCancelState.setAlpha(0.8f);
 
 
     }
@@ -424,8 +458,8 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                 binding.ivBottomCompleteStatus);
 
         binding.layoutButtonCompletedState.setAlpha(1);
-        binding.layoutButtonOngoingState.setAlpha(0.4f);
-        binding.layoutButtonCancelState.setAlpha(0.4f);
+        binding.layoutButtonOngoingState.setAlpha(0.8f);
+        binding.layoutButtonCancelState.setAlpha(0.8f);
 
 
     }
@@ -443,8 +477,8 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                 binding.ivBottomCancelStatus);
 
         binding.layoutButtonCancelState.setAlpha(1);
-        binding.layoutButtonCompletedState.setAlpha(0.4f);
-        binding.layoutButtonOngoingState.setAlpha(0.4f);
+        binding.layoutButtonCompletedState.setAlpha(0.8f);
+        binding.layoutButtonOngoingState.setAlpha(0.8f);
 
     }
 

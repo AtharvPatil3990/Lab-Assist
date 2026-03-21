@@ -82,24 +82,21 @@
     <!--    Selected status color   -->
 
     <!-- Selected Pending -->
-    <color name="pending_status_selected_bg">#EB8C00</color>   <!-- solid -->
+    <color name="pending_status_selected_bg">#F59E0B</color>
     <color name="pending_status_selected_text">#FFFFFF</color>
-    <color name="pending_status_selected_stroke">#C76F00</color>
+    <color name="pending_status_selected_stroke">#D97706</color>
 
-    <!-- Selected Ongoing -->
-    <color name="ongoing_status_selected_bg">#3A72ED</color>
+    <color name="ongoing_status_selected_bg">#2563EB</color>
     <color name="ongoing_status_selected_text">#FFFFFF</color>
-    <color name="ongoing_status_selected_stroke">#1E4ED8</color>
+    <color name="ongoing_status_selected_stroke">#1D4ED8</color>
 
-    <!-- Selected Cancelled -->
-    <color name="cancelled_status_selected_bg">#F44336</color>
+    <color name="cancelled_status_selected_bg">#EF4444</color>
     <color name="cancelled_status_selected_text">#FFFFFF</color>
-    <color name="cancelled_status_selected_stroke">#D32F2F</color>
+    <color name="cancelled_status_selected_stroke">#DC2626</color>
 
-    <!-- Selected Completed -->
-    <color name="completed_status_selected_bg">#4CAF50</color>
+    <color name="completed_status_selected_bg">#10B981</color>
     <color name="completed_status_selected_text">#FFFFFF</color>
-    <color name="completed_status_selected_stroke">#388E3C</color>
+    <color name="completed_status_selected_stroke">#059669</color>
 
 <!--    Priority tasks  -->
     <color name="priority_high_bg">#FFF0F0</color>
@@ -119,8 +116,11 @@
     <color name="overlay_background">#B3FFFFFF</color>
     <color name="loading_spinner">#0A6CA8</color>
 
-
 <!--    Warning colors    -->
     <color name="warning_color">#D97706</color>
     <color name="warning_text_color">#FFFFFF</color>
+
+<!--    Reject button     -->
+    <color name="reject_btn_color">#D32F2F</color>
+
 </resources>

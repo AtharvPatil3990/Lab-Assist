@@ -32,7 +32,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import android.view.inputmethod.InputMethodManager;
 
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -135,10 +134,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
                 Snackbar.make(binding.getRoot(), "Unexpected error occurred", Snackbar.LENGTH_SHORT).show();
-
                 Log.d("LogErr", call.toString());
-                Log.d("LogErr", t.getMessage());
-                Log.d("LogErr", t.toString());
                 binding.loginProgressBar.setVisibility(View.GONE);
                 Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }

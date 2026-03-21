@@ -101,7 +101,11 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
 
         // Apply status and style
         setComplaintChipStatus(holder.binding.chipStatus, status);
-        holder.binding.chipStatus.setText(techComplaint.status);
+        if (techComplaint.status.equals("IN_PROGRESS")) {
+            holder.binding.chipStatus.setText("Ongoing");
+        } else {
+            holder.binding.chipStatus.setText(techComplaint.status);
+        }
 
         holder.binding.MainConstLayout.setOnClickListener(v -> animateAndOpen(v, () -> {
             // SAFE CASTING CHECK

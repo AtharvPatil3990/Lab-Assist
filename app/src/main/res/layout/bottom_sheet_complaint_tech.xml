@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="btnAcceptTicket,btnStartWork,layoutStatusButtons" />
+        app:constraint_referenced_ids="btnAcceptComplaint, btnReassignComplaint, btnStartWork,layoutStatusButtons" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
@@ -375,23 +375,45 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/lab_assist_logo"
-                app:shapeAppearanceOverlay="@style/RoundImage" />
+                app:shapeAppearanceOverlay="@drawable/lab_assist_round_logo" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnAcceptTicket"
+        android:id="@+id/btnReassignComplaint"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:paddingVertical="12dp"
+        android:text="Reassign"
+        android:textColor="@color/reject_btn_color"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/close_icon"
+        app:iconTint="@color/reject_btn_color"
+        app:strokeColor="@color/reject_btn_color"
+        app:strokeWidth="1.5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnAcceptComplaint" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAcceptComplaint"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
         android:layout_marginBottom="16dp"
         android:paddingVertical="14dp"
         android:text="Accept Complaint"
         android:textColor="@color/primary_btn_text"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:visibility="gone"
         app:backgroundTint="@color/primary_btn_bg"
         app:cornerRadius="8dp"
         app:icon="@drawable/complete_icon"
@@ -400,7 +422,7 @@
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/btnReassignComplaint" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStartWork"
@@ -429,6 +451,7 @@
         android:id="@+id/layoutStatusButtons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/background_color"
         app:layout_constraintBottom_toBottomOf="parent"

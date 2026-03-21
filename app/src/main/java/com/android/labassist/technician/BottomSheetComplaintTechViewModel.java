@@ -11,6 +11,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.android.labassist.database.dao.LabAssistDao;
 import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.network.ApiController;
+import com.android.labassist.network.models.RerouteComplaintRequest;
+import com.android.labassist.network.models.RerouteComplaintResponse;
 import com.android.labassist.network.models.UpdateComplaintStatusRequest;
 import com.android.labassist.network.models.UpdateComplaintStatusResponse;
 
@@ -72,6 +74,7 @@ public class BottomSheetComplaintTechViewModel extends AndroidViewModel {
                             executorService.execute(() -> {
                                 dao.updateComplaintStatus(complaintId, newStatus);
                             });
+                            errorMessage.setValue("Complaint updated successfully");
                         } else {
                             // The server rejected it (e.g., 400 or 500 error)
                             errorMessage.setValue("Failed to update status on server. Code: " + response.code());
@@ -104,6 +107,7 @@ public class BottomSheetComplaintTechViewModel extends AndroidViewModel {
                                 executorService.execute(() -> {
                                     dao.updateComplaintStatus(complaintId, newStatus);
                                 });
+                                errorMessage.setValue("Complaint updated successfully");
                             } else {
                                 // The server rejected it (e.g., 400 or 500 error)
                                 errorMessage.setValue("Failed to update status on server. Code: " + response.code());
@@ -136,6 +140,7 @@ public class BottomSheetComplaintTechViewModel extends AndroidViewModel {
                                 executorService.execute(() -> {
                                     dao.updateComplaintStatus(complaintId, newStatus);
                                 });
+                                errorMessage.setValue("Complaint updated successfully");
                             } else {
                                 // The server rejected it (e.g., 400 or 500 error)
                                 errorMessage.setValue("Failed to update status on server. Code: " + response.code());
@@ -148,6 +153,35 @@ public class BottomSheetComplaintTechViewModel extends AndroidViewModel {
                             isLoading.setValue(false);
                             errorMessage.setValue("Network error. Please check your connection.");
                             Log.e("ViewModel", "Network Error: " + t.getMessage());
+                        }
+                    });
+        }
+
+        public void rerouteAssignedComplaint(String complaintId, String reason){
+            // 1. Tell the UI to show a loading state
+            isLoading.setValue(true);
+
+            api.getAuthApi()
+                    .rerouteComplaint(new RerouteComplaintRequest(complaintId, reason))
+                    .enqueue(new Callback<RerouteComplaintResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<RerouteComplaintResponse> call, @NonNull Response<RerouteComplaintResponse> response) {
+                            isLoading.setValue(false);
+                            if(response.isSuccessful() && response.body() != null){
+                                RerouteComplaintResponse rerouteResponse = response.body();
+                                if(rerouteResponse.newStatus.equals("OPEN")){
+                                    executorService.execute(() -> {
+                                        dao.deleteComplaintWithId(complaintId);
+                                    });
+                                    errorMessage.setValue("Complaint reassigned successfully");
+                                }
+                                else errorMessage.setValue("No technicians available. Moved to Queue!");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<RerouteComplaintResponse> call, @NonNull Throwable t) {
+
                         }
                     });
         }

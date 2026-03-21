@@ -47,6 +47,9 @@ public interface LabAssistDao {
     @Query("SELECT * FROM complaints WHERE status != 'RESOLVED' and status != 'QUEUE' ORDER BY createdAt DESC")
     LiveData<List<ComplaintEntity>> getActiveComplaints();
 
+    @Query("DELETE FROM complaints WHERE id = :complaintId")
+    void deleteComplaintWithId(String complaintId);
+
     // Local optimistic update (Updates UI instantly before server confirms)
     @Query("UPDATE complaints SET status = :newStatus WHERE id = :complaintId")
     void updateComplaintStatus(String complaintId, String newStatus);
