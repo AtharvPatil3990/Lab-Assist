@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.android.labassist.NoNetworkException;
 import com.android.labassist.database.dao.LabAssistDao;
 import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.network.ApiController;
@@ -85,7 +86,9 @@ public class BottomSheetComplaintTechViewModel extends AndroidViewModel {
                     @Override
                     public void onFailure(@NonNull Call<UpdateComplaintStatusResponse> call, @NonNull Throwable t) {
                         isLoading.setValue(false);
-                        errorMessage.setValue("Network error. Please check your connection.");
+                        if(t instanceof NoNetworkException)
+                            errorMessage.setValue("Network error. Please check your connection.");
+                        errorMessage.setValue("An Error occurred please try again later.");
                         Log.e("ViewModel", "Network Error: " + t.getMessage());
                     }
                 });

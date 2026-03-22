@@ -59,7 +59,7 @@ public class ComplaintAdapter extends RecyclerView.Adapter<ComplaintAdapter.Comp
         return complaintList.size();
     }
 
-    static class ComplaintViewHolder extends RecyclerView.ViewHolder {
+    public static class ComplaintViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemComplaintBinding binding;
 

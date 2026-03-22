@@ -170,7 +170,7 @@ public class ComplaintRVAdapterTech extends RecyclerView.Adapter<ComplaintRVAdap
             time = "Today, " + timeSDF.format(dateInMilli);
         }
         else{
-            SimpleDateFormat dateSDF = new SimpleDateFormat("dd MM, hh:mm a", Locale.getDefault());
+            SimpleDateFormat dateSDF = new SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault());
             time = dateSDF.format(dateInMilli);
         }
         return time;

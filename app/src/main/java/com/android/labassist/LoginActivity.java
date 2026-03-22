@@ -40,6 +40,9 @@ public class LoginActivity extends AppCompatActivity {
 
     ActivityLoginBinding binding;
 
+    Snackbar offlineSnackbar;
+    private boolean wasOffline = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
             loginUser(new LoginRequest(email, password));
         });
 
+        initNetworkMonitor();
     }
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -102,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser(LoginRequest request){
-        binding.loginProgressBar.setVisibility(View.VISIBLE);
+        binding.loginOverlay.setVisibility(View.VISIBLE);
 
         Call<LoginResponse> call =
                 ApiController.getInstance(LoginActivity.this)
@@ -114,13 +118,12 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+                binding.loginOverlay.setVisibility(View.GONE);
                 if(response.isSuccessful() && response.body()!=null) {
                     LoginResponse body = response.body();
                     TokenManager.getInstance(LoginActivity.this).saveTokens(body.getAccessToken(), body.getRefreshToken());
                     Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
-
-                    binding.loginProgressBar.setVisibility(View.GONE);
 
                     finish();
                 }
@@ -135,8 +138,40 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
                 Snackbar.make(binding.getRoot(), "Unexpected error occurred", Snackbar.LENGTH_SHORT).show();
                 Log.d("LogErr", call.toString());
-                binding.loginProgressBar.setVisibility(View.GONE);
-                Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+
+                binding.loginOverlay.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void initNetworkMonitor(){
+        NetworkMonitor networkMonitor = new NetworkMonitor(this);
+
+        networkMonitor.observe(this, isConnected ->{
+            if(!isConnected){
+                wasOffline = true;
+                binding.btnLogin.setEnabled(false);
+                binding.btnLogin.setText("Waiting for connection...");
+                offlineSnackbar = Snackbar.make(binding.getRoot(), "No Internet Connection, you are offline", Snackbar.LENGTH_INDEFINITE)
+                    .setBackgroundTint(ContextCompat.getColor(this, R.color.cancelled_status))
+                    .setTextColor(ContextCompat.getColor(this, R.color.white));
+
+                offlineSnackbar.show();
+            }
+            else{
+                if(offlineSnackbar != null)
+                    offlineSnackbar.dismiss();
+
+                binding.btnLogin.setEnabled(true);
+                binding.btnLogin.setText("Login");
+
+                if(wasOffline) {
+                    Snackbar.make(binding.getRoot(), "Back online", Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(ContextCompat.getColor(this, R.color.completed_status))
+                            .setTextColor(ContextCompat.getColor(this, R.color.warning_text_color))
+                            .show();
+                }
+                wasOffline = false;
             }
         });
     }

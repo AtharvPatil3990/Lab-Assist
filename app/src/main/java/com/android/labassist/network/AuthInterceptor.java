@@ -1,11 +1,16 @@
 package com.android.labassist.network;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.android.labassist.AppNetworkState;
 import com.android.labassist.BuildConfig;
+import com.android.labassist.NoNetworkException;
 import com.android.labassist.auth.AuthEventBus;
 import com.android.labassist.auth.SessionManager;
 import com.android.labassist.auth.TokenManager;
@@ -28,12 +33,15 @@ public class AuthInterceptor implements Interceptor {
     public AuthInterceptor(Context context) {
         this.context = context.getApplicationContext();
         this.tokenManager = TokenManager.getInstance(this.context);
-        Log.d("Token", "interceptor constructor");
     }
 
     @NonNull
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
+
+        if (!AppNetworkState.isNetworkConnected)
+            throw new NoNetworkException();
+
         Request originalRequest = chain.request();
         Request.Builder builder = originalRequest.newBuilder();
 
@@ -67,7 +75,6 @@ public class AuthInterceptor implements Interceptor {
         if (refreshToken == null) return false;
 
         try {
-            Log.d("Token", "In Inceptor refreshAccessToken()");
             // CRITICAL: Ensure this Public API does NOT use this interceptor
             Call<LoginResponse> call = ApiController.getInstance(context)
                     .getPublicApi()

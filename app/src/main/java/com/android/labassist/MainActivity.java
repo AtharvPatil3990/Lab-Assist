@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -28,6 +29,7 @@ import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.ProfileData;
 import com.android.labassist.network.models.UserProfileResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,9 +38,10 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private BottomNavigationView bottomNav;
-    private ProgressBar progressBar;
     private SessionManager sessionManager;
-    private MainViewModel viewModel;
+    private Snackbar offlineSnackbar;
+    private boolean wasOffline = false;
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +54,13 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         sessionManager = SessionManager.getInstance(getApplicationContext());
 
-        Log.d("Token", "Outside the observe");
-        ActivityMainBinding binding = ActivityMainBinding.bind(findViewById(R.id.activity_main));
+        binding = ActivityMainBinding.bind(findViewById(R.id.activity_main));
 
 //    Observing Logout signal
         AuthEventBus.getInstance().getLogoutSignal().observe(this, shouldLogout -> {
-            Log.d("Token", "AuthEventBus observing called " + shouldLogout);
             if (shouldLogout)
                 navigateToLogin();
         });
@@ -68,10 +68,6 @@ public class MainActivity extends AppCompatActivity {
         if(sessionManager.getId() == null && sessionManager.isRoleSet()){
             navigateToLogin();
         }
-
-        Log.d("Token", "Initializing binding");
-
-        progressBar = binding.loadingProgressBar;
 
         createNotificationChannel();
 
@@ -81,6 +77,49 @@ public class MainActivity extends AppCompatActivity {
         navController = navHostFragment.getNavController();
 
         handleRoleAndNavigate();
+        initNetworkMonitor();
+    }
+
+    private void initNetworkMonitor(){
+        NetworkMonitor networkMonitor = new NetworkMonitor(this);
+
+        View rootView = findViewById(android.R.id.content);
+
+        networkMonitor.observe(this, isConnected -> {
+            if(!isConnected){
+                wasOffline = true;
+
+                if(offlineSnackbar != null) {
+                    offlineSnackbar = Snackbar.make(rootView, "No internet connection. You are offline.", Snackbar.LENGTH_INDEFINITE);
+                    offlineSnackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.cancelled_status));
+                    offlineSnackbar.setTextColor(ContextCompat.getColor(this, R.color.warning_text_color));
+
+
+                    if (bottomNav != null) {
+                        offlineSnackbar.setAnchorView(bottomNav);
+                    }
+                }
+                if (offlineSnackbar!=null && !offlineSnackbar.isShown())
+                    offlineSnackbar.show();
+            }
+            else{
+                if(offlineSnackbar != null && offlineSnackbar.isShown())
+                    offlineSnackbar.dismiss();
+
+                if(wasOffline) {
+                    Snackbar onlineSnackbar = Snackbar.make(rootView, "Back Online", Snackbar.LENGTH_SHORT);
+                    onlineSnackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.completed_status));
+                    onlineSnackbar.setTextColor(ContextCompat.getColor(this, R.color.warning_text_color));
+                    if (bottomNav != null)
+                        onlineSnackbar.setAnchorView(bottomNav);
+
+
+                    onlineSnackbar.show();
+                }
+                wasOffline = false;
+
+            }
+        });
     }
 
     private void createNotificationChannel(){
@@ -94,11 +133,12 @@ public class MainActivity extends AppCompatActivity {
         else setupNavigation();
 
 
-        progressBar.setVisibility(View.GONE);
         bottomNav.setVisibility(View.VISIBLE);
     }
 
     private void fetchUserProfile(){
+        binding.loadingOverlay.setVisibility(View.VISIBLE);
+
         Call<UserProfileResponse> call = ApiController.getInstance(getApplicationContext()).getAuthApi().getUserProfile();
 
         call.enqueue(new Callback<>() {
@@ -133,6 +173,9 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(@NonNull Call<UserProfileResponse> call, @NonNull Throwable t) {
+                if(t instanceof NoNetworkException){
+                    Toast.makeText(MainActivity.this, "No network connection please login again", Toast.LENGTH_SHORT).show();
+                }
                 handleAuthFailure(t.getMessage());
             }
         });
@@ -149,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupNavigation(){
+        binding.loadingOverlay.setVisibility(View.GONE);
 
         switch (sessionManager.getRole()){
             case SessionManager.ROLE_ADMIN:
@@ -188,6 +232,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        viewModel = null;
     }
 }
