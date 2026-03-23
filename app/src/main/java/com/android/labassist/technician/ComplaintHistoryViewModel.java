@@ -36,6 +36,11 @@ public class ComplaintHistoryViewModel extends AndroidViewModel {
         // Note: You would need to update your Repository's refresh method
         // to take a callback or use an EventBus to tell the ViewModel when it's done.
         repository.refreshComplaintsFromServer();
+    }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        repository.cancelApiCalls();
     }
 }

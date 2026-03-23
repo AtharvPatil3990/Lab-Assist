@@ -144,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<UserProfileResponse> call, @NonNull Response<UserProfileResponse> response) {
+                if(isFinishing() || isDestroyed())
+                    return;
+
                 if(response.isSuccessful() && response.body()!=null){
                     UserProfileResponse userProfile = response.body();
                     if(sessionManager != null) {

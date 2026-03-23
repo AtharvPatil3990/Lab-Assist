@@ -82,4 +82,10 @@ public class ComplaintsViewModel extends AndroidViewModel{
                 return ComplaintStatus.ASSIGNED;
         }
     }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        repository.cancelApiCalls();
+    }
 }

@@ -17,4 +17,10 @@ public class HomeViewModel extends AndroidViewModel {
     public void triggerLabSync(){
         repository.fetchAndCacheDepartmentArchitecture("STUDENT");
     }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        repository.cancelApiCalls();
+    }
 }

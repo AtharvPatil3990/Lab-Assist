@@ -36,4 +36,10 @@ public class TaskDashboardViewModel extends AndroidViewModel {
     public void refreshDashboard() {
         repository.refreshComplaintsFromServer();
     }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        repository.cancelApiCalls();
+    }
 }

@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.android.labassist.auth.SessionManager;
 import com.android.labassist.network.ApiController;
+import com.android.labassist.network.models.AdminRequestQrgId;
 import com.android.labassist.network.models.AdminStatsResponse;
 
 import retrofit2.Call;
@@ -54,7 +55,7 @@ public class DashboardViewModel extends AndroidViewModel {
         SessionManager sessionManager = SessionManager.getInstance(context);
 
         // Make the API Call
-        ApiController.getInstance(context).getAuthApi().getAdminStatistics(sessionManager.getOrganisationId()).enqueue(new Callback<>() {
+        ApiController.getInstance(context).getAuthApi().getAdminStatistics(new AdminRequestQrgId(sessionManager.getOrganisationId())).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<AdminStatsResponse> call, @NonNull Response<AdminStatsResponse> response) {
                 isLoading.setValue(false);

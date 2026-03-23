@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 }
                 else{
-                    Snackbar.make(binding.getRoot(), "Login not successful", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(binding.getRoot(), "Incorrect email or password", Snackbar.LENGTH_SHORT).show();
                     Log.d("LogErr", call.toString());
                     Log.d("LogErr", response.toString());
                 }

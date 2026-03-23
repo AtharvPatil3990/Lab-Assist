@@ -239,19 +239,16 @@ public class NotesViewModel extends ViewModel {
     private long parseSupabaseTimestamp(String timestamp) {
         if (timestamp == null) return System.currentTimeMillis();
         try {
-            // If the device is running Android 8.0 (API 26) or higher
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                return java.time.Instant.parse(timestamp).toEpochMilli();
-            } else {
-                // Fallback for older Android devices
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault());
-                sdf.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
-                java.util.Date date = sdf.parse(timestamp);
-                return date != null ? date.getTime() : System.currentTimeMillis();
-            }
+            return java.time.Instant.parse(timestamp).toEpochMilli();
         } catch (Exception e) {
             Log.e("NotesViewModel", "Failed to parse time: " + timestamp, e);
             return System.currentTimeMillis(); // Safe fallback
         }
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        repository.cancelApiCalls();
     }
 }

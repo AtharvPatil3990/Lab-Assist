@@ -116,4 +116,10 @@ public class RaiseComplaintViewModel extends AndroidViewModel {
     public void resetStatus() {
         submissionStatus.setValue(null);
     }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        repository.cancelApiCalls();
+    }
 }

@@ -44,6 +44,10 @@ public class ComplaintRepository {
     // to avoid freezing the UI thread.
     private final ExecutorService executorService;
 
+    private Call<ComplaintsResponse> complaintsResponseCall;
+    private Call<LabResponse> labReq;
+    private Call<RaiseComplaintResponse> raiseComplaintCall;
+
     private final java.text.SimpleDateFormat supabaseDateFormat;
     public ComplaintRepository(Application application) {
 
@@ -72,13 +76,13 @@ public class ComplaintRepository {
     public void refreshComplaintsFromServer() {
         SessionManager sessionManager = SessionManager.getInstance(context);
 
-        Call<ComplaintsResponse> call =
+        complaintsResponseCall =
                 ApiController
                         .getInstance(context)
                         .getAuthApi().
                         getComplaints(new ComplaintsRequest(sessionManager.getRole()));
 
-        call.enqueue(new Callback<ComplaintsResponse>() {
+        complaintsResponseCall.enqueue(new Callback<ComplaintsResponse>() {
             @Override
             public void onResponse(@NonNull Call<ComplaintsResponse> call, @NonNull Response<ComplaintsResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -215,7 +219,7 @@ public class ComplaintRepository {
             return;
         }
 
-        Call<LabResponse> labReq = null;
+        labReq = null;
         // 2. Fetch Labs from Supabase
         if(role.equals( SessionManager.ROLE_STUDENT))
             labReq = ApiController.getInstance(context).getAuthApi().getDepartmentArchitecture(new LabRequest(departmentId));
@@ -310,7 +314,8 @@ public class ComplaintRepository {
     }
 
     public void raiseComplaint(RaiseComplaintRequest request, ComplaintCallback callback) {
-        ApiController.getInstance(context).getAuthApi().raiseComplaint(request).enqueue(new Callback<>() {
+        raiseComplaintCall = ApiController.getInstance(context).getAuthApi().raiseComplaint(request);
+        raiseComplaintCall.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<RaiseComplaintResponse> call, @NonNull Response<RaiseComplaintResponse> response) {
                 // 1. Check if the HTTP request was successful (Status code 200-299)
@@ -341,6 +346,17 @@ public class ComplaintRepository {
         // 2. Return the LiveData stream from Room
         // This allows the UI to update automatically whenever the database changes
         return labAssistDao.getAllComplaintsHistory();
+    }
+
+    public void cancelApiCalls(){
+        if(complaintsResponseCall!= null && !complaintsResponseCall.isCanceled())
+            complaintsResponseCall.cancel();
+
+        if(raiseComplaintCall != null && !raiseComplaintCall.isCanceled())
+            raiseComplaintCall.cancel();
+
+        if(labReq != null && !labReq.isCanceled())
+            labReq.cancel();
     }
 
     public static interface ComplaintCallback {

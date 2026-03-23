@@ -2,6 +2,7 @@ package com.android.labassist.admin;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -10,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.android.labassist.auth.SessionManager;
 import com.android.labassist.network.ApiController;
+import com.android.labassist.network.models.AdminRequestQrgId;
 import com.android.labassist.network.models.UserModel;
 import com.android.labassist.network.models.UsersResponse;
 
@@ -38,17 +40,16 @@ public class UsersViewModel extends AndroidViewModel {
     public LiveData<List<UserModel>> getTechniciansList() { return techniciansList; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
 
+    Call<UsersResponse> getUsersCall;
+
     // --- MAIN ACTION ---
     public void fetchAllUsers() {
         isLoading.setValue(true);
         SessionManager session = SessionManager.getInstance(context);
 
-        // Supabase REST API requires 'eq.' to filter by exact match
-        String orgQuery = "eq." + session.getOrganisationId();
-
         // 1. Fetch Technicians from the 'technicians' table
-        ApiController.getInstance(context).getAuthApi().getOrgUsers(session.getOrganisationId())
-                .enqueue(new Callback<UsersResponse>() {
+        getUsersCall = ApiController.getInstance(context).getAuthApi().getOrgUsers(new AdminRequestQrgId(session.getOrganisationId()));
+        getUsersCall.enqueue(new Callback<UsersResponse>() {
 
                     @Override
                     public void onResponse(@NonNull Call<UsersResponse> call, @NonNull Response<UsersResponse> response) {
@@ -88,8 +89,16 @@ public class UsersViewModel extends AndroidViewModel {
                         isLoading.setValue(false);
 
                         // 2. Handle network failures (no internet, server down, timeout)
-                        // Log.e("UsersViewModel", "API call failed: " + t.getMessage());
+                         Log.e("UsersViewModel", "API call failed: " + t.getMessage());
                     }
                 });
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+
+        if (getUsersCall != null && !getUsersCall.isCanceled())
+            getUsersCall.cancel();
     }
 }

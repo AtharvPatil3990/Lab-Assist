@@ -31,6 +31,8 @@ public class NoteRepository {
     private final APICalls api;
     private final ExecutorService executorService; // For running DB inserts off the main thread
 
+    private Call<NotesResponse> labReqCall, deviceReqCall;
+
     public NoteRepository(Context context) {
 
         this.noteDao = AppDatabase.getInstance(context).labAssistDao();
@@ -57,7 +59,8 @@ public class NoteRepository {
 
     // 2. The Background Sync Logic for Labs
     private void refreshLabNotesFromNetwork(String labId) {
-        api.getNotes(NotesRequest.forLab(labId)).enqueue(new Callback<NotesResponse>() {
+        labReqCall = api.getNotes(NotesRequest.forLab(labId));
+        labReqCall.enqueue(new Callback<NotesResponse>() {
             @Override
             public void onResponse(@NonNull Call<NotesResponse> call, @NonNull Response<NotesResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().success) {
@@ -82,7 +85,8 @@ public class NoteRepository {
 
     // 2. The Background Sync Logic
     private void refreshDeviceNotesFromNetwork(String deviceId) {
-        api.getNotes(NotesRequest.forDevice(deviceId)).enqueue(new Callback<>() {
+        deviceReqCall = api.getNotes(NotesRequest.forDevice(deviceId));
+        deviceReqCall.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<NotesResponse> call, @NonNull Response<NotesResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().success) {
@@ -144,5 +148,13 @@ public class NoteRepository {
 
     public void createNote(CreateNoteRequest request, Callback<CreateNoteResponse> callback){
         api.addNote(request).enqueue(callback);
+    }
+
+    public void cancelApiCalls(){
+        if(labReqCall != null && !labReqCall.isCanceled())
+            labReqCall.cancel();
+
+        if(deviceReqCall != null && !deviceReqCall.isCanceled())
+            deviceReqCall.cancel();
     }
 }
