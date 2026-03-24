@@ -167,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
                                 regID
                         );
 
+                        if(userProfile.getRole().equals(SessionManager.ROLE_ADMIN))
+                            sessionManager.setAdminLevel(userProfile.getLevel());
+
                         setupNavigation();
                     }
                 }
@@ -208,11 +211,14 @@ public class MainActivity extends AppCompatActivity {
                             bottomNav.inflateMenu(R.menu.menu_technician);
                             break;
 
+            case SessionManager.ROLE_STUDENT:
+                            navController.setGraph(R.navigation.nav_end_user);
+                            bottomNav.inflateMenu(R.menu.menu_enduser);
+                            break;
+
             default:
-//                For student
-                navController.setGraph(R.navigation.nav_end_user);
-                bottomNav.inflateMenu(R.menu.menu_enduser);
-                break;
+                Toast.makeText(this, "User role is not recognized, please login in again", Toast.LENGTH_LONG).show();
+                navigateToLogin();
         }
 
         NavigationUI.setupWithNavController(bottomNav, navController);

@@ -72,6 +72,9 @@ public class DashboardFragment extends Fragment {
 
         // 4. Initial Fetch
         viewModel.fetchStatistics();
+
+        SessionManager session = SessionManager.getInstance(requireContext());
+        viewModel.fetchOrgArchitecture(session.getOrganisationId(), session.getRole(), session.getAdminLevel());
     }
 
     private void setupHeader() {

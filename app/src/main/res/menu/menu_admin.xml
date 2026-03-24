@@ -6,9 +6,14 @@
         android:icon="@drawable/home_icon"
         />
     <item
-        android:id="@+id/navigation_reports"
+        android:id="@+id/navigation_users"
         android:title="Users"
         android:icon="@drawable/my_complaints_icon"
+        />
+    <item
+        android:id="@+id/navigation_departments"
+        android:title="Labs"
+        android:icon="@drawable/labs"
         />
     <item
         android:id="@+id/navigation_admin_profile"

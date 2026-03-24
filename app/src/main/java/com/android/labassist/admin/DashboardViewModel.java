@@ -13,6 +13,7 @@ import com.android.labassist.auth.SessionManager;
 import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.AdminRequestQrgId;
 import com.android.labassist.network.models.AdminStatsResponse;
+import com.android.labassist.repositories.ArchitectureRepository;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,9 +27,14 @@ public class DashboardViewModel extends AndroidViewModel {
 
     private final Context context;
 
+    private Call<AdminStatsResponse> adminStatsResponseCall;
+
+    private ArchitectureRepository repository;
+
     public DashboardViewModel(@NonNull Application application) {
         super(application);
         context = application.getApplicationContext();
+        repository = new ArchitectureRepository(context);
     }
 
     // --- GETTERS ---
@@ -55,7 +61,8 @@ public class DashboardViewModel extends AndroidViewModel {
         SessionManager sessionManager = SessionManager.getInstance(context);
 
         // Make the API Call
-        ApiController.getInstance(context).getAuthApi().getAdminStatistics(new AdminRequestQrgId(sessionManager.getOrganisationId())).enqueue(new Callback<>() {
+        adminStatsResponseCall = ApiController.getInstance(context).getAuthApi().getAdminStatistics(new AdminRequestQrgId(sessionManager.getOrganisationId()));
+        adminStatsResponseCall.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<AdminStatsResponse> call, @NonNull Response<AdminStatsResponse> response) {
                 isLoading.setValue(false);
@@ -78,5 +85,24 @@ public class DashboardViewModel extends AndroidViewModel {
                 // Optional: Handle error (e.g., set an error LiveData string to show a Toast)
             }
         });
+    }
+
+    public void fetchOrgArchitecture(String orgId, String role, String adminLevel) {
+        repository.fetchAndSaveArchitecture(orgId, role, adminLevel);
+    }
+
+    public void fetchDeptArchitecture(String deptId, String role) {
+
+    }
+
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if(adminStatsResponseCall != null && !adminStatsResponseCall.isCanceled())
+            adminStatsResponseCall.cancel();
+
+        if(repository != null)
+            repository.cancelCalls();
     }
 }

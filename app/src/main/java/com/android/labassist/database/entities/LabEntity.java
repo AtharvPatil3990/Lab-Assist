@@ -14,4 +14,7 @@ public class LabEntity {
     public String labCode;
     public String labType;
     public boolean isUnderMaintenance;
+
+    //    Reference to department
+    public String deptId;
 }

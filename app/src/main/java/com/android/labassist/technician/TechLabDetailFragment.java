@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.android.labassist.auth.SessionManager;
 import com.android.labassist.databinding.FragmentTechLabDetailBinding;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -18,6 +19,7 @@ public class TechLabDetailFragment extends Fragment {
     private String currentLabId;
     private String currentLabName;
 
+    private boolean isAdmin;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,6 +37,8 @@ public class TechLabDetailFragment extends Fragment {
             currentLabName = getArguments().getString("LAB_NAME", "Lab");
         }
 
+        isAdmin = SessionManager.getInstance(requireContext()).getRole().equals(SessionManager.ROLE_ADMIN);
+
         setupToolbar();
         setupViewPagerAndTabs();
     }
@@ -44,6 +48,9 @@ public class TechLabDetailFragment extends Fragment {
         binding.toolbarLabHub.setNavigationOnClickListener(v -> {
             requireActivity().getOnBackPressedDispatcher().onBackPressed();
         });
+
+        if(isAdmin)
+            binding.toolbarLabHub.setTitle("Department Lab");
 
         if(currentLabName != null && !currentLabName.isEmpty())
             binding.toolbarLabHub.setTitle(currentLabName);

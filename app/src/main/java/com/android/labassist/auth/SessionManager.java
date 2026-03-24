@@ -30,6 +30,9 @@ public class SessionManager {
     public static final String ROLE_TECH = "TECHNICIAN";
     public static final String ROLE_ADMIN = "ADMIN";
 
+    public static final String ADMIN_ORG = "ORG_ADMIN";
+    public static final String ADMIN_DEPT = "DEPARTMENT_ADMIN";
+
     private static SessionManager instance;
     private final SharedPreferences prefs;
 
@@ -88,6 +91,14 @@ public class SessionManager {
 
     public void setLastLabSyncTime(long timeInMills){
         prefs.edit().putLong(LAST_LAB_SYNC_TIME, timeInMills).apply();
+    }
+
+    public void setAdminLevel(String adminLevel){
+        prefs.edit().putString(KEY_LEVEL, adminLevel).apply();
+    }
+
+    public String getAdminLevel(){
+        return prefs.getString(KEY_LEVEL, null);
     }
 
     public long getLastLabSyncTime(){

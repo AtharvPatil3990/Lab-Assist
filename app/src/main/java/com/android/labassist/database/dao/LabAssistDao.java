@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 
 import com.android.labassist.database.entities.ComplaintEntity;
+import com.android.labassist.database.entities.DepartmentEntity;
 import com.android.labassist.database.entities.DeviceEntity;
 import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.database.entities.NoteEntity;
@@ -21,6 +22,9 @@ public interface LabAssistDao {
     // REPLACE ensures that if the server updates a lab's name, Room overwrites the old one
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertLabs(List<LabEntity> labs);
+
+    @Query("SELECT * FROM labs WHERE deptId = :deptId")
+    LiveData<List<LabEntity>> getLiveLabsByDeptId(String deptId);
 
     @Query("SELECT * FROM labs ORDER BY labName ASC")
     LiveData<List<LabEntity>> getAllLabs();
@@ -146,4 +150,13 @@ public interface LabAssistDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertNote(NoteEntity note);
+
+
+//    Departments
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertDepartments(List<DepartmentEntity> departments);
+
+    @Query("SELECT * FROM departments ORDER BY name ASC")
+    LiveData<List<DepartmentEntity>> getAllLiveDepartments();
+
 }

@@ -7,7 +7,7 @@ public class LabResponse {
     public boolean success;
 
     @SerializedName("data")
-    public DepartmentData data;
+    public LabsData data;
 
     @SerializedName("error")
     public String error;

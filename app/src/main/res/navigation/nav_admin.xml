@@ -13,7 +13,7 @@
         />
 
     <fragment
-        android:id="@+id/navigation_reports"
+        android:id="@+id/navigation_users"
         android:name="com.android.labassist.admin.ReportsFragment"
         tools:layout="@layout/fragment_admin_reports"
         />
@@ -25,5 +25,51 @@
         android:label="Profile"
         />
 
+    <fragment
+        android:id="@+id/navigation_departments"
+        android:name="com.android.labassist.admin.DepartmentsFragment"
+        tools:layout="@layout/fragment_departments"
+        android:label="Labs">
+
+        <action
+            android:id="@+id/action_admin_to_department_lab"
+            app:destination="@id/navigation_department_labs"/>"
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_admin_lab_detail"
+        android:name="com.android.labassist.technician.TechLabDetailFragment"
+        tools:layout="@layout/fragment_tech_lab_detail"
+        android:label="Lab Details">
+
+        <action
+            android:id="@+id/action_admin_to_device_detail"
+            app:destination="@id/navigation_admin_device_detail"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_department_labs"
+        android:name="com.android.labassist.technician.AssignedLabsFragment"
+        tools:layout="@layout/fragment_assigned_labs"
+        android:label="Department Labs">
+
+        <action
+            android:id="@+id/action_admin_to_lab_detail"
+            app:destination="@id/navigation_admin_lab_detail"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_admin_device_detail"
+        android:name="com.android.labassist.technician.TechDeviceDetailsFragment"
+        tools:layout="@layout/fragment_tech_device_details"
+        />
+
+    <fragment
+        android:id="@+id/navigation_tech_lab_devices"
+        android:name="com.android.labassist.technician.TechLabDevicesFragment"
+        tools:layout="@layout/fragment_tech_lab_devices" />
 
 </navigation>

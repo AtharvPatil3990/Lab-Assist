@@ -8,12 +8,13 @@ import androidx.room.RoomDatabase;
 
 import com.android.labassist.database.dao.LabAssistDao;
 import com.android.labassist.database.entities.ComplaintEntity;
+import com.android.labassist.database.entities.DepartmentEntity;
 import com.android.labassist.database.entities.DeviceEntity;
 import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.database.entities.NoteEntity;
 
 @Database(
-        entities = {LabEntity.class, DeviceEntity.class, ComplaintEntity.class, NoteEntity.class},
+        entities = {LabEntity.class, DeviceEntity.class, ComplaintEntity.class, NoteEntity.class, DepartmentEntity.class},
         version = 1,
         exportSchema = false
 )

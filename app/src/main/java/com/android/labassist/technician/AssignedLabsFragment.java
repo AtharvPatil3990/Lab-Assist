@@ -13,6 +13,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.android.labassist.R;
+import com.android.labassist.auth.SessionManager;
 import com.android.labassist.databinding.FragmentAssignedLabsBinding;
 // Import your database class to get the DAO
 import com.android.labassist.database.AppDatabase;
@@ -24,6 +25,8 @@ public class AssignedLabsFragment extends Fragment {
 // When clicked, navigate to the Lab Detail Hub and pass the labId
     private LabRVAdapter adapter = new LabRVAdapter((labId, labName) -> navigateToLabDetails(labId, labName));
     private AssignedLabsViewModel viewModel;
+    private boolean isAdmin;
+    private String department_id;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,12 +38,23 @@ public class AssignedLabsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if(savedInstanceState != null)
+            department_id = savedInstanceState.getString("DEPARTMENT_ID", "");
+
+        isAdmin = SessionManager.getInstance(requireContext()).getRole().equals(SessionManager.ROLE_ADMIN);
+
         setupRecyclerView();
         setupViewModel();
+
+        setupUI();
+    }
+
+    private void setupUI(){
+        if(isAdmin)
+            binding.toolbar.setTitle("Department Labs");
     }
 
     private void setupRecyclerView() {
-
         binding.rvAssignedLabs.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvAssignedLabs.setAdapter(adapter);
     }
@@ -51,7 +65,7 @@ public class AssignedLabsFragment extends Fragment {
 
         // 2. Get your DAO from your Room Database instance
         AppDatabase db = AppDatabase.getInstance(requireContext());
-        viewModel.init(db.labAssistDao());
+        viewModel.init(db.labAssistDao(), isAdmin, department_id != null ? department_id : "");
 
         // 3. Observe the database!
         viewModel.getAssignedLabs().observe(getViewLifecycleOwner(), labs -> {
@@ -71,7 +85,10 @@ public class AssignedLabsFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("LAB_ID", labId);
         args.putString("LAB_NAME", labName);
-        Navigation.findNavController(requireView()).navigate(R.id.action_assigned_lab_to_lab_detail, args);
+        if(isAdmin)
+            Navigation.findNavController(requireView()).navigate(R.id.action_admin_to_lab_detail, args);
+        else
+            Navigation.findNavController(requireView()).navigate(R.id.action_assigned_lab_to_lab_detail, args);
     }
 
     private void toggleEmptyState(boolean isEmpty) {

@@ -12,13 +12,16 @@ public class AssignedLabsViewModel extends ViewModel {
     private LiveData<List<LabEntity>> labsLiveData;
 
     // Initialize with your DAO, just like you did in NotesViewModel
-    public void init(LabAssistDao dao) {
+    public void init(LabAssistDao dao, boolean isAdmin, String deptId) {
         // Fetch the LiveData directly from Room
-        this.labsLiveData = dao.getAllLabsForLabLive();
+        if(isAdmin) this.labsLiveData = dao.getLiveLabsByDeptId(deptId);
+
+        else this.labsLiveData = dao.getAllLabsForLabLive();
     }
 
     // Expose the list to the Fragment
     public LiveData<List<LabEntity>> getAssignedLabs() {
         return labsLiveData;
     }
+
 }
