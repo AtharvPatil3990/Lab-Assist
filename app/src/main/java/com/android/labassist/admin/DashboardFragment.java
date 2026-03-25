@@ -21,6 +21,8 @@ public class DashboardFragment extends Fragment {
     private FragmentAdminDashboardBinding binding;
     private DashboardViewModel viewModel;
 
+    private boolean firstLaunch = false;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,7 +73,11 @@ public class DashboardFragment extends Fragment {
         binding.swipeRefreshAdmin.setOnRefreshListener(() -> viewModel.fetchStatistics());
 
         // 4. Initial Fetch
-        viewModel.fetchStatistics();
+        if(!firstLaunch) {
+            viewModel.fetchStatistics();
+            viewModel.fetchComplaintsFromServer();
+            firstLaunch = true;
+        }
 
         SessionManager session = SessionManager.getInstance(requireContext());
         viewModel.fetchOrgArchitecture(session.getOrganisationId(), session.getRole(), session.getAdminLevel());

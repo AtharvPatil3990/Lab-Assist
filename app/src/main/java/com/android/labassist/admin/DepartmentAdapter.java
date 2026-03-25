@@ -57,11 +57,7 @@ public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.Vi
             binding.tvDepartmentName.setText(dept.getName());
             binding.tvDepartmentCode.setText("Dept Code: " + (dept.getCode() != null ? dept.getCode() : "N/A"));
 
-            if (dept.getName() != null && !dept.getName().isEmpty()) {
-                binding.tvDepartmentInitial.setText(String.valueOf(dept.getName().charAt(0)).toUpperCase());
-            } else {
-                binding.tvDepartmentInitial.setText("?");
-            }
+            binding.tvDepartmentInitial.setText(dept.getCode());
 
             binding.getRoot().setOnClickListener(v -> listener.onDepartmentClick(dept));
         }

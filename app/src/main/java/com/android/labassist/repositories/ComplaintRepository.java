@@ -219,14 +219,8 @@ public class ComplaintRepository {
             return;
         }
 
-        labReq = null;
-        // 2. Fetch Labs from Supabase
-        if(role.equals( SessionManager.ROLE_STUDENT))
-            labReq = ApiController.getInstance(context).getAuthApi().getDepartmentArchitecture(new LabRequest(departmentId));
-        else if(role.equals(SessionManager.ROLE_TECH)) {
-            Log.d("TechLab", "Fetching Architecture for Tech");
-            labReq = ApiController.getInstance(context).getAuthApi().getDepartmentArchitecture(new LabRequest());
-        }
+        labReq = ApiController.getInstance(context).getAuthApi().getDepartmentArchitecture(new LabRequest(role));
+
         if(labReq == null)
             return;
 

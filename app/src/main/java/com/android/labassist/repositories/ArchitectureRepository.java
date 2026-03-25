@@ -14,10 +14,10 @@ import com.android.labassist.database.entities.DeviceEntity;
 import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.network.APICalls;
 import com.android.labassist.network.ApiController;
-import com.android.labassist.network.models.AdminOrgRequest;
 import com.android.labassist.network.models.AdminOrgResponse;
 import com.android.labassist.network.models.Departments;
 import com.android.labassist.network.models.LabModel;
+import com.android.labassist.network.models.LabRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +55,8 @@ public class ArchitectureRepository {
 
     // 2. The Fetch Method
     public void fetchAndSaveArchitecture(String orgId, String role, String adminLevel) {
-        AdminOrgRequest request = new AdminOrgRequest(orgId, role, adminLevel);
-
         Log.d("ArchitectureAdmin", "Inside the admin architecture api call : beginning");
-        adminOrgCall = apiCalls.getOrgArchitecture(request);
+        adminOrgCall = apiCalls.getOrgArchitecture(new LabRequest(sessionManager.getRole()));
         adminOrgCall.enqueue(new Callback<AdminOrgResponse>() {
             @Override
             public void onResponse(@NonNull Call<AdminOrgResponse> call, @NonNull Response<AdminOrgResponse> response) {

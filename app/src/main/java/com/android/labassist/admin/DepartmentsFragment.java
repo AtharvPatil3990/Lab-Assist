@@ -1,6 +1,7 @@
 package com.android.labassist.admin;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,10 +64,11 @@ public class DepartmentsFragment extends Fragment {
     private void setupRecyclerView() {
         adapter = new DepartmentAdapter(department -> {
             Bundle bundle = new Bundle();
+            Log.d("DepartmentId", "department_id: " + department.getId());
             bundle.putString("department_id", department.getId()); // Using Entity getter
             bundle.putString("department_name", department.getName());
 
-            Navigation.findNavController(requireView()).navigate(R.id.navigation_departments, bundle);
+            Navigation.findNavController(requireView()).navigate(R.id.action_admin_to_department_lab, bundle);
         });
 
         binding.rvDepartments.setLayoutManager(new LinearLayoutManager(requireContext()));

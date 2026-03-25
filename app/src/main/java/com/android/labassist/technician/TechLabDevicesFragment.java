@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.labassist.R;
+import com.android.labassist.auth.SessionManager;
 import com.android.labassist.database.AppDatabase;
 import com.android.labassist.databinding.FragmentTechLabDevicesBinding;
 
@@ -23,6 +24,7 @@ public class TechLabDevicesFragment extends Fragment {
     private FragmentTechLabDevicesBinding binding;
     private DeviceAdapter adapter;
     private String currentLabId;
+    private boolean isAdmin;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class TechLabDevicesFragment extends Fragment {
         // 1. Get the Lab ID passed from the PagerAdapter
         if (getArguments() != null) {
             currentLabId = getArguments().getString("LAB_ID");
+            isAdmin = SessionManager.getInstance(requireContext()).getRole().equals(SessionManager.ROLE_ADMIN);
         }
 
         setupRecyclerView();
@@ -55,7 +58,10 @@ public class TechLabDevicesFragment extends Fragment {
         adapter = new DeviceAdapter(deviceId -> {
              Bundle args = new Bundle();
              args.putString("DEVICE_ID", deviceId);
-             Navigation.findNavController(requireView()).navigate(R.id.action_lab_devices_to_device_details, args);
+             if (isAdmin)
+                 Navigation.findNavController(requireView()).navigate(R.id.action_admin_to_device_detail, args);
+            else
+                 Navigation.findNavController(requireView()).navigate(R.id.action_lab_devices_to_device_details, args);
         });
 
         binding.rvDevices.setLayoutManager(new LinearLayoutManager(requireContext()));

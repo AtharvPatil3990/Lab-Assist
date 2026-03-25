@@ -1,6 +1,7 @@
 package com.android.labassist.technician;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ public class AssignedLabsFragment extends Fragment {
     private AssignedLabsViewModel viewModel;
     private boolean isAdmin;
     private String department_id;
+    private String deptName;
+    private SessionManager sessionManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,14 +37,18 @@ public class AssignedLabsFragment extends Fragment {
         return binding.getRoot();
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(savedInstanceState != null)
-            department_id = savedInstanceState.getString("DEPARTMENT_ID", "");
+        if(getArguments() != null) {
+            department_id = getArguments().getString("department_id", "");
+            deptName = getArguments().getString("department_name", "");
+        }
 
-        isAdmin = SessionManager.getInstance(requireContext()).getRole().equals(SessionManager.ROLE_ADMIN);
+        sessionManager = SessionManager.getInstance(requireContext());
+        isAdmin = sessionManager.getRole().equals(SessionManager.ROLE_ADMIN);
 
         setupRecyclerView();
         setupViewModel();
@@ -50,8 +57,20 @@ public class AssignedLabsFragment extends Fragment {
     }
 
     private void setupUI(){
-        if(isAdmin)
+        if(isAdmin) {
             binding.toolbar.setTitle("Department Labs");
+            binding.toolbar.setSubtitle(deptName);
+
+            if (sessionManager.getAdminLevel().equals(SessionManager.ADMIN_ORG)) {
+                binding.toolbar.setNavigationIcon(R.drawable.arrow_back_icon);
+                binding.toolbar.setNavigationOnClickListener(v -> {
+                    Navigation.findNavController(requireView()).navigateUp();
+                });
+            }
+
+            binding.tvEmptyStateText.setText("No Labs Configured");
+            binding.tvEmptyStateSubText.setText("This department does not have any laboratory infrastructure mapped to it yet.");
+        }
     }
 
     private void setupRecyclerView() {
@@ -65,7 +84,8 @@ public class AssignedLabsFragment extends Fragment {
 
         // 2. Get your DAO from your Room Database instance
         AppDatabase db = AppDatabase.getInstance(requireContext());
-        viewModel.init(db.labAssistDao(), isAdmin, department_id != null ? department_id : "");
+        Log.d("DepartmentId", "Inside AssignedLabs department id: " + department_id);
+        viewModel.init(db.labAssistDao(), isAdmin, department_id);
 
         // 3. Observe the database!
         viewModel.getAssignedLabs().observe(getViewLifecycleOwner(), labs -> {

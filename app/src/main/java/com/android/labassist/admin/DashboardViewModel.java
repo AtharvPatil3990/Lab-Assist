@@ -14,6 +14,7 @@ import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.AdminRequestQrgId;
 import com.android.labassist.network.models.AdminStatsResponse;
 import com.android.labassist.repositories.ArchitectureRepository;
+import com.android.labassist.repositories.ComplaintRepository;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,12 +30,14 @@ public class DashboardViewModel extends AndroidViewModel {
 
     private Call<AdminStatsResponse> adminStatsResponseCall;
 
-    private ArchitectureRepository repository;
+    private final ArchitectureRepository architectureRepository;
+    private final ComplaintRepository complaintRepository;
 
     public DashboardViewModel(@NonNull Application application) {
         super(application);
         context = application.getApplicationContext();
-        repository = new ArchitectureRepository(context);
+        architectureRepository = new ArchitectureRepository(context);
+        complaintRepository = new ComplaintRepository(application);
     }
 
     // --- GETTERS ---
@@ -88,12 +91,18 @@ public class DashboardViewModel extends AndroidViewModel {
     }
 
     public void fetchOrgArchitecture(String orgId, String role, String adminLevel) {
-        repository.fetchAndSaveArchitecture(orgId, role, adminLevel);
+        architectureRepository.fetchAndSaveArchitecture(orgId, role, adminLevel);
     }
 
     public void fetchDeptArchitecture(String deptId, String role) {
 
     }
+
+
+    public void fetchComplaintsFromServer() {
+        complaintRepository.refreshComplaintsFromServer();
+    }
+
 
 
     @Override
@@ -102,7 +111,10 @@ public class DashboardViewModel extends AndroidViewModel {
         if(adminStatsResponseCall != null && !adminStatsResponseCall.isCanceled())
             adminStatsResponseCall.cancel();
 
-        if(repository != null)
-            repository.cancelCalls();
+        if(architectureRepository != null)
+            architectureRepository.cancelCalls();
+
+        if (complaintRepository!=null)
+            complaintRepository.cancelApiCalls();
     }
 }

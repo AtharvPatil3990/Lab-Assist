@@ -25,6 +25,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.android.labassist.ComplaintStatus;
 import com.android.labassist.R;
+import com.android.labassist.auth.SessionManager;
 import com.android.labassist.database.AppDatabase;
 import com.android.labassist.database.entities.ComplaintEntity;
 import com.android.labassist.databinding.BottomSheetComplaintTechBinding;
@@ -51,6 +52,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
     private String currentComplaintId;
     private BottomSheetComplaintTechViewModel viewModel;
+    private boolean isAdmin;
 
     private static final String ARG_COMPLAINT_ID = "COMPLAINT_ID";
 
@@ -103,6 +105,8 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        isAdmin = SessionManager.getInstance(requireContext()).getRole().equals(SessionManager.ROLE_ADMIN);
 
         // 3. Initialize the ViewModel
         viewModel = new ViewModelProvider(this).get(BottomSheetComplaintTechViewModel.class);
@@ -170,6 +174,30 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
             binding.tvProblemDescription.setText(techComplaint.getDescription());
         }
 
+        // Assigning Last updated date / completed date
+        String lastUpdateDateLabel;
+        if (techComplaint.getStatus().equals(ComplaintStatus.RESOLVED)) {
+            lastUpdateDateLabel = "Resolved on";
+            binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.completed_date_icon);
+        } else if (techComplaint.getStatus().equals(ComplaintStatus.CANCELLED)) {
+            lastUpdateDateLabel = "Rejected on";
+            binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.reject_icon);
+        } else {
+            lastUpdateDateLabel = "Status Updated On";
+            binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.last_update_date_icon);
+        }
+        binding.tvLastUpdatedDateLabel.setText(lastUpdateDateLabel);
+
+        if(isAdmin){
+            binding.btnAcceptComplaint.setVisibility(View.GONE);
+            binding.btnReassignComplaint.setVisibility(View.GONE);
+            binding.btnStartWork.setVisibility(View.GONE);
+            binding.layoutStatusButtons.setVisibility(View.GONE);
+
+            binding.ivOverflowMenu.setVisibility(View.GONE);
+            return;
+        }
+
         setBottomButtonSelectedStatus(techComplaint.getStatus());
 
 
@@ -225,7 +253,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                             .setTitle("Override System Queue?")
                             .setMessage("This complaint is queued because you have other pending tasks.\nAre you sure you want to prioritize this one?")
                             .setPositiveButton("Accept Complaint", (dialog, which) -> {
-                                 viewModel.updateComplaintStatus(techComplaint.getId(), "ASSIGNED");
+                                viewModel.updateComplaintStatus(techComplaint.getId(), "ASSIGNED");
                             })
                             .setNegativeButton("Cancel", (dialog, which) -> {
                                 dialog.dismiss();
@@ -242,7 +270,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                 binding.btnStartWork.setVisibility(View.VISIBLE);
 
                 binding.btnStartWork.setOnClickListener(v -> {
-                     viewModel.updateComplaintStatus(techComplaint.getId(), "IN_PROGRESS");
+                    viewModel.updateComplaintStatus(techComplaint.getId(), "IN_PROGRESS");
                 });
                 break;
 
@@ -253,7 +281,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
 
                 // Attach click listeners to your 3 custom chips
                 binding.layoutButtonOngoingState.setOnClickListener(v -> {
-                     viewModel.updateComplaintStatus(techComplaint.getId(), "IN_PROGRESS");
+                    viewModel.updateComplaintStatus(techComplaint.getId(), "IN_PROGRESS");
 //                    setBottomButtonStateOngoing();
 
                 });
@@ -297,7 +325,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                             // 4. SUCCESS! We have a valid reason.
 
                             // TODO: Call your ViewModel, but you will need to pass the 'reason' string now!
-                             viewModel.updateComplaintStatusWithReason(techComplaint.getId(), "CANCELLED", reason);
+                            viewModel.updateComplaintStatusWithReason(techComplaint.getId(), "CANCELLED", reason);
 
                             dialog.dismiss(); // Now we can safely close the dialog
                         }
@@ -318,6 +346,7 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
                 showReassignButton();
                 break;
         }
+
 
         // Overflow Menu for Notes
         binding.ivOverflowMenu.setOnClickListener(v -> {
@@ -357,20 +386,6 @@ public class BottomSheetComplaintTech extends BottomSheetDialogFragment {
             });
             popupMenu.show();
         });
-
-        // Assigning Last updated date / completed date
-        String lastUpdateDateLabel;
-        if (techComplaint.getStatus().equals(ComplaintStatus.RESOLVED)) {
-            lastUpdateDateLabel = "Resolved on";
-            binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.completed_date_icon);
-        } else if (techComplaint.getStatus().equals(ComplaintStatus.CANCELLED)) {
-            lastUpdateDateLabel = "Rejected on";
-            binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.reject_icon);
-        } else {
-            lastUpdateDateLabel = "Status Updated On";
-            binding.ivLastUpdatedDateIcon.setImageResource(R.drawable.last_update_date_icon);
-        }
-        binding.tvLastUpdatedDateLabel.setText(lastUpdateDateLabel);
     }
 
     private void showReassignButton() {

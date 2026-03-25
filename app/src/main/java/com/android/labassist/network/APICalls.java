@@ -1,6 +1,5 @@
 package com.android.labassist.network;
 
-import com.android.labassist.network.models.AdminOrgRequest;
 import com.android.labassist.network.models.AdminOrgResponse;
 import com.android.labassist.network.models.AdminRequestQrgId;
 import com.android.labassist.network.models.AdminStatsResponse;
@@ -61,8 +60,8 @@ public interface APICalls {
     @POST("functions/v1/get-lab-architecture")
     Call<LabResponse> getDepartmentArchitecture(@Body LabRequest request);
 
-    @POST("functions/v1/get-user-profile")
-    Call<AdminOrgResponse> getOrgArchitecture(@Body AdminOrgRequest request);
+    @POST("functions/v1/get-lab-architecture")
+    Call<AdminOrgResponse> getOrgArchitecture(@Body LabRequest request);
 
     @POST("functions/v1/get-students-technicians")
     Call<UsersResponse> getOrgUsers(@Body AdminRequestQrgId requestQrgId);
