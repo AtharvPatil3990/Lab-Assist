@@ -36,6 +36,9 @@ public interface LabAssistDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertDevices(List<DeviceEntity> devices);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertDevice(DeviceEntity device);
+
     // Dynamic query to populate the "Select Device" dropdown based on chosen Lab
     @Query("SELECT * FROM devices WHERE labId = :labId ORDER BY deviceName ASC")
     LiveData<List<DeviceEntity>> getDevicesForLab(String labId);

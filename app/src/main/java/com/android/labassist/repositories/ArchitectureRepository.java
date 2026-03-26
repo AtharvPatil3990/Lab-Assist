@@ -16,11 +16,14 @@ import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.AdminOrgResponse;
 import com.android.labassist.network.models.CreateDepartmentRequest;
 import com.android.labassist.network.models.CreateDepartmentResponse;
+import com.android.labassist.network.models.CreateDeviceRequest;
+import com.android.labassist.network.models.CreateDeviceResponse;
 import com.android.labassist.network.models.CreateLabRequest;
 import com.android.labassist.network.models.CreateLabResponse;
 import com.android.labassist.network.models.Departments;
 import com.android.labassist.network.models.LabModel;
 import com.android.labassist.network.models.LabRequest;
+import com.google.android.datatransport.runtime.firebase.transport.LogEventDropped;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -42,6 +45,7 @@ public class ArchitectureRepository {
     private Call<AdminOrgResponse> adminOrgCall;
     private Call<CreateDepartmentResponse> createDeptCall;
     private Call<CreateLabResponse> createLabCall;
+    private Call<CreateDeviceResponse> createDeviceCall;
 
     public ArchitectureRepository(Context context){
         dao = AppDatabase.getInstance(context).labAssistDao();
@@ -251,7 +255,59 @@ public class ArchitectureRepository {
             }
         });
     }
+    public void createNewDevice(String currentLabId, String code, String name, String dbTypeEnum, String typeOther, ApiStatusListener listener) {
+        CreateDeviceRequest request = new CreateDeviceRequest(currentLabId, code, name, dbTypeEnum, typeOther);
 
+        createDeviceCall = apiCalls.createDevice(request);
+        createDeviceCall.enqueue(new Callback<CreateDeviceResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<CreateDeviceResponse> call, @NonNull Response<CreateDeviceResponse> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+
+                    String newDeviceId = response.body().deviceId;
+
+                    // Insert into local Room DB immediately!
+                    executor.execute(() -> {
+                        DeviceEntity deviceEntity = new DeviceEntity();
+                        deviceEntity.id = newDeviceId;
+                        deviceEntity.labId = currentLabId;
+                        deviceEntity.deviceCode = code;
+                        deviceEntity.deviceName = name;
+                        deviceEntity.deviceType = dbTypeEnum;
+                        deviceEntity.isActive = true;
+
+                        dao.insertDevice(deviceEntity);
+                    });
+
+                    listener.onSuccess("Device registered successfully!");
+
+                }
+
+                else if(response.code() == 23505){
+                    listener.onError("Department already exists");
+                }
+
+                else {
+                    // Grab the exact error message from the Deno function
+                    listener.onError("Failed to add device. Please try again.");
+                    Log.d("AddDevice", "Device type: " + dbTypeEnum);
+                    if(response.body() != null)
+                        Log.d("AddDevice", "Error msg : " + response.body().error);
+
+                    Log.d("AddDevice", "Error msg : " + response.errorBody());
+                    Log.d("AddDevice", "Response: " + response.code() + "Response msg: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<CreateDeviceResponse> call, @NonNull Throwable t) {
+                Log.d("ArchitectureAdmin", "Create Lab Error: " + t.getMessage());
+                listener.onError("Network error. Please check your connection.");
+
+            }
+        });
+    }
 
     public void cancelCalls(){
         if(adminOrgCall != null && !adminOrgCall.isCanceled())
@@ -263,5 +319,7 @@ public class ArchitectureRepository {
         if(createLabCall != null && !createLabCall.isCanceled())
             createLabCall.cancel();
 
+        if(createDeviceCall != null && !createDeviceCall.isCanceled())
+            createDeviceCall.cancel();
     }
 }

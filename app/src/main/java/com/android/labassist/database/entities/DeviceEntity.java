@@ -15,4 +15,5 @@ public class DeviceEntity {
     public String deviceName;
     public String deviceCode;
     public String deviceType;
+    public boolean isActive;
 }

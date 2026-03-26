@@ -86,4 +86,113 @@
         <item>OTHERS</item>
     </string-array>
 
+
+    <string-array name="device_types_ui">
+        <item>Desktop</item>
+        <item>Laptop</item>
+        <item>Workstation</item>
+        <item>Thin Client</item>
+        <item>Server</item>
+        <item>Virtual Server</item>
+        <item>Router</item>
+        <item>Switch</item>
+        <item>Firewall</item>
+        <item>Modem</item>
+        <item>Access Point</item>
+        <item>Load Balancer</item>
+        <item>Network Controller</item>
+        <item>UPS (Uninterruptible Power Supply)</item>
+        <item>Power Distribution Unit (PDU)</item>
+        <item>Inverter</item>
+        <item>Server Rack</item>
+        <item>Cooling Unit</item>
+        <item>Printer</item>
+        <item>Scanner</item>
+        <item>Plotter</item>
+        <item>Projector</item>
+        <item>Display / Monitor</item>
+        <item>Smart Board</item>
+        <item>Webcam</item>
+        <item>NAS (Network Attached Storage)</item>
+        <item>SAN (Storage Area Network)</item>
+        <item>External Storage</item>
+        <item>IoT Device</item>
+        <item>Microcontroller</item>
+        <item>Sensor</item>
+        <item>Actuator</item>
+        <item>Gateway</item>
+        <item>Robotics Unit</item>
+        <item>Robotic Arm</item>
+        <item>Motor Controller</item>
+        <item>Vision Module</item>
+        <item>Oscilloscope</item>
+        <item>Logic Analyzer</item>
+        <item>Signal Generator</item>
+        <item>Multimeter</item>
+        <item>Power Supply Unit (Bench)</item>
+        <item>Forensics Workstation</item>
+        <item>Write Blocker</item>
+        <item>Forensic Storage</item>
+        <item>Security Appliance</item>
+        <item>Audio System</item>
+        <item>Video Capture Device</item>
+        <item>Hypervisor Node</item>
+        <item>VM Host</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="device_types_values">
+        <item>DESKTOP</item>
+        <item>LAPTOP</item>
+        <item>WORKSTATION</item>
+        <item>THIN_CLIENT</item>
+        <item>SERVER</item>
+        <item>VIRTUAL_SERVER</item>
+        <item>ROUTER</item>
+        <item>SWITCH</item>
+        <item>FIREWALL</item>
+        <item>MODEM</item>
+        <item>ACCESS_POINT</item>
+        <item>LOAD_BALANCER</item>
+        <item>NETWORK_CONTROLLER</item>
+        <item>UPS</item>
+        <item>POWER_DISTRIBUTION_UNIT</item>
+        <item>INVERTER</item>
+        <item>RACK</item>
+        <item>COOLING_UNIT</item>
+        <item>PRINTER</item>
+        <item>SCANNER</item>
+        <item>PLOTTER</item>
+        <item>PROJECTOR</item>
+        <item>DISPLAY</item>
+        <item>SMART_BOARD</item>
+        <item>WEBCAM</item>
+        <item>NAS</item>
+        <item>SAN</item>
+        <item>EXTERNAL_STORAGE</item>
+        <item>IOT_DEVICE</item>
+        <item>MICROCONTROLLER</item>
+        <item>SENSOR</item>
+        <item>ACTUATOR</item>
+        <item>GATEWAY</item>
+        <item>ROBOTICS_UNIT</item>
+        <item>ROBOTIC_ARM</item>
+        <item>MOTOR_CONTROLLER</item>
+        <item>VISION_MODULE</item>
+        <item>OSCILLOSCOPE</item>
+        <item>LOGIC_ANALYZER</item>
+        <item>SIGNAL_GENERATOR</item>
+        <item>MULTIMETER</item>
+        <item>POWER_SUPPLY_UNIT</item>
+        <item>FORENSICS_WORKSTATION</item>
+        <item>WRITE_BLOCKER</item>
+        <item>FORENSIC_STORAGE</item>
+        <item>SECURITY_APPLIANCE</item>
+        <item>AUDIO_SYSTEM</item>
+        <item>VIDEO_CAPTURE_DEVICE</item>
+        <item>HYPERVISOR_NODE</item>
+        <item>VM_HOST</item>
+        <item>OTHER</item>
+    </string-array>
+
 </resources>
