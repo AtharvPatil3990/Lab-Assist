@@ -17,6 +17,11 @@ public class Departments{
     @SerializedName("description")
     public String description;
 
+    @SerializedName("created_at")
+    public String createdAt;
+
+
+
     @SerializedName("labs")
     public List<LabModel> labsData;
 

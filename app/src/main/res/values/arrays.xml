@@ -13,4 +13,77 @@
         <item>system</item>
     </string-array>
 
+
+    <string-array name="lab_types_ui">
+        <item>General Computing</item>
+        <item>Programming</item>
+        <item>Operating Systems</item>
+        <item>Data Structures</item>
+        <item>Database</item>
+        <item>Software Engineering</item>
+        <item>Computer Hardware</item>
+        <item>Embedded Systems</item>
+        <item>IoT (Internet of Things)</item>
+        <item>Robotics</item>
+        <item>Digital Electronics</item>
+        <item>Networking</item>
+        <item>Cyber Security</item>
+        <item>Ethical Hacking</item>
+        <item>Forensics</item>
+        <item>Firewall Lab</item>
+        <item>Data Science</item>
+        <item>AI &amp; Machine Learning</item>
+        <item>Big Data</item>
+        <item>Data Analytics</item>
+        <item>Cloud Computing</item>
+        <item>DevOps</item>
+        <item>Virtualization</item>
+        <item>Containerization</item>
+        <item>Computer Graphics</item>
+        <item>Animation</item>
+        <item>Game Development</item>
+        <item>Multimedia</item>
+        <item>Blockchain</item>
+        <item>AR/VR</item>
+        <item>Quantum Computing</item>
+        <item>Research Lab</item>
+        <item>Others</item>
+    </string-array>
+
+    <string-array name="lab_types_values">
+        <item>GENERAL_COMPUTING</item>
+        <item>PROGRAMMING</item>
+        <item>OPERATING_SYSTEMS</item>
+        <item>DATA_STRUCTURES</item>
+        <item>DATABASE</item>
+        <item>SOFTWARE_ENGINEERING</item>
+        <item>COMPUTER_HARDWARE</item>
+        <item>EMBEDDED_SYSTEMS</item>
+        <item>IOT</item>
+        <item>ROBOTICS</item>
+        <item>DIGITAL_ELECTRONICS</item>
+        <item>NETWORKING</item>
+        <item>CYBER_SECURITY</item>
+        <item>ETHICAL_HACKING</item>
+        <item>FORENSICS</item>
+        <item>FIREWALL_LAB</item>
+        <item>DATA_SCIENCE</item>
+        <item>AI_ML</item>
+        <item>BIG_DATA</item>
+        <item>DATA_ANALYTICS</item>
+        <item>CLOUD_COMPUTING</item>
+        <item>DEVOPS</item>
+        <item>VIRTUALIZATION</item>
+        <item>CONTAINERIZATION</item>
+        <item>COMPUTER_GRAPHICS</item>
+        <item>ANIMATION</item>
+        <item>GAME_DEVELOPMENT</item>
+        <item>MULTIMEDIA</item>
+        <item>BLOCKCHAIN</item>
+        <item>AR_VR</item>
+        <item>QUANTUM_COMPUTING</item>
+        <item>RESEARCH_LAB</item>
+        <item>OTHERS</item>
+    </string-array>
+
 </resources>

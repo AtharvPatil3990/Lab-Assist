@@ -90,8 +90,8 @@ public class DashboardViewModel extends AndroidViewModel {
         });
     }
 
-    public void fetchOrgArchitecture(String orgId, String role, String adminLevel) {
-        architectureRepository.fetchAndSaveArchitecture(orgId, role, adminLevel);
+    public void fetchOrgArchitecture() {
+        architectureRepository.fetchAndSaveArchitecture();
     }
 
     public void fetchDeptArchitecture(String deptId, String role) {

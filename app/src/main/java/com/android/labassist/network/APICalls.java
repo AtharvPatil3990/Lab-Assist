@@ -5,6 +5,10 @@ import com.android.labassist.network.models.AdminRequestQrgId;
 import com.android.labassist.network.models.AdminStatsResponse;
 import com.android.labassist.network.models.ComplaintsRequest;
 import com.android.labassist.network.models.ComplaintsResponse;
+import com.android.labassist.network.models.CreateDepartmentRequest;
+import com.android.labassist.network.models.CreateDepartmentResponse;
+import com.android.labassist.network.models.CreateLabRequest;
+import com.android.labassist.network.models.CreateLabResponse;
 import com.android.labassist.network.models.CreateNoteRequest;
 import com.android.labassist.network.models.CreateNoteResponse;
 import com.android.labassist.network.models.DeviceResponse;
@@ -78,4 +82,9 @@ public interface APICalls {
     @POST("functions/v1/reroute-complaint")
     Call<RerouteComplaintResponse> rerouteComplaint(@Body RerouteComplaintRequest request);
 
+    @POST("functions/v1/create-department")
+    Call<CreateDepartmentResponse> createDepartment(@Body CreateDepartmentRequest request);
+
+    @POST("functions/v1/create-lab")
+    Call<CreateLabResponse> createLab(@Body CreateLabRequest request);
 }

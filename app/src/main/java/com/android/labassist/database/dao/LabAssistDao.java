@@ -23,6 +23,9 @@ public interface LabAssistDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertLabs(List<LabEntity> labs);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertLab(LabEntity lab);
+
     @Query("SELECT * FROM labs WHERE deptId = :deptId")
     LiveData<List<LabEntity>> getLiveLabsByDeptId(String deptId);
 
@@ -158,5 +161,8 @@ public interface LabAssistDao {
 
     @Query("SELECT * FROM departments ORDER BY name ASC")
     LiveData<List<DepartmentEntity>> getAllLiveDepartments();
+
+    @Insert
+    void insertDepartment(DepartmentEntity department);
 
 }

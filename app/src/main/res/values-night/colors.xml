@@ -32,6 +32,8 @@
     <color name="fab_icon">#FFFFFF</color>
     <color name="fab_tooltip_text">#FFFFFF</color>
 
+    <color name="fab_ripple">#095E8A</color>
+
     <!--    Material Button       -->
     <color name="primary_btn_bg">#0A6CA8</color>
     <color name="primary_btn_pressed">#095985</color>
