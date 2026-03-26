@@ -14,6 +14,8 @@ import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.network.APICalls;
 import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.AdminOrgResponse;
+import com.android.labassist.network.models.AssignTechToLabRequest;
+import com.android.labassist.network.models.AssignTechToLabResponse;
 import com.android.labassist.network.models.CreateDepartmentRequest;
 import com.android.labassist.network.models.CreateDepartmentResponse;
 import com.android.labassist.network.models.CreateDeviceRequest;
@@ -23,7 +25,6 @@ import com.android.labassist.network.models.CreateLabResponse;
 import com.android.labassist.network.models.Departments;
 import com.android.labassist.network.models.LabModel;
 import com.android.labassist.network.models.LabRequest;
-import com.google.android.datatransport.runtime.firebase.transport.LogEventDropped;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -46,6 +47,8 @@ public class ArchitectureRepository {
     private Call<CreateDepartmentResponse> createDeptCall;
     private Call<CreateLabResponse> createLabCall;
     private Call<CreateDeviceResponse> createDeviceCall;
+
+    private Call<AssignTechToLabResponse> assignTechToLabResponseCall;
 
     public ArchitectureRepository(Context context){
         dao = AppDatabase.getInstance(context).labAssistDao();
@@ -305,6 +308,53 @@ public class ArchitectureRepository {
                 Log.d("ArchitectureAdmin", "Create Lab Error: " + t.getMessage());
                 listener.onError("Network error. Please check your connection.");
 
+            }
+        });
+    }
+
+    public void assignTechToLab(String labId, String techId, boolean isPrimary, ApiStatusListener listener) {
+        assignTechToLabResponseCall = apiCalls.assignTechToLab(new AssignTechToLabRequest(techId, labId, isPrimary));
+        assignTechToLabResponseCall.enqueue(new Callback<AssignTechToLabResponse>() {
+
+            @Override
+            public void onResponse(@NonNull Call<AssignTechToLabResponse> call, @NonNull Response<AssignTechToLabResponse> response) {
+
+                // 1. Success Route
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
+
+                    // Jump to a background thread to update the local cache
+                    // Note: Make sure you have your executor initialized in your repository!
+                    executor.execute(() -> {
+                        // Update your Room database to reflect the new assignment
+                        // e.g., dao.insertTechnicianLabMapping(new MappingEntity(techId, labId, isPrimary));
+                        // or    dao.updateLabTechnician(labId, techId);
+                    });
+
+                    listener.onSuccess("Technician assigned successfully!");
+
+                }
+                // 2. Edge Function Error Route (e.g., "Forbidden: Lab not found")
+                else {
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "Failed to assign technician.";
+
+                        // Parse the JSON error thrown by your Deno function
+                        if (errorBody.contains("\"error\"")) {
+                            org.json.JSONObject jsonObject = new org.json.JSONObject(errorBody);
+                            listener.onError(jsonObject.getString("error"));
+                        } else {
+                            listener.onError(errorBody);
+                        }
+                    } catch (Exception e) {
+                        listener.onError("An unexpected error occurred while parsing the server response.");
+                    }
+                }
+            }
+
+            // 3. Network Failure Route (e.g., No Wi-Fi, Timeout)
+            @Override
+            public void onFailure(@NonNull Call<AssignTechToLabResponse> call, @NonNull Throwable t) {
+                listener.onError("Network error. Please check your internet connection and try again.");
             }
         });
     }

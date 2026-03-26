@@ -3,6 +3,8 @@ package com.android.labassist.network;
 import com.android.labassist.network.models.AdminOrgResponse;
 import com.android.labassist.network.models.AdminRequestQrgId;
 import com.android.labassist.network.models.AdminStatsResponse;
+import com.android.labassist.network.models.AssignTechToLabRequest;
+import com.android.labassist.network.models.AssignTechToLabResponse;
 import com.android.labassist.network.models.ComplaintsRequest;
 import com.android.labassist.network.models.ComplaintsResponse;
 import com.android.labassist.network.models.CreateDepartmentRequest;
@@ -92,4 +94,7 @@ public interface APICalls {
 
     @POST("functions/v1/create-device")
     Call<CreateDeviceResponse> createDevice(@Body CreateDeviceRequest request);
+
+    @POST("functions/v1/assign-technician-to-lab")
+    Call<AssignTechToLabResponse> assignTechToLab(@Body AssignTechToLabRequest request);
 }

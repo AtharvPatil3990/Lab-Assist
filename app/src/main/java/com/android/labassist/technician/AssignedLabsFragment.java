@@ -226,6 +226,8 @@ public class AssignedLabsFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("LAB_ID", labId);
         args.putString("LAB_NAME", labName);
+        args.putString("DEPARTMENT_ID", department_id);
+
         if(isAdmin)
             Navigation.findNavController(requireView()).navigate(R.id.action_admin_to_lab_detail, args);
         else

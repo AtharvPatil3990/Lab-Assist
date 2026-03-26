@@ -12,9 +12,11 @@ import com.android.labassist.database.entities.DepartmentEntity;
 import com.android.labassist.database.entities.DeviceEntity;
 import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.database.entities.NoteEntity;
+import com.android.labassist.database.entities.StudentEntity;
+import com.android.labassist.database.entities.TechnicianEntity;
 
 @Database(
-        entities = {LabEntity.class, DeviceEntity.class, ComplaintEntity.class, NoteEntity.class, DepartmentEntity.class},
+        entities = {LabEntity.class, DeviceEntity.class, ComplaintEntity.class, NoteEntity.class, DepartmentEntity.class, TechnicianEntity.class, StudentEntity.class},
         version = 1,
         exportSchema = false
 )
@@ -30,6 +32,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (instance == null) {
                     instance = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "lab_assist_database")
+                            .allowMainThreadQueries()
                             .fallbackToDestructiveMigration(false) // Wipes DB if version changes (good for early dev)
                             .build();
                 }

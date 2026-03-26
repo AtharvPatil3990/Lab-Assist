@@ -10,12 +10,19 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.labassist.auth.SessionManager;
+import com.android.labassist.database.AppDatabase;
+import com.android.labassist.database.dao.LabAssistDao;
+import com.android.labassist.database.entities.StudentEntity;
+import com.android.labassist.database.entities.TechnicianEntity;
 import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.AdminRequestQrgId;
 import com.android.labassist.network.models.UserModel;
 import com.android.labassist.network.models.UsersResponse;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,24 +65,40 @@ public class UsersViewModel extends AndroidViewModel {
 
                         // 2. Check if the HTTP request was successful and our JSON success flag is true
                         if (response.isSuccessful() && response.body() != null && response.body().success) {
+                            ExecutorService executor = Executors.newSingleThreadExecutor();
+                            LabAssistDao dao = AppDatabase.getInstance(context).labAssistDao();
 
                             List<UserModel> fetchedStudents = response.body().students;
                             List<UserModel> fetchedTechs = response.body().technicians;
 
+                            List<StudentEntity> studentEntityList = new ArrayList<>();
+
                             // 3. Process Students: Tag them so the UI knows to make their badge Orange
                             if (fetchedStudents != null) {
                                 for (UserModel student : fetchedStudents) {
+                                    studentEntityList.add(new StudentEntity(student.id, student.name, student.rollNumber));
+
                                     student.role = "Student";
                                 }
                                 studentsList.setValue(fetchedStudents);
+
+                                executor.execute(() -> {
+                                    dao.insertStudents(studentEntityList);
+                                });
                             }
+
+                            List<TechnicianEntity> technicianEntityList = new ArrayList<>();
 
                             // 4. Process Technicians: Tag them so the UI knows to make their badge Blue
                             if (fetchedTechs != null) {
                                 for (UserModel tech : fetchedTechs) {
                                     tech.role = "Technician";
+                                    technicianEntityList.add(new TechnicianEntity(tech.employeeCode, tech.id, tech.level, tech.name, tech.departmentId));
                                 }
                                 techniciansList.setValue(fetchedTechs);
+                                executor.execute(() -> {
+                                    dao.insertTechnicians(technicianEntityList);
+                                });
                             }
                         } else {
                             // Optional: Handle logical errors from your Edge Function (e.g., success = false)

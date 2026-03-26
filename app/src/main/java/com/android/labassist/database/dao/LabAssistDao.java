@@ -12,6 +12,8 @@ import com.android.labassist.database.entities.DepartmentEntity;
 import com.android.labassist.database.entities.DeviceEntity;
 import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.database.entities.NoteEntity;
+import com.android.labassist.database.entities.StudentEntity;
+import com.android.labassist.database.entities.TechnicianEntity;
 
 import java.util.List;
 
@@ -167,5 +169,14 @@ public interface LabAssistDao {
 
     @Insert
     void insertDepartment(DepartmentEntity department);
+
+    @Query("SELECT * FROM technicians WHERE department_id = :departmentId")
+    List<TechnicianEntity> getTechniciansByDeptId(String departmentId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertStudents(List<StudentEntity> students);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertTechnicians(List<TechnicianEntity> technicians);
 
 }

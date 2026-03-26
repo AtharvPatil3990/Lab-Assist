@@ -12,6 +12,9 @@ public class UserModel {
     @SerializedName("is_active")
     public boolean isActive;
 
+    @SerializedName("department_id")
+    public String departmentId;
+
     // --- Student specific fields ---
     @SerializedName("roll_number")
     public String rollNumber;
