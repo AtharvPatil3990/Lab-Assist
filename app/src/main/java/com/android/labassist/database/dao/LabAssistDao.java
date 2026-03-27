@@ -173,8 +173,17 @@ public interface LabAssistDao {
     @Query("SELECT * FROM technicians WHERE department_id = :departmentId")
     List<TechnicianEntity> getTechniciansByDeptId(String departmentId);
 
+    @Query("SELECT * FROM departments")
+    List<DepartmentEntity> getDepartmentsByOrgId();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertStudents(List<StudentEntity> students);
+
+    @Query("SELECT * FROM students")
+    LiveData<List<StudentEntity>> getLiveStudents();
+
+    @Query("SELECT * FROM technicians")
+    LiveData<List<TechnicianEntity>> getLiveTechnicians();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertTechnicians(List<TechnicianEntity> technicians);

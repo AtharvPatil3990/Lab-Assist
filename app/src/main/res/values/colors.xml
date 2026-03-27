@@ -124,4 +124,6 @@
 <!--    Reject button     -->
     <color name="reject_btn_color">#D32F2F</color>
 
+    <color name="pure">#FFFFFF</color>
+
 </resources>

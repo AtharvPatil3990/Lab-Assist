@@ -28,4 +28,5 @@ public class UserModel {
 
     // --- App specific fields (Not in JSON, we set this manually in ViewModel) ---
     public String role;
+
 }

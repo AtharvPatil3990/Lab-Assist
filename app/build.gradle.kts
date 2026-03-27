@@ -16,6 +16,7 @@ if (localPropertiesFile.exists()) {
 val supabaseUrl = localProperties.getProperty("SUPABASE_URL") ?: ""
 val supabaseAnonKey = localProperties.getProperty("SUPABASE_ANON_KEY") ?: ""
 
+val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID") ?: ""
 
 android {
     namespace = "com.android.labassist"
@@ -42,6 +43,12 @@ android {
             "String",
             "SUPABASE_ANON_KEY",
             "\"$supabaseAnonKey\""
+        )
+
+        buildConfigField(
+            type = "String",
+            name = "GOOGLE_WEB_CLIENT_ID",
+            value = "\"$googleWebClientId\""
         )
     }
 
@@ -103,5 +110,14 @@ dependencies {
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
 
-    implementation("androidx.lifecycle:lifecycle-livedata:2.6.2")
+    implementation(libs.lifecycle.livedata)
+
+    implementation(libs.play.services.auth)
+
+    // The core Credential Manager API
+    implementation("androidx.credentials:credentials:1.2.2")
+// Play Services integration for Credential Manager
+    implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
+// Google ID library for parsing the modern tokens
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
 }

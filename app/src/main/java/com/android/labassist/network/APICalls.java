@@ -16,6 +16,9 @@ import com.android.labassist.network.models.CreateLabResponse;
 import com.android.labassist.network.models.CreateNoteRequest;
 import com.android.labassist.network.models.CreateNoteResponse;
 import com.android.labassist.network.models.DeviceResponse;
+import com.android.labassist.network.models.GoogleAuthRequest;
+import com.android.labassist.network.models.InviteUserRequest;
+import com.android.labassist.network.models.InviteUserResponse;
 import com.android.labassist.network.models.LabRequest;
 import com.android.labassist.network.models.LabResponse;
 import com.android.labassist.network.models.LoginRequest;
@@ -97,4 +100,10 @@ public interface APICalls {
 
     @POST("functions/v1/assign-technician-to-lab")
     Call<AssignTechToLabResponse> assignTechToLab(@Body AssignTechToLabRequest request);
+
+    @POST("auth/v1/token?grant_type=id_token")
+    Call<LoginResponse> signInWithGoogle(@Body GoogleAuthRequest request);
+
+    @POST("functions/v1/send-invite")
+    Call<InviteUserResponse> inviteUser(@Body InviteUserRequest request);
 }

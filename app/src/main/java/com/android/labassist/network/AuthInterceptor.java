@@ -1,9 +1,6 @@
 package com.android.labassist.network;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -12,7 +9,6 @@ import com.android.labassist.AppNetworkState;
 import com.android.labassist.BuildConfig;
 import com.android.labassist.NoNetworkException;
 import com.android.labassist.auth.AuthEventBus;
-import com.android.labassist.auth.SessionManager;
 import com.android.labassist.auth.TokenManager;
 import com.android.labassist.network.models.LoginResponse;
 import com.android.labassist.network.models.RefreshSessionRequest;

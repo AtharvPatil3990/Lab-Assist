@@ -23,6 +23,8 @@ import com.android.labassist.network.models.CreateDeviceResponse;
 import com.android.labassist.network.models.CreateLabRequest;
 import com.android.labassist.network.models.CreateLabResponse;
 import com.android.labassist.network.models.Departments;
+import com.android.labassist.network.models.InviteUserRequest;
+import com.android.labassist.network.models.InviteUserResponse;
 import com.android.labassist.network.models.LabModel;
 import com.android.labassist.network.models.LabRequest;
 
@@ -47,6 +49,7 @@ public class ArchitectureRepository {
     private Call<CreateDepartmentResponse> createDeptCall;
     private Call<CreateLabResponse> createLabCall;
     private Call<CreateDeviceResponse> createDeviceCall;
+    private Call<InviteUserResponse> inviteUserCall;
 
     private Call<AssignTechToLabResponse> assignTechToLabResponseCall;
 
@@ -120,7 +123,8 @@ public class ArchitectureRepository {
                         apiDept.deptId,
                         true, // Defaulting to true, or map from API if you add it later
                         apiDept.deptName,
-                        parseSupabaseTime(apiDept.createdAt) // Or parse from API
+                        parseSupabaseTime(apiDept.createdAt), // Or parse from API,
+                        apiDept.orgId
                 );
                 departmentEntities.add(deptEntity);
 
@@ -177,7 +181,7 @@ public class ArchitectureRepository {
                             long createdAt = parseSupabaseTime(response.body().createdAt);
 
                             executor.execute(() -> {
-                                DepartmentEntity departmentEntity = new DepartmentEntity(deptCode, deptId, true, deptName, createdAt);
+                                DepartmentEntity departmentEntity = new DepartmentEntity(deptCode, deptId, true, deptName, createdAt, sessionManager.getOrganisationId());
                                 dao.insertDepartment(departmentEntity);
                             });
                             listener.onSuccess("Department created successfully!");
@@ -320,7 +324,7 @@ public class ArchitectureRepository {
             public void onResponse(@NonNull Call<AssignTechToLabResponse> call, @NonNull Response<AssignTechToLabResponse> response) {
 
                 // 1. Success Route
-                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                if (response.isSuccessful() && response.body() != null) {
 
                     // Jump to a background thread to update the local cache
                     // Note: Make sure you have your executor initialized in your repository!
@@ -359,6 +363,33 @@ public class ArchitectureRepository {
         });
     }
 
+    public void inviteUser(String email, String rollNoOrEmpNo, String role, String orgId, String deptId, ApiStatusListener listener){
+        InviteUserRequest request = new InviteUserRequest(email, rollNoOrEmpNo, deptId, orgId, role);
+        Log.d("InviteReq", "Email: "+ email);
+        Log.d("InviteReq", "Roll: "+ rollNoOrEmpNo);
+        Log.d("InviteReq", "role: "+ role);
+        Log.d("InviteReq", "orgId: "+ orgId);
+        Log.d("InviteReq", "dept: "+ deptId);
+        inviteUserCall = apiCalls.inviteUser(request);
+        inviteUserCall.enqueue(new Callback<InviteUserResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<InviteUserResponse> call, @NonNull Response<InviteUserResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    listener.onSuccess("User Invite sent successfully");
+                }
+                else{
+
+                    listener.onError("Failed to send invite");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<InviteUserResponse> call, @NonNull Throwable t) {
+                listener.onError("An unexpected error occurred");
+            }
+        });
+    }
+
     public void cancelCalls(){
         if(adminOrgCall != null && !adminOrgCall.isCanceled())
             adminOrgCall.cancel();
@@ -371,5 +402,8 @@ public class ArchitectureRepository {
 
         if(createDeviceCall != null && !createDeviceCall.isCanceled())
             createDeviceCall.cancel();
+
+        if(inviteUserCall != null && !inviteUserCall.isCanceled())
+            inviteUserCall.cancel();
     }
 }

@@ -20,7 +20,8 @@ public class Departments{
     @SerializedName("created_at")
     public String createdAt;
 
-
+    @SerializedName("organization_id")
+    public String orgId;
 
     @SerializedName("labs")
     public List<LabModel> labsData;

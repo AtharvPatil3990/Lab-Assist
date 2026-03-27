@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="pure">#00000000</color>
+
     <color name="secondary_bg">#0E141A</color>
     <color name="background_color">#15202B</color>
 
