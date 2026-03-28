@@ -34,15 +34,19 @@ import androidx.credentials.exceptions.GetCredentialException;
 import com.android.labassist.auth.AuthEventBus;
 import com.android.labassist.auth.TokenManager;
 import com.android.labassist.databinding.ActivityLoginBinding;
+import com.android.labassist.network.APICalls;
 import com.android.labassist.network.ApiController;
 import com.android.labassist.network.models.GoogleAuthRequest;
 import com.android.labassist.network.models.LoginRequest;
 import com.android.labassist.network.models.LoginResponse;
 import com.android.labassist.BuildConfig;
+import com.android.labassist.network.models.UpdateFcmTokenRequest;
+import com.android.labassist.network.models.UpdateFcmTokenResponse;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import android.view.inputmethod.InputMethodManager;
 
@@ -203,6 +207,8 @@ public class LoginActivity extends AppCompatActivity {
                 if(response.isSuccessful() && response.body()!=null) {
                     LoginResponse body = response.body();
                     TokenManager.getInstance(LoginActivity.this).saveTokens(body.getAccessToken(), body.getRefreshToken());
+                    getFcmToken();
+
                     Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
@@ -252,6 +258,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     // Reusing your exact TokenManager logic!
                     TokenManager.getInstance(LoginActivity.this).saveTokens(body.getAccessToken(), body.getRefreshToken());
+                    getFcmToken();
 
                     Toast.makeText(LoginActivity.this, "Google Login Successful", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
@@ -307,6 +314,36 @@ public class LoginActivity extends AppCompatActivity {
                 wasOffline = false;
             }
         });
+    }
+
+    private void getFcmToken(){
+        FirebaseMessaging.getInstance()
+                .getToken()
+                .addOnCompleteListener(task -> {
+                   if(!task.isSuccessful() && task.getResult() == null){
+                       Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                       return;
+                   }
+                   String token = task.getResult();
+                   Log.d("FCMToken", "Token: " + token);
+                   ApiController.getInstance(LoginActivity.this).getAuthApi()
+                           .updateFcmToken(new UpdateFcmTokenRequest(token))
+                           .enqueue(new Callback<UpdateFcmTokenResponse>() {
+                               @Override
+                               public void onResponse(@NonNull Call<UpdateFcmTokenResponse> call, @NonNull Response<UpdateFcmTokenResponse> response) {
+                                   if(response.isSuccessful()){
+                                       Log.d("FCMToken", "Response success code: " + response.code());
+                                   }
+                                   else
+                                       Log.d("FCMToken", "Response success code: " + response.message());
+                               }
+
+                               @Override
+                               public void onFailure(@NonNull Call<UpdateFcmTokenResponse> call, @NonNull Throwable t) {
+                                   Log.d("FCMToken", "onFailure msg: " + t.getMessage());
+                               }
+                           });
+                });
     }
 
     private void hideKeyboardAndClearFocus() {

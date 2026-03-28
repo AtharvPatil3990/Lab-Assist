@@ -13,6 +13,11 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_raise_complaint"
             app:destination="@id/navigation_raise_complaint" />
+
+        <action
+            android:id="@+id/action_home_to_notification"
+            app:destination="@id/navigation_notifications"/>
+
     </fragment>
 
     <fragment
@@ -44,6 +49,13 @@
         android:id="@+id/navigation_settings"
         android:name="com.android.labassist.endUser.SettingFragment"
         android:label="Settings"
+        />
+
+    <fragment
+        android:id="@+id/navigation_notifications"
+        android:name="com.android.labassist.NotificationFragment"
+        tools:layout="@layout/fragment_notification"
+        android:label="Notification"
         />
 
 </navigation>

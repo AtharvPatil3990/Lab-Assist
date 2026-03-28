@@ -9,8 +9,12 @@
         android:id="@+id/navigation_task"
         android:name="com.android.labassist.technician.TaskDashboardFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_technician_dashboard"
+        tools:layout="@layout/fragment_technician_dashboard">
+        <action
+            android:id="@+id/action_dashboard_to_notification"
+            app:destination="@id/navigation_tech_notifications"
         />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_history"
@@ -34,11 +38,15 @@
         android:id="@+id/action_global_view_notes"
         app:destination="@id/navigation_view_notes" />
 
-    <fragment
+    <dialog
         android:id="@+id/navigation_complaint_bottom_sheet"
         android:name="com.android.labassist.technician.BottomSheetComplaintTech"
         tools:layout="@layout/bottom_sheet_complaint_tech"
         android:label="Complaint Bottom Sheet" />
+
+    <action
+        android:id="@+id/action_global_to_complaintBottomSheet"
+        app:destination="@id/navigation_complaint_bottom_sheet" />
 
     <fragment
         android:id="@+id/navigation_view_notes"
@@ -85,6 +93,13 @@
         android:id="@+id/navigation_device_detail"
         android:name="com.android.labassist.technician.TechDeviceDetailsFragment"
         tools:layout="@layout/fragment_tech_device_details"
+        />
+
+    <fragment
+        android:id="@+id/navigation_tech_notifications"
+        android:name="com.android.labassist.NotificationFragment"
+        android:layout="@layout/fragment_notification"
+        android:label="Notification"
         />
 
 </navigation>

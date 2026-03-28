@@ -9,20 +9,20 @@
             android:iconTint="@color/toolbar_icon"
             app:showAsAction="always"/>
 
-        <!-- 3 Dots (Overflow menu) -->
-        <item
-            android:id="@+id/action_settings"
-            android:iconTint="@color/toolbar_icon"
-            android:title="Settings"/>
+<!--        &lt;!&ndash; 3 Dots (Overflow menu) &ndash;&gt;-->
+<!--        <item-->
+<!--            android:id="@+id/action_settings"-->
+<!--            android:iconTint="@color/toolbar_icon"-->
+<!--            android:title="Settings"/>-->
 
-        <item
-            android:id="@+id/action_help"
-            android:iconTint="@color/toolbar_icon"
-            android:title="Help" />
+<!--        <item-->
+<!--            android:id="@+id/action_help"-->
+<!--            android:iconTint="@color/toolbar_icon"-->
+<!--            android:title="Help" />-->
 
-        <item
-            android:id="@+id/action_logout"
-            android:iconTint="@color/toolbar_icon"
-            android:title="Logout" />
+<!--        <item-->
+<!--            android:id="@+id/action_logout"-->
+<!--            android:iconTint="@color/toolbar_icon"-->
+<!--            android:title="Logout" />-->
 
 </menu>

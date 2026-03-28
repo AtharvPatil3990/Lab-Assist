@@ -32,6 +32,8 @@ import com.android.labassist.network.models.RerouteComplaintRequest;
 import com.android.labassist.network.models.RerouteComplaintResponse;
 import com.android.labassist.network.models.UpdateComplaintStatusRequest;
 import com.android.labassist.network.models.UpdateComplaintStatusResponse;
+import com.android.labassist.network.models.UpdateFcmTokenRequest;
+import com.android.labassist.network.models.UpdateFcmTokenResponse;
 import com.android.labassist.network.models.UserProfileResponse;
 import com.android.labassist.network.models.UsersResponse;
 
@@ -106,4 +108,7 @@ public interface APICalls {
 
     @POST("functions/v1/send-invite")
     Call<InviteUserResponse> inviteUser(@Body InviteUserRequest request);
+
+    @POST("functions/v1/update-fcm-token")
+    Call<UpdateFcmTokenResponse> updateFcmToken(@Body UpdateFcmTokenRequest request);
 }

@@ -22,6 +22,7 @@ roomCompiler = "2.8.4"
 roomRuntime = "2.8.4"
 securityCrypto = "1.1.0"
 swiperefreshlayout = "1.2.0"
+googleGmsServices = "4.4.1"
 
 [libraries]
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
@@ -53,4 +54,5 @@ swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefre
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsServices" }
 

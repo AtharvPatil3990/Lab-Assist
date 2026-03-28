@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
@@ -89,16 +90,14 @@ public class MainActivity extends AppCompatActivity {
             if(!isConnected){
                 wasOffline = true;
 
-                if(offlineSnackbar != null) {
-                    offlineSnackbar = Snackbar.make(rootView, "No internet connection. You are offline.", Snackbar.LENGTH_INDEFINITE);
-                    offlineSnackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.cancelled_status));
-                    offlineSnackbar.setTextColor(ContextCompat.getColor(this, R.color.warning_text_color));
+                offlineSnackbar = Snackbar.make(rootView, "No internet connection. You are offline.", Snackbar.LENGTH_INDEFINITE);
+                offlineSnackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.cancelled_status));
+                offlineSnackbar.setTextColor(ContextCompat.getColor(this, R.color.warning_text_color));
 
-
-                    if (bottomNav != null) {
-                        offlineSnackbar.setAnchorView(bottomNav);
-                    }
+                if (bottomNav != null) {
+                    offlineSnackbar.setAnchorView(bottomNav);
                 }
+
                 if (offlineSnackbar!=null && !offlineSnackbar.isShown())
                     offlineSnackbar.show();
             }
@@ -222,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         NavigationUI.setupWithNavController(bottomNav, navController);
+        // 🌟 Only check for notifications AFTER the graph is fully loaded!
+        handleNotificationIntent(getIntent());
     }
 
     private void handleAuthFailure(String logMessage) {
@@ -236,6 +237,37 @@ public class MainActivity extends AppCompatActivity {
             case SessionManager.ROLE_TECH:  return data.getEmpCode();
             default:                        return data.getRollNumber();
         }
+    }
+
+    private void handleNotificationIntent(Intent intent) {
+        if (intent != null && intent.getExtras() != null) {
+            String complaintId = intent.getStringExtra("complaint_id");
+
+            if (complaintId != null) {
+                Log.d("FCM_ROUTING", "Deep linking straight to complaint: " + complaintId);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("complaint_id", complaintId);
+
+                // Grab your NavController
+                NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+                try {
+                    navController.navigate(R.id.action_global_to_complaintBottomSheet, bundle);
+                } catch (IllegalArgumentException e) {
+                    Log.e("FCM_ROUTING", "Navigation action not found. Check your nav_graph.xml", e);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
+
+        // Update the Activity's current intent so we don't process the old one
+        setIntent(intent);
+        handleNotificationIntent(intent);
     }
 
     @Override

@@ -23,7 +23,12 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.labassist.R;
+import com.android.labassist.auth.AuthEventBus;
 import com.android.labassist.auth.SessionManager;
+import com.android.labassist.auth.TokenManager;
+import com.android.labassist.database.AppDatabase;
+
+import java.util.concurrent.Executors;
 
 public class SettingFragment extends PreferenceFragmentCompat {
 //  TODO: Edit profile function
@@ -71,15 +76,6 @@ public class SettingFragment extends PreferenceFragmentCompat {
             notificationPref.setOnPreferenceChangeListener((preference, newValue) -> {
                 boolean isEnabled = (boolean) newValue;
                 setNotificationState(isEnabled, notificationPref);
-                return true;
-            });
-        }
-//         Logout Button
-        Preference logoutPref = findPreference("account_logout");
-        if(logoutPref != null) {
-            logoutPref.setOnPreferenceClickListener(preference -> {
-//                Todo: Write extra logic for logout here
-                SessionManager.getInstance(requireContext()).logout();
                 return true;
             });
         }

@@ -14,24 +14,24 @@
         android:iconTint="@color/icon"
         />
 
-    <item
-        android:id="@+id/menu_resign_complaint"
-        android:title="Resign Complaint"
-        android:icon="@drawable/resign_complaint_icon"
-        android:iconTint="@color/icon"
-        />
+<!--    <item-->
+<!--        android:id="@+id/menu_resign_complaint"-->
+<!--        android:title="Resign Complaint"-->
+<!--        android:icon="@drawable/resign_complaint_icon"-->
+<!--        android:iconTint="@color/icon"-->
+<!--        />-->
 
-    <item
-        android:id="@+id/menu_on_hold"
-        android:title="Put On Hold"
-        android:icon="@drawable/hold_icon"
-        android:iconTint="@color/icon"
-        />
+<!--    <item-->
+<!--        android:id="@+id/menu_on_hold"-->
+<!--        android:title="Put On Hold"-->
+<!--        android:icon="@drawable/hold_icon"-->
+<!--        android:iconTint="@color/icon"-->
+<!--        />-->
 
-    <item
-        android:id="@+id/menu_flag_duplicate"
-        android:title="Flag as Duplicate"
-        android:icon="@drawable/duplicate_icon"
-        android:iconTint="@color/icon"
-        />
+<!--    <item-->
+<!--        android:id="@+id/menu_flag_duplicate"-->
+<!--        android:title="Flag as Duplicate"-->
+<!--        android:icon="@drawable/duplicate_icon"-->
+<!--        android:iconTint="@color/icon"-->
+<!--        />-->
 </menu>

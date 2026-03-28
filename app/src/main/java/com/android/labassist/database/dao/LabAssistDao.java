@@ -12,6 +12,7 @@ import com.android.labassist.database.entities.DepartmentEntity;
 import com.android.labassist.database.entities.DeviceEntity;
 import com.android.labassist.database.entities.LabEntity;
 import com.android.labassist.database.entities.NoteEntity;
+import com.android.labassist.database.entities.NotificationEntity;
 import com.android.labassist.database.entities.StudentEntity;
 import com.android.labassist.database.entities.TechnicianEntity;
 
@@ -187,5 +188,24 @@ public interface LabAssistDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertTechnicians(List<TechnicianEntity> technicians);
+
+    // Insert new notifications from Supabase. Replaces if it already exists.
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertNotifications(List<NotificationEntity> notifications);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertNotification(NotificationEntity notification);
+
+    // Get all notifications sorted by newest first
+    @Query("SELECT * FROM notifications ORDER BY created_at DESC")
+    LiveData<List<NotificationEntity>> getAllNotifications();
+
+    // Get a count of unread notifications (perfect for a red badge on the bell icon!)
+    @Query("SELECT COUNT(*) FROM notifications WHERE is_read = 0")
+    LiveData<Integer> getUnreadCount();
+
+    // Mark a specific notification as read when clicked
+    @Query("UPDATE notifications SET is_read = 1 WHERE id = :notificationId")
+    void markAsRead(int notificationId);
 
 }

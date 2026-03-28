@@ -5,14 +5,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.labassist.R;
 import com.android.labassist.auth.SessionManager;
 import com.android.labassist.databinding.FragmentTechnicianDashboardBinding;
+import com.android.labassist.endUser.HomeFragment;
 import com.android.labassist.network.models.ComplaintsResponse;
 
 import java.text.SimpleDateFormat;
@@ -47,6 +50,17 @@ public class TaskDashboardFragment extends Fragment {
 
         if(SessionManager.getInstance(requireContext()).getLastLabSyncTime() <= System.currentTimeMillis() + 18000000)
             viewModel.syncLabArchitecture();
+
+
+        // 👇 ADD THIS TOOLBAR LISTENER HERE 👇
+        binding.toolbarTechHome.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_notifications) {
+                NavHostFragment.findNavController(TaskDashboardFragment.this)
+                        .navigate(R.id.action_dashboard_to_notification);
+                return true; // Tells Android we successfully handled the click
+            }
+            return false;
+        });
     }
 
     private void updateDashboardCard(ComplaintsResponse.Stats stats) {

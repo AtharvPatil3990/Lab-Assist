@@ -104,6 +104,16 @@ public class HomeFragment extends Fragment {
                     navigate(R.id.action_navigation_home_to_navigation_raise_complaint);
         });
 
+        // 👇 ADD THIS TOOLBAR LISTENER HERE 👇
+        binding.toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_notifications) {
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(R.id.action_home_to_notification);
+                return true; // Tells Android we successfully handled the click
+            }
+            return false;
+        });
+
         // Add last sync time with 24 hrs
         SessionManager session =  SessionManager.getInstance(requireContext());
         long lastSyncTime = session.getLastLabSyncTime() + (86400000);

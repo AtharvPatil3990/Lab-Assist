@@ -1,6 +1,7 @@
 package com.android.labassist.endUser;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +12,23 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.android.labassist.LoginActivity;
 import com.android.labassist.R;
 import com.android.labassist.auth.AuthEventBus;
 import com.android.labassist.auth.SessionManager;
 import com.android.labassist.auth.TokenManager;
 import com.android.labassist.database.AppDatabase;
 import com.android.labassist.databinding.FragmentUserProfileBinding;
+import com.android.labassist.network.ApiController;
+import com.android.labassist.network.models.UpdateFcmTokenRequest;
+import com.android.labassist.network.models.UpdateFcmTokenResponse;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
 
@@ -82,7 +91,26 @@ public class ProfileFragment extends Fragment {
             // Trigger the logout event to send the user back to the Login screen
             AuthEventBus.getInstance().triggerLogout();
 
-            // Todo: retrofit call to clear fcm_token from supabase
+            ApiController.getInstance(requireContext()).getAuthApi()
+                    .updateFcmToken(new UpdateFcmTokenRequest("removed"))
+                    .enqueue(new Callback<UpdateFcmTokenResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<UpdateFcmTokenResponse> call, @NonNull Response<UpdateFcmTokenResponse> response) {
+                            Log.d("FCMToken", "Response onResponse issuccessful: " + response.isSuccessful());
+
+                            if(response.isSuccessful()){
+                                Log.d("FCMToken", "Response success code: " + response.code());
+                                Log.d("FCMToken", "Response onResponse issuccessful: " + response.isSuccessful());
+                            }
+                            else
+                                Log.d("FCMToken", "Response success in else msg: " + response.message());
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<UpdateFcmTokenResponse> call, @NonNull Throwable t) {
+                            Log.d("FCMToken", "onFailure msg: " + t.getMessage());
+                        }
+                    });
         });
     }
 

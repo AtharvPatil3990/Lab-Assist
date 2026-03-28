@@ -44,24 +44,18 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Account">
-        <Preference
-            android:title="Change Password"
-            android:key="account_change_pass"
-            android:icon="@drawable/change_pass_icon"
-            />
+<!--    <PreferenceCategory android:title="Account">-->
+<!--        <Preference-->
+<!--            android:title="Change Password"-->
+<!--            android:key="account_change_pass"-->
+<!--            android:icon="@drawable/change_pass_icon"-->
+<!--            />-->
 
-        <Preference
-            android:title="Logout"
-            android:key="account_logout"
-            android:icon="@drawable/logout_icon"
-            />
-
-        <Preference
-            android:title="Delete Account"
-            android:key="account_delete"
-            app:summary="Once deleted account cannot be restored"
-            android:icon="@drawable/delete_forever_icon"
-            />
-    </PreferenceCategory>
+<!--        <Preference-->
+<!--            android:title="Delete Account"-->
+<!--            android:key="account_delete"-->
+<!--            app:summary="Once deleted account cannot be restored"-->
+<!--            android:icon="@drawable/delete_forever_icon"-->
+<!--            />-->
+<!--    </PreferenceCategory>-->
 </PreferenceScreen>
